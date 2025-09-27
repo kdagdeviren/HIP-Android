@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import '../../data/models/patient_model.dart';
 import '../../data/repositories/patient_repository.dart';
 
@@ -9,16 +10,16 @@ class PatientViewModel extends ChangeNotifier {
 
   Stream<List<Patient>> get patients => repository.getPatients();
 
-  Future<void> addPatient(Patient patient) async {
-    await repository.addPatient(patient);
+  Future<ResponseMessage> addPatient(Patient patient) async {
+    return await repository.addPatient(patient);
   }
 
-  Future<void> updatePatient(Patient patient) async {
-    await repository.updatePatient(patient);
+  Future<ResponseMessage> updatePatient(Patient patient) async {
+    return await repository.updatePatient(patient);
   }
 
-  Future<void> deletePatient(String id) async {
-    await repository.deletePatient(id);
+  Future<ResponseMessage> deletePatient(String id) async {
+    return await repository.deletePatient(id);
   }
 
   /// Belirli bir docID'ye sahip hastayı getirir.

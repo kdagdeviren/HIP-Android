@@ -26,7 +26,9 @@ class MainPage extends StatelessWidget {
               title: "Yeni bir hasta kaydı oluşturun",
               buttonName: "KAYIT AÇ",
               image: "assets/images/new_patient.png",
-              buttonPressed: () {},
+              buttonPressed: () {
+                NavigationService.instance.navigateTo('/patient-add');
+              },
             ),
             SizedBox(height: 1.h),
             CustomCardWithImage(
