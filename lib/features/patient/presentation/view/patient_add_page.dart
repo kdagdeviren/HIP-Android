@@ -46,7 +46,7 @@ class PatientAddPage extends StatelessWidget {
                     children: [
                       InformationBox(
                         title: "HASTA",
-                        buttons: false,
+                        showCopy: false,
                         textFieldListTiles: [
                           TextFieldListTile(
                             title: "Adı",

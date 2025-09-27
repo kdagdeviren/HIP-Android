@@ -35,7 +35,9 @@ class MainPage extends StatelessWidget {
               title: "Mevcut bir hastanın verilerini girin",
               buttonName: "HASTALARI GÖR",
               image: "assets/images/existing_patinet.png",
-              buttonPressed: () {},
+              buttonPressed: () {
+                NavigationService.instance.navigateTo('/patient-all-list');
+              },
             ),
             SizedBox(height: 1.h),
             CustomCardWithImage(

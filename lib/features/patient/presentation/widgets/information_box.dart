@@ -9,15 +9,19 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class InformationBox extends StatelessWidget {
   const InformationBox({
     super.key,
-    required this.title,
-    required this.buttons,
+    this.title,
+    required this.showCopy,
+    this.padding,
+    this.innerPadding,
     this.fixedListTiles,
     this.textFieldListTiles,
     this.buttonWidget,
   });
 
-  final String title;
-  final bool buttons;
+  final String? title;
+  final bool showCopy;
+  final EdgeInsets? padding;
+  final EdgeInsets? innerPadding;
   final List<FixedListTile>? fixedListTiles;
   final List<TextFieldListTile>? textFieldListTiles;
   final Widget? buttonWidget;
@@ -29,11 +33,11 @@ class InformationBox extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
+          padding:
+              padding ?? EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
           decoration: borderDecoration,
           child: Column(
             children: [
-              SizedBox(height: 1.h),
               fixedListTiles != null
                   ? Column(
                       children: fixedListTiles!
@@ -72,21 +76,23 @@ class InformationBox extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 3.6.h,
-                  color: AppColors.background,
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
-                  child: FittedBox(
-                    child: Text(
-                      title,
-                      style: AppTextStyles.nunitoBold25.copyWith(
-                        color: AppColors.text,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                ),
-                if (buttons)
+                title != null
+                    ? Container(
+                        height: 3.6.h,
+                        color: AppColors.background,
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        child: FittedBox(
+                          child: Text(
+                            title!,
+                            style: AppTextStyles.nunitoBold25.copyWith(
+                              color: AppColors.text,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      )
+                    : SizedBox(),
+                if (showCopy)
                   SizedBox(
                     height: 3.6.h,
                     child: Row(
