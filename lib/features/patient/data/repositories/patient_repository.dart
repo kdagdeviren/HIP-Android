@@ -10,8 +10,8 @@ class PatientRepository {
 
   Future<ResponseMessage> addPatient(Patient patient) =>
       remoteDataSource.addPatient(patient);
-  Future<ResponseMessage> updatePatient(Patient patient) =>
-      remoteDataSource.updatePatient(patient);
+  Future<ResponseMessage> updatePatient(String docId, Patient patient) =>
+      remoteDataSource.updatePatient(docId, patient);
   Future<ResponseMessage> deletePatient(String id) =>
       remoteDataSource.deletePatient(id);
   Stream<List<Patient>> getPatients() => remoteDataSource.getPatients();

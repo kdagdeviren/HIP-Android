@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_popup/smart_popup.dart';
 
-class PopupService extends ChangeNotifier {
+class PopupService {
   // Normal popup (X ile kapatma)
   void showNormal(BuildContext context, String title, String message) {
     showDialog(

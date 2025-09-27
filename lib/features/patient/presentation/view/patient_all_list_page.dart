@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodels/patient_add_viewmodel.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/text_field_list_tile.dart';

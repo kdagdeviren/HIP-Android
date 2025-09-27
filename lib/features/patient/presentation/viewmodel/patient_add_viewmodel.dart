@@ -5,7 +5,7 @@ import 'package:flutter_medical_data_app/core/services/popup_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodels/patient_view_model.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
 
 class PatientAddViewmodel extends ChangeNotifier {
   final PatientViewModel patientViewModel;

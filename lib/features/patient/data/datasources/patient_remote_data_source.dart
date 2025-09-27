@@ -9,8 +9,13 @@ class PatientRemoteDataSource {
 
   Future<ResponseMessage> addPatient(Patient patient) async {
     try {
-      await _patientsCollection.doc().set(patient.toMap());
-      return ResponseMessage(status: true, message: 'Hasta başarıyla eklendi');
+      final docRef = _patientsCollection.doc();
+      await docRef.set(patient.toMap());
+      return ResponseMessage(
+        status: true,
+        message: 'Hasta başarıyla eklendi',
+        docId: docRef.id,
+      );
     } catch (e) {
       return ResponseMessage(
         status: false,
@@ -19,9 +24,9 @@ class PatientRemoteDataSource {
     }
   }
 
-  Future<ResponseMessage> updatePatient(Patient patient) async {
+  Future<ResponseMessage> updatePatient(String docId, Patient patient) async {
     try {
-      await _patientsCollection.doc().update(patient.toMap());
+      await _patientsCollection.doc(docId).update(patient.toMap());
       return ResponseMessage(
         status: true,
         message: 'Hasta başarıyla güncellendi',

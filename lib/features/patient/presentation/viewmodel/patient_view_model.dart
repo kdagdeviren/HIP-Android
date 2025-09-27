@@ -14,8 +14,8 @@ class PatientViewModel extends ChangeNotifier {
     return await repository.addPatient(patient);
   }
 
-  Future<ResponseMessage> updatePatient(Patient patient) async {
-    return await repository.updatePatient(patient);
+  Future<ResponseMessage> updatePatient(String docId, Patient patient) async {
+    return await repository.updatePatient(docId, patient);
   }
 
   Future<ResponseMessage> deletePatient(String id) async {

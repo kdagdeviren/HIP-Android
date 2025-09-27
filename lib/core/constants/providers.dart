@@ -1,9 +1,8 @@
 import 'package:flutter_medical_data_app/core/services/popup_service.dart';
-import 'package:flutter_medical_data_app/features/auth/presentation/viewmodel/auth_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/data/datasources/patient_remote_data_source.dart';
 import 'package:flutter_medical_data_app/features/patient/data/repositories/patient_repository.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodels/patient_add_viewmodel.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodels/patient_view_model.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
 import 'package:provider/provider.dart';
 
 var providers = [
@@ -18,6 +17,5 @@ var providers = [
   ChangeNotifierProvider(
     create: (context) => PatientAddViewmodel(context.read<PatientViewModel>()),
   ),
-  ChangeNotifierProvider(create: (_) => PopupService()),
-  ChangeNotifierProvider(create: (_) => AuthViewmodel()),
+  Provider(create: (_) => PopupService()),
 ];
