@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/widgets/text_field_list_tile.dart';
-import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/patient_add_list.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -24,30 +23,28 @@ class PatientAllListPage extends StatelessWidget {
           children: [
             Consumer<PatientAddViewmodel>(
               builder: (context, viewModel, _) {
-                return Column(
-                  children: [
-                    InformationBox(
-                      showCopy: false,
-                      padding: EdgeInsets.only(
-                        top: 1.h,
-                        bottom: 1.h,
-                        left: 4.w,
-                        right: 4.w,
-                      ),
-                      textFieldListTiles: [
-                        TextFieldListTile(
-                          title: "ID",
-                          controller: idController,
+                return Expanded(
+                  child: Column(
+                    children: [
+                      SizedBox(height: 4.h),
+                      PatientAddList(idController: idController),
+                      SizedBox(height: 3.h),
+                      Expanded(
+                        child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                if (index == 0) SizedBox(height: 2.h),
+                                PatientListTile(),
+                              ],
+                            );
+                          },
+                          itemCount: 2,
                         ),
-                      ],
-                      buttonWidget: SecondButton(
-                        buttonText: "Mevcut Hasta Ekle",
-                        onPressed: () {},
-                        height: 4.h,
                       ),
-                    ),
-                    SizedBox(height: 3.h),
-                  ],
+                    ],
+                  ),
                 );
               },
             ),

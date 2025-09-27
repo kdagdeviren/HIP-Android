@@ -63,7 +63,7 @@ class SecondButton extends StatelessWidget {
           backgroundColor: AppColors.secondButtonColor,
           minimumSize: Size(double.infinity, 6.h),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
         onPressed: () {

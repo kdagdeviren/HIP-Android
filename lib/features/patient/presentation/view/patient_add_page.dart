@@ -4,10 +4,10 @@ import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/page_information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/widgets/text_field_list_tile.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/text_field_list_tile.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -46,7 +46,7 @@ class PatientAddPage extends StatelessWidget {
                     children: [
                       InformationBox(
                         title: "HASTA",
-                        showCopy: false,
+                        showCopy: true,
                         textFieldListTiles: [
                           TextFieldListTile(
                             title: "Adı",
