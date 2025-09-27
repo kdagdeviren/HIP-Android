@@ -12,4 +12,6 @@ class PatientRepository {
       remoteDataSource.updatePatient(patient);
   Future<void> deletePatient(String id) => remoteDataSource.deletePatient(id);
   Stream<List<Patient>> getPatients() => remoteDataSource.getPatients();
+  Future<Patient?> getPatientById(String docId) =>
+      remoteDataSource.getPatientById(docId);
 }

@@ -17,6 +17,14 @@ class PatientRemoteDataSource {
     await _patientsCollection.doc(id).delete();
   }
 
+  Future<Patient?> getPatientById(String docId) async {
+    final doc = await _patientsCollection.doc(docId).get();
+    if (doc.exists) {
+      return Patient.fromMap(doc.data() as Map<String, dynamic>);
+    }
+    return null;
+  }
+
   Stream<List<Patient>> getPatients() {
     return _patientsCollection.snapshots().map(
       (snapshot) => snapshot.docs

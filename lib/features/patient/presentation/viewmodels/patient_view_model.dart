@@ -20,4 +20,9 @@ class PatientViewModel extends ChangeNotifier {
   Future<void> deletePatient(String id) async {
     await repository.deletePatient(id);
   }
+
+  /// Belirli bir docID'ye sahip hastayı getirir.
+  Future<Patient?> getPatientById(String docId) async {
+    return await repository.getPatientById(docId);
+  }
 }

@@ -10,12 +10,14 @@ class AuthTextField extends StatelessWidget {
     required this.iconName,
     required this.hintText,
     this.iconHeight,
+    this.obscureText = false,
   });
 
   final TextEditingController controller;
   final String iconName;
   final String hintText;
   final double? iconHeight;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +38,11 @@ class AuthTextField extends StatelessWidget {
           SizedBox(width: 2.w),
           Expanded(
             child: TextField(
+              controller: controller,
+              obscureText: obscureText,
               style: AppTextStyles.nunitoRegular20.copyWith(
                 color: AppColors.text,
               ),
-
               decoration: InputDecoration(
                 hintStyle: AppTextStyles.nunitoRegular20.copyWith(
                   color: AppColors.text,
