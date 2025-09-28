@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/box_decorations.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
+import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile_top.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_medical_data.dart';
@@ -8,7 +9,9 @@ import 'package:flutter_medical_data_app/features/patient/presentation/widgets/p
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientListTile extends StatelessWidget {
-  const PatientListTile({super.key});
+  const PatientListTile({super.key, required this.patient});
+
+  final Patient patient;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,10 @@ class PatientListTile extends StatelessWidget {
                   child: Column(
                     children: [
                       //Patient information for name, surname and ID
-                      PatientListTileTop(),
+                      PatientListTileTop(
+                        patientName: "${patient.firstName} ${patient.lastName}",
+                        patientDocID: patient.docId!,
+                      ),
                       Container(height: 1.5, color: AppColors.text),
                       SizedBox(height: 1.h),
                       IntrinsicHeight(
@@ -38,7 +44,12 @@ class PatientListTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             //Information for protocol number
-                            Expanded(flex: 35, child: ProtocolWidget()),
+                            Expanded(
+                              flex: 35,
+                              child: ProtocolWidget(
+                                protocolNo: patient.protocolNo,
+                              ),
+                            ),
                             //Divider
                             VerticalDivider(
                               thickness: 1.5,

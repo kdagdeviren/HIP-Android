@@ -32,6 +32,7 @@ class PatientRemoteDataSource {
         message: 'Hasta başarıyla güncellendi',
       );
     } catch (e) {
+      LoggerUtil.e('Hasta güncellenirken: $e');
       return ResponseMessage(
         status: false,
         message: 'Hasta güncellenirken hata oluştu: $e',
@@ -55,7 +56,9 @@ class PatientRemoteDataSource {
     try {
       final doc = await _patientsCollection.doc(docId).get();
       if (doc.exists) {
-        return Patient.fromMap(doc.data() as Map<String, dynamic>);
+        return Patient.fromMapBasic(
+          doc.data() as Map<String, dynamic>,
+        ).copyWith(docId: doc.id);
       }
       return null;
     } catch (e) {
@@ -68,12 +71,40 @@ class PatientRemoteDataSource {
     try {
       return _patientsCollection.snapshots().map(
         (snapshot) => snapshot.docs
-            .map((doc) => Patient.fromMap(doc.data() as Map<String, dynamic>))
+            .map((doc) {
+              try {
+                return Patient.fromMapBasic(
+                  doc.data() as Map<String, dynamic>,
+                ).copyWith(docId: doc.id);
+              } catch (e) {
+                LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
+                return null;
+              }
+            })
+            .where((patient) => patient != null)
+            .cast<Patient>()
             .toList(),
       );
     } catch (e) {
       LoggerUtil.e('Hastalar getirilirken hata oluştu: $e');
       return Stream.value([]);
+    }
+  }
+
+  Future<List<QueryDocumentSnapshot>> getPatientsPaginated(
+    int limit, [
+    DocumentSnapshot? startAfter,
+  ]) async {
+    try {
+      Query query = _patientsCollection.limit(limit);
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+      final snapshot = await query.get();
+      return snapshot.docs;
+    } catch (e) {
+      LoggerUtil.e('Hastalar paginated getirilirken hata: $e');
+      return [];
     }
   }
 }

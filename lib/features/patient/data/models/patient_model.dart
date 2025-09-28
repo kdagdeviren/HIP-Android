@@ -1,3 +1,4 @@
+import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/categories/pet/pet.dart';
 
 import 'categories/pathology/pathology.dart';
@@ -15,7 +16,6 @@ class Patient {
   final String mainDoctorId;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-
   final Pathology? pathology;
   final Oncology? oncology;
   final Demography? demography;
@@ -23,6 +23,7 @@ class Patient {
   final Biochemistry? biochemistry;
   final Radiology? radiology;
   final PET? pet;
+  final AddedCategories? addedCategories;
 
   Patient({
     this.docId,
@@ -39,14 +40,15 @@ class Patient {
     this.biochemistry,
     this.radiology,
     this.pet,
+    this.addedCategories,
   });
 
   Map<String, dynamic> toMap() {
     return {
-      'docId': docId,
       'firstName': firstName,
       'lastName': lastName,
       'protocolNo': protocolNo,
+      'mainDoctorId': mainDoctorId,
       'pathology': pathology?.toMap(),
       'oncology': oncology?.toMap(),
       'demography': demography?.toMap(),
@@ -54,46 +56,90 @@ class Patient {
       'biochemistry': biochemistry?.toMap(),
       'radiology': radiology?.toMap(),
       'pet': pet?.toMap(),
+      'addedCategories': addedCategories?.toMap(),
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
   factory Patient.fromMap(Map<String, dynamic> map) {
-    return Patient(
-      docId: map['docId'],
-      firstName: map['firstName'],
-      lastName: map['lastName'],
-      protocolNo: map['protocolNo'],
-      mainDoctorId: map['mainDoctorId'],
-      createdAt: map['createdAt'] != null
-          ? DateTime.parse(map['createdAt'])
-          : null,
-      updatedAt: map['updatedAt'] != null
-          ? DateTime.parse(map['updatedAt'])
-          : null,
-      pathology: map['pathology'] != null
-          ? Pathology.fromMap(Map<String, dynamic>.from(map['pathology']))
-          : null,
-      oncology: map['oncology'] != null
-          ? Oncology.fromMap(Map<String, dynamic>.from(map['oncology']))
-          : null,
-      demography: map['demography'] != null
-          ? Demography.fromMap(Map<String, dynamic>.from(map['demography']))
-          : null,
-      comorbidity: map['comorbidity'] != null
-          ? Comorbidity.fromMap(Map<String, dynamic>.from(map['comorbidity']))
-          : null,
-      biochemistry: map['biochemistry'] != null
-          ? Biochemistry.fromMap(Map<String, dynamic>.from(map['biochemistry']))
-          : null,
-      radiology: map['radiology'] != null
-          ? Radiology.fromMap(Map<String, dynamic>.from(map['radiology']))
-          : null,
-      pet: map['pet'] != null
-          ? PET.fromMap(Map<String, dynamic>.from(map['pet']))
-          : null,
-    );
+    try {
+      return Patient(
+        firstName: map['firstName'] as String? ?? '',
+        lastName: map['lastName'] as String? ?? '',
+        protocolNo: map['protocolNo'] as String? ?? '',
+        mainDoctorId: map['mainDoctorId'] as String? ?? '',
+        createdAt: map['createdAt'] != null
+            ? DateTime.parse(map['createdAt'] as String)
+            : null,
+        updatedAt: map['updatedAt'] != null
+            ? DateTime.parse(map['updatedAt'] as String)
+            : null,
+        pathology: map['pathology'] != null
+            ? Pathology.fromMap(Map<String, dynamic>.from(map['pathology']))
+            : null,
+        oncology: map['oncology'] != null
+            ? Oncology.fromMap(Map<String, dynamic>.from(map['oncology']))
+            : null,
+        demography: map['demography'] != null
+            ? Demography.fromMap(Map<String, dynamic>.from(map['demography']))
+            : null,
+        comorbidity: map['comorbidity'] != null
+            ? Comorbidity.fromMap(Map<String, dynamic>.from(map['comorbidity']))
+            : null,
+        biochemistry: map['biochemistry'] != null
+            ? Biochemistry.fromMap(
+                Map<String, dynamic>.from(map['biochemistry']),
+              )
+            : null,
+        radiology: map['radiology'] != null
+            ? Radiology.fromMap(Map<String, dynamic>.from(map['radiology']))
+            : null,
+        pet: map['pet'] != null
+            ? PET.fromMap(Map<String, dynamic>.from(map['pet']))
+            : null,
+        addedCategories: map['addedCategories'] != null
+            ? AddedCategories.fromMap(
+                Map<String, dynamic>.from(map['addedCategories']),
+              )
+            : null,
+      );
+    } catch (e) {
+      throw Exception('Error parsing Patient from map: $e, map: $map');
+    }
+  }
+
+  factory Patient.fromMapBasic(Map<String, dynamic> map) {
+    try {
+      return Patient(
+        docId: map['docId'] as String?,
+        firstName: map['firstName'] as String? ?? '',
+        lastName: map['lastName'] as String? ?? '',
+        protocolNo: map['protocolNo'] as String? ?? '',
+        mainDoctorId: map['mainDoctorId'] as String? ?? '',
+        createdAt: map['createdAt'] != null
+            ? DateTime.parse(map['createdAt'] as String)
+            : null,
+        updatedAt: map['updatedAt'] != null
+            ? DateTime.parse(map['updatedAt'] as String)
+            : null,
+        addedCategories: map['addedCategories'] != null
+            ? AddedCategories.fromMap(
+                Map<String, dynamic>.from(map['addedCategories']),
+              )
+            : null,
+        // Diğer fields'lar çekilmiyor, performans için
+        pathology: null,
+        oncology: null,
+        demography: null,
+        comorbidity: null,
+        biochemistry: null,
+        radiology: null,
+        pet: null,
+      );
+    } catch (e) {
+      throw Exception('Error parsing Patient from map: $e, map: $map');
+    }
   }
 
   Patient copyWith({
@@ -111,6 +157,7 @@ class Patient {
     Biochemistry? biochemistry,
     Radiology? radiology,
     PET? pet,
+    AddedCategories? addedCategories,
   }) {
     return Patient(
       docId: docId ?? this.docId,
@@ -127,6 +174,7 @@ class Patient {
       biochemistry: biochemistry ?? this.biochemistry,
       radiology: radiology ?? this.radiology,
       pet: pet ?? this.pet,
+      addedCategories: addedCategories ?? this.addedCategories,
     );
   }
 }

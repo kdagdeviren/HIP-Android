@@ -4,7 +4,9 @@ import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class ProtocolWidget extends StatelessWidget {
-  const ProtocolWidget({super.key});
+  const ProtocolWidget({super.key, required this.protocolNo});
+
+  final String protocolNo;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class ProtocolWidget extends StatelessWidget {
         ),
         children: [
           TextSpan(
-            text: "157126154",
+            text: protocolNo,
             style: AppTextStyles.nunitoBold20.copyWith(
               fontSize: 16.sp,
               fontWeight: FontWeight.w400,

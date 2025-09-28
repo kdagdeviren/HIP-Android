@@ -3,7 +3,14 @@ import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientListTileTop extends StatelessWidget {
-  const PatientListTileTop({super.key});
+  const PatientListTileTop({
+    super.key,
+    required this.patientName,
+    required this.patientDocID,
+  });
+
+  final String patientName;
+  final String patientDocID;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +18,7 @@ class PatientListTileTop extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          "Özgür Demir",
+          patientName,
           style: AppTextStyles.nunitoBold25.copyWith(
             fontSize: 18.sp,
             fontWeight: FontWeight.w800,
@@ -28,7 +35,7 @@ class PatientListTileTop extends StatelessWidget {
             ),
             Text(
               textAlign: TextAlign.right,
-              "tWKmLZYEfcWl8ptOKWGW",
+              patientDocID,
               style: AppTextStyles.nunitoMedium20.copyWith(fontSize: 14.sp),
             ),
           ],

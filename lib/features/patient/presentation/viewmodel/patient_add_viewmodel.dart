@@ -39,6 +39,10 @@ class PatientAddViewmodel extends ChangeNotifier {
         mainDoctorId: FirebaseAuth.instance.currentUser!.uid,
       );
 
+      LoggerUtil.i(
+        "Adding patient with mainDoctorId: ${newPatient.mainDoctorId}",
+      );
+
       ResponseMessage response = await patientViewModel.addPatient(newPatient);
       if (!response.status) {
         PopupService().showError(context, "Hata", response.message);
@@ -47,6 +51,7 @@ class PatientAddViewmodel extends ChangeNotifier {
         LoggerUtil.i("Hasta başarıyla eklendi: ${response.message}");
 
         NavigationService.instance.goBack();
+        NavigationService.instance.navigateTo('/patient-all-list');
         PopupService().showSuccess(
           context,
           "Başarılı",
