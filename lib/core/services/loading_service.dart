@@ -20,7 +20,7 @@ class LoadingService {
 
     _overlayEntry = OverlayEntry(
       builder: (context) => Container(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: Center(
           child: Container(
             padding: const EdgeInsets.all(16),

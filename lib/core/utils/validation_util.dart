@@ -63,10 +63,12 @@ class ValidationUtil {
   /// Returns protocol number validation error message
   static String? getProtocolNumberErrorMessage(String protocolNumber) {
     if (protocolNumber.isEmpty) return 'Protokol numarası boş olamaz';
-    if (protocolNumber.length < 3)
+    if (protocolNumber.length < 3) {
       return 'Protokol numarası en az 3 karakter olmalıdır';
-    if (!RegExp(r'^\d+$').hasMatch(protocolNumber))
+    }
+    if (!RegExp(r'^\d+$').hasMatch(protocolNumber)) {
       return 'Protokol numarası sadece rakam içermelidir';
+    }
     return null;
   }
 
@@ -76,8 +78,9 @@ class ValidationUtil {
     String confirmPassword,
   ) {
     if (confirmPassword.isEmpty) return 'Şifre tekrarı boş olamaz';
-    if (!doPasswordsMatch(password, confirmPassword))
+    if (!doPasswordsMatch(password, confirmPassword)) {
       return 'Şifreler eşleşmiyor';
+    }
     return null;
   }
 }

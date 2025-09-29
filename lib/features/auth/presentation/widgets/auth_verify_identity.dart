@@ -32,7 +32,7 @@ class AuthVerifyIdentity extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(
-                color: AppColors.text.withOpacity(0.5),
+                color: AppColors.text.withValues(alpha: 0.5),
                 width: 2,
               ),
             ),

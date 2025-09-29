@@ -26,6 +26,6 @@ class LoggerUtil {
   static void i(dynamic message) => _instance._logger.i(message);
   static void w(dynamic message) => _instance._logger.w(message);
   static void e(dynamic message) => _instance._logger.e(message);
-  static void v(dynamic message) => _instance._logger.v(message);
-  static void wtf(dynamic message) => _instance._logger.wtf(message);
+  static void t(dynamic message) => _instance._logger.t(message);
+  static void f(dynamic message) => _instance._logger.f(message);
 }

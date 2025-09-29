@@ -96,22 +96,22 @@ class _PatientAddPageState extends State<PatientAddPage> {
                             protocolNo: protocolNumber.text.trim(),
                           );
 
-                          if (mounted) {
-                            if (response.status) {
-                              NavigationService.instance.goBack();
-                              NavigationService.instance.navigateTo(
-                                '/patient-all-list',
-                              );
-                              ErrorHandler.showSuccessSnackBar(
-                                context,
-                                "Hasta başarıyla eklendi.",
-                              );
-                            } else {
-                              ErrorHandler.showErrorSnackBar(
-                                context,
-                                response.message,
-                              );
-                            }
+                          if (!mounted) return;
+
+                          if (response.status) {
+                            NavigationService.instance.goBack();
+                            NavigationService.instance.navigateTo(
+                              '/patient-all-list',
+                            );
+                            ErrorHandler.showSuccessSnackBar(
+                              context,
+                              "Hasta başarıyla eklendi.",
+                            );
+                          } else {
+                            ErrorHandler.showErrorSnackBar(
+                              context,
+                              response.message,
+                            );
                           }
                         },
                         height: 5.5.h,

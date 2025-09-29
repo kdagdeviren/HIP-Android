@@ -10,7 +10,12 @@ class PatientRemoteDataSource {
   Future<ResponseMessage> addPatient(Patient patient) async {
     try {
       final docRef = _patientsCollection.doc();
-      await docRef.set(patient.toMap());
+      final patientData = patient.toMap();
+      // Use server timestamp for createdAt and updatedAt
+      patientData['createdAt'] = FieldValue.serverTimestamp();
+      patientData['updatedAt'] = FieldValue.serverTimestamp();
+
+      await docRef.set(patientData);
       return ResponseMessage(
         status: true,
         message: 'Hasta başarıyla eklendi',
@@ -26,7 +31,11 @@ class PatientRemoteDataSource {
 
   Future<ResponseMessage> updatePatient(String docId, Patient patient) async {
     try {
-      await _patientsCollection.doc(docId).update(patient.toMap());
+      final patientData = patient.toMap();
+      // Update timestamp on modification
+      patientData['updatedAt'] = FieldValue.serverTimestamp();
+
+      await _patientsCollection.doc(docId).update(patientData);
       return ResponseMessage(
         status: true,
         message: 'Hasta başarıyla güncellendi',
@@ -56,9 +65,7 @@ class PatientRemoteDataSource {
     try {
       final doc = await _patientsCollection.doc(docId).get();
       if (doc.exists) {
-        return Patient.fromMapBasic(
-          doc.data() as Map<String, dynamic>,
-        ).copyWith(docId: doc.id);
+        return _mapDocumentToPatient(doc);
       }
       return null;
     } catch (e) {
@@ -70,20 +77,7 @@ class PatientRemoteDataSource {
   Stream<List<Patient>> getPatients() {
     try {
       return _patientsCollection.snapshots().map(
-        (snapshot) => snapshot.docs
-            .map((doc) {
-              try {
-                return Patient.fromMapBasic(
-                  doc.data() as Map<String, dynamic>,
-                ).copyWith(docId: doc.id);
-              } catch (e) {
-                LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
-                return null;
-              }
-            })
-            .where((patient) => patient != null)
-            .cast<Patient>()
-            .toList(),
+        (snapshot) => _mapDocumentsToPatients(snapshot.docs),
       );
     } catch (e) {
       LoggerUtil.e('Hastalar getirilirken hata oluştu: $e');
@@ -91,7 +85,7 @@ class PatientRemoteDataSource {
     }
   }
 
-  Future<List<QueryDocumentSnapshot>> getPatientsPaginated(
+  Future<List<Patient>> getPatientsPaginated(
     int limit, [
     DocumentSnapshot? startAfter,
   ]) async {
@@ -101,10 +95,31 @@ class PatientRemoteDataSource {
         query = query.startAfterDocument(startAfter);
       }
       final snapshot = await query.get();
-      return snapshot.docs;
+      return _mapDocumentsToPatients(snapshot.docs);
     } catch (e) {
       LoggerUtil.e('Hastalar paginated getirilirken hata: $e');
       return [];
     }
+  }
+
+  /// Maps a single document to Patient object
+  Patient? _mapDocumentToPatient(DocumentSnapshot doc) {
+    try {
+      return Patient.fromMapBasic(
+        doc.data() as Map<String, dynamic>,
+      ).copyWith(docId: doc.id);
+    } catch (e) {
+      LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
+      return null;
+    }
+  }
+
+  /// Maps multiple documents to list of Patient objects
+  List<Patient> _mapDocumentsToPatients(List<QueryDocumentSnapshot> docs) {
+    return docs
+        .map((doc) => _mapDocumentToPatient(doc))
+        .where((patient) => patient != null)
+        .cast<Patient>()
+        .toList();
   }
 }

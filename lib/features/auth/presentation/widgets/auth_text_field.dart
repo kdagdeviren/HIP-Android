@@ -24,7 +24,10 @@ class AuthTextField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: AppColors.text.withOpacity(0.5), width: 2),
+          bottom: BorderSide(
+            color: AppColors.text.withValues(alpha: 0.5),
+            width: 2,
+          ),
         ),
       ),
       child: Row(

@@ -35,7 +35,7 @@ class PatientListTile extends StatelessWidget {
                       //Patient information for name, surname and ID
                       PatientListTileTop(
                         patientName: "${patient.firstName} ${patient.lastName}",
-                        patientDocID: patient.docId!,
+                        patientDocID: patient.docId ?? 'N/A',
                       ),
                       Container(height: 1.5, color: AppColors.text),
                       SizedBox(height: 1.h),

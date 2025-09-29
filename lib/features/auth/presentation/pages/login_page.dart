@@ -100,18 +100,20 @@ class _LoginPageState extends State<LoginPage> {
                                     );
                                     loading.close();
 
-                                    if (mounted &&
-                                        viewModel.responseMessage != null) {
-                                      if (viewModel.responseMessage!.status) {
-                                        NavigationService.instance.navigateTo(
-                                          '/home',
-                                        );
-                                      } else {
-                                        ErrorHandler.showErrorSnackBar(
-                                          context,
-                                          viewModel.responseMessage!.message,
-                                        );
-                                      }
+                                    if (!mounted ||
+                                        viewModel.responseMessage == null) {
+                                      return;
+                                    }
+
+                                    if (viewModel.responseMessage!.status) {
+                                      NavigationService.instance.navigateTo(
+                                        '/home',
+                                      );
+                                    } else {
+                                      ErrorHandler.showErrorSnackBar(
+                                        context,
+                                        viewModel.responseMessage!.message,
+                                      );
                                     }
                                   },
                                   height: 5.h,

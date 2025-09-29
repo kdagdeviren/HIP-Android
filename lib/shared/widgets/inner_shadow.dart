@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class GlassBox extends StatelessWidget {
@@ -45,7 +43,7 @@ class GlassBox extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               blurStyle: BlurStyle.outer,
-              color: outerShadowColor.withOpacity(0.28),
+              color: outerShadowColor.withValues(alpha: 0.28),
               blurRadius: blur,
               spreadRadius: 0,
               offset: const Offset(0, 1),

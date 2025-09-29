@@ -16,7 +16,7 @@ class PatientRepository {
   Future<ResponseMessage> deletePatient(String id) =>
       remoteDataSource.deletePatient(id);
   Stream<List<Patient>> getPatients() => remoteDataSource.getPatients();
-  Future<List<QueryDocumentSnapshot>> getPatientsPaginated(
+  Future<List<Patient>> getPatientsPaginated(
     int limit, [
     DocumentSnapshot? startAfter,
   ]) => remoteDataSource.getPatientsPaginated(limit, startAfter);

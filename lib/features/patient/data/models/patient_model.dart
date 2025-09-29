@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/categories/pet/pet.dart';
 
@@ -57,8 +58,9 @@ class Patient {
       'radiology': radiology?.toMap(),
       'pet': pet?.toMap(),
       'addedCategories': addedCategories?.toMap(),
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
+      // Note: createdAt/updatedAt will be handled at datasource level with FieldValue.serverTimestamp()
+      if (createdAt != null) 'createdAt': createdAt,
+      if (updatedAt != null) 'updatedAt': updatedAt,
     };
   }
 
@@ -69,12 +71,8 @@ class Patient {
         lastName: map['lastName'] as String? ?? '',
         protocolNo: map['protocolNo'] as String? ?? '',
         mainDoctorId: map['mainDoctorId'] as String? ?? '',
-        createdAt: map['createdAt'] != null
-            ? DateTime.parse(map['createdAt'] as String)
-            : null,
-        updatedAt: map['updatedAt'] != null
-            ? DateTime.parse(map['updatedAt'] as String)
-            : null,
+        createdAt: _parseDateTime(map['createdAt']),
+        updatedAt: _parseDateTime(map['updatedAt']),
         pathology: map['pathology'] != null
             ? Pathology.fromMap(Map<String, dynamic>.from(map['pathology']))
             : null,
@@ -117,12 +115,8 @@ class Patient {
         lastName: map['lastName'] as String? ?? '',
         protocolNo: map['protocolNo'] as String? ?? '',
         mainDoctorId: map['mainDoctorId'] as String? ?? '',
-        createdAt: map['createdAt'] != null
-            ? DateTime.parse(map['createdAt'] as String)
-            : null,
-        updatedAt: map['updatedAt'] != null
-            ? DateTime.parse(map['updatedAt'] as String)
-            : null,
+        createdAt: _parseDateTime(map['createdAt']),
+        updatedAt: _parseDateTime(map['updatedAt']),
         addedCategories: map['addedCategories'] != null
             ? AddedCategories.fromMap(
                 Map<String, dynamic>.from(map['addedCategories']),
@@ -176,5 +170,19 @@ class Patient {
       pet: pet ?? this.pet,
       addedCategories: addedCategories ?? this.addedCategories,
     );
+  }
+
+  /// Parses DateTime from various formats (Timestamp, String, or null)
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is Timestamp) return value.toDate();
+    if (value is String) {
+      try {
+        return DateTime.parse(value);
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
   }
 }

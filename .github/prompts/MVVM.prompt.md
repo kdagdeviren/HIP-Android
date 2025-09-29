@@ -1,5 +1,9 @@
 # MVVM.prompt.md
 
+## Language Rules
+- **Code and comments must be in English.**
+- **All explanations and reasoning must be in Turkish.**
+
 ## Project Main Prompt
 
 ### Architecture
@@ -22,10 +26,6 @@
 - **UseCase**: single responsibility, encapsulates one business operation.
 - **Repository**: abstracts data sources.
 - **Entity**: pure data models in domain layer.
-
-### Language Rules
-- **Code and comments must be in English.**
-- **Explanations must be in Turkish.**
 
 ### Notes
 - Each new feature must have its own folder structure.
