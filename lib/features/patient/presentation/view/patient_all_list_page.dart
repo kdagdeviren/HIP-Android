@@ -13,8 +13,10 @@ class PatientAllListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final idController = TextEditingController();
-    return ChangeNotifierProvider(
-      create: (_) => PatientAllListViewModel(context),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PatientAllListViewModel()),
+      ],
       child: Scaffold(
         appBar: PatientAppBar(title: "Hasta Kaydı"),
         body: Padding(
@@ -29,7 +31,13 @@ class PatientAllListPage extends StatelessWidget {
                     SizedBox(height: 4.h),
                     PatientAddList(idController: idController),
                     SizedBox(height: 3.h),
-                    const Expanded(child: PatientListView()),
+                    Expanded(
+                      child: Consumer<PatientAllListViewModel>(
+                        builder: (context, viewModel, child) => PatientListView(
+                          addDataCallback: viewModel.addDataNavigation,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

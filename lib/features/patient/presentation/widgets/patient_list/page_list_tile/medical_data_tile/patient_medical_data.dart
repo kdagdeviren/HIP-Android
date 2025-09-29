@@ -7,7 +7,9 @@ import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientMedicalData extends StatelessWidget {
-  const PatientMedicalData({super.key});
+  const PatientMedicalData({super.key, required this.onPressed});
+
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class PatientMedicalData extends StatelessWidget {
           SizedBox(height: spaceHeight),
           SecondButton(
             buttonText: "VERİ GİRİŞİ",
-            onPressed: () {},
+            onPressed: onPressed,
             height: 4.h,
           ),
         ],

@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientListView extends StatelessWidget {
-  const PatientListView({super.key});
+  const PatientListView({super.key, required this.addDataCallback});
+
+  final VoidCallback addDataCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,10 @@ class PatientListView extends StatelessWidget {
             return Column(
               children: [
                 if (index == 0) SizedBox(height: 2.h),
-                PatientListTile(patient: patient),
+                PatientListTile(
+                  patient: patient,
+                  addDataCallback: addDataCallback,
+                ),
               ],
             );
           },

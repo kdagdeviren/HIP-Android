@@ -48,11 +48,13 @@ class SecondButton extends StatelessWidget {
     required this.buttonText,
     required this.onPressed,
     required this.height,
+    this.buttonColor,
   });
 
   final String buttonText;
   final Function onPressed;
   final double height;
+  final Color? buttonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class SecondButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.secondButtonColor,
+          backgroundColor: buttonColor ?? AppColors.secondButtonColor,
           minimumSize: Size(double.infinity, 6.h),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),

@@ -11,12 +11,14 @@ class CustomCardWithImage extends StatelessWidget {
     required this.buttonName,
     required this.image,
     required this.buttonPressed,
+    this.buttonColor,
   });
 
   final String title;
   final String buttonName;
   final String image;
   final Function buttonPressed;
+  final Color? buttonColor;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +47,7 @@ class CustomCardWithImage extends StatelessWidget {
                 SizedBox(height: 3.h),
                 SecondButton(
                   buttonText: buttonName,
+                  buttonColor: buttonColor,
                   onPressed: () {
                     buttonPressed();
                   },

@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_medical_data_app/core/constants/providers.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/view/patient_add_page.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/view/patient_all_list_page.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/view/patient_enter_data.dart';
 import 'package:flutter_medical_data_app/firebase_options.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/theme/app_theme.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
               //Patient Pages
               '/patient-add': (context) => const PatientAddPage(),
               '/patient-all-list': (context) => const PatientAllListPage(),
+              '/patient-enter-data': (context) => const PatientEnterData(),
             },
             home: const AuthGuard(),
           ),

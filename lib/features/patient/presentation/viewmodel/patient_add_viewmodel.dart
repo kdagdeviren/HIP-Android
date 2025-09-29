@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:flutter_medical_data_app/core/utils/validation_util.dart';
@@ -62,5 +63,38 @@ class PatientAddViewmodel extends ChangeNotifier {
       final errorMessage = ErrorHandler.handleError(e, 'Add Patient');
       return ResponseMessage(status: false, message: errorMessage);
     }
+  }
+
+  Future<void> handleAddPatient(
+    BuildContext context, {
+    required String name,
+    required String surname,
+    required String protocolNo,
+  }) async {
+    final response = await addPatient(
+      name: name,
+      surname: surname,
+      protocolNo: protocolNo,
+    );
+
+    if (response.status) {
+      _navigateToPatientList();
+      _showSuccessMessage(context);
+    } else {
+      _showErrorMessage(context, response.message);
+    }
+  }
+
+  void _navigateToPatientList() {
+    NavigationService.instance.goBack();
+    NavigationService.instance.navigateTo('/patient-all-list');
+  }
+
+  void _showSuccessMessage(BuildContext context) {
+    ErrorHandler.showSuccessSnackBar(context, "Hasta başarıyla eklendi.");
+  }
+
+  void _showErrorMessage(BuildContext context, String message) {
+    ErrorHandler.showErrorSnackBar(context, message);
   }
 }

@@ -9,8 +9,6 @@ import 'package:flutter_medical_data_app/features/patient/presentation/widgets/p
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/text_field_list_tile.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
-import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
-import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -90,29 +88,12 @@ class _PatientAddPageState extends State<PatientAddPage> {
                       SecondButton(
                         buttonText: "KAYDI OLUŞTUR",
                         onPressed: () async {
-                          final response = await viewModel.addPatient(
+                          await viewModel.handleAddPatient(
+                            context,
                             name: nameController.text.trim(),
                             surname: surnameController.text.trim(),
                             protocolNo: protocolNumber.text.trim(),
                           );
-
-                          if (!mounted) return;
-
-                          if (response.status) {
-                            NavigationService.instance.goBack();
-                            NavigationService.instance.navigateTo(
-                              '/patient-all-list',
-                            );
-                            ErrorHandler.showSuccessSnackBar(
-                              context,
-                              "Hasta başarıyla eklendi.",
-                            );
-                          } else {
-                            ErrorHandler.showErrorSnackBar(
-                              context,
-                              response.message,
-                            );
-                          }
                         },
                         height: 5.5.h,
                       ),

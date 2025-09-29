@@ -9,9 +9,14 @@ import 'package:flutter_medical_data_app/features/patient/presentation/widgets/p
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientListTile extends StatelessWidget {
-  const PatientListTile({super.key, required this.patient});
+  const PatientListTile({
+    super.key,
+    required this.patient,
+    required this.addDataCallback,
+  });
 
   final Patient patient;
+  final VoidCallback addDataCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +61,12 @@ class PatientListTile extends StatelessWidget {
                               color: AppColors.text,
                             ),
                             //Information for medical data, pathology, radiology, etc.
-                            Expanded(flex: 65, child: PatientMedicalData()),
+                            Expanded(
+                              flex: 65,
+                              child: PatientMedicalData(
+                                onPressed: addDataCallback,
+                              ),
+                            ),
                           ],
                         ),
                       ),
