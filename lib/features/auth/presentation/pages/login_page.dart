@@ -7,22 +7,50 @@ import 'package:flutter_medical_data_app/features/auth/presentation/widgets/bott
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/logo_with_round_bg.dart';
 import 'package:flutter_medical_data_app/shared/widgets/inner_shadow.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
+import 'package:flutter_medical_data_app/core/services/loading_service.dart';
+import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
     return ChangeNotifierProvider(
       create: (_) => LoginViewmodel(AuthService()),
       child: Scaffold(
         body: SafeArea(
-          child: Consumer<LoginViewmodel>(
-            builder: (context, viewModel, _) {
+          child: Selector<LoginViewmodel, bool>(
+            selector: (context, viewModel) => viewModel.isLoading,
+            builder: (context, isLoading, _) {
+              final viewModel = Provider.of<LoginViewmodel>(
+                context,
+                listen: false,
+              );
               return Container(
                 height: double.infinity,
                 width: double.infinity,
@@ -62,16 +90,32 @@ class LoginPage extends StatelessWidget {
                                 ),
                                 SizedBox(height: 2.h),
                                 MainButton(
-                                  onPressed: () {
-                                    if (viewModel.isLoading) return;
-                                    viewModel.loginWithEmail(
-                                      context: context,
+                                  onPressed: () async {
+                                    if (isLoading) return;
+
+                                    loading.show(context);
+                                    await viewModel.loginWithEmail(
                                       email: emailController.text.trim(),
                                       password: passwordController.text.trim(),
                                     );
+                                    loading.close();
+
+                                    if (mounted &&
+                                        viewModel.responseMessage != null) {
+                                      if (viewModel.responseMessage!.status) {
+                                        NavigationService.instance.navigateTo(
+                                          '/home',
+                                        );
+                                      } else {
+                                        ErrorHandler.showErrorSnackBar(
+                                          context,
+                                          viewModel.responseMessage!.message,
+                                        );
+                                      }
+                                    }
                                   },
                                   height: 5.h,
-                                  buttonText: viewModel.isLoading
+                                  buttonText: isLoading
                                       ? "Giriş Yapılıyor..."
                                       : "GİRİŞ YAP",
                                 ),

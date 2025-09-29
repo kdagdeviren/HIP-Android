@@ -4,7 +4,7 @@ import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile_top.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_medical_data.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/medical_data_tile/patient_medical_data.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/protocol_widget.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 

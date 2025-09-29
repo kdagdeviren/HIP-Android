@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
-import 'package:flutter_medical_data_app/core/services/popup_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
+import 'package:flutter_medical_data_app/core/utils/validation_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
@@ -11,24 +11,33 @@ class PatientAddViewmodel extends ChangeNotifier {
   final PatientViewModel patientViewModel;
   PatientAddViewmodel(this.patientViewModel);
 
+  /// Validates patient form data
+  String? validatePatientData(String name, String surname, String protocolNo) {
+    final nameError = ValidationUtil.getNameErrorMessage(name);
+    if (nameError != null) return "Ad: ${nameError.toLowerCase()}";
+
+    final surnameError = ValidationUtil.getNameErrorMessage(surname);
+    if (surnameError != null) return "Soyad: ${surnameError.toLowerCase()}";
+
+    final protocolError = ValidationUtil.getProtocolNumberErrorMessage(
+      protocolNo,
+    );
+    if (protocolError != null) return protocolError;
+
+    return null;
+  }
+
+  /// Adds a new patient
   Future<ResponseMessage> addPatient({
     required String name,
     required String surname,
     required String protocolNo,
-    required BuildContext context,
   }) async {
     try {
-      if (name.isEmpty || surname.isEmpty || protocolNo.isEmpty) {
-        PopupService().showError(
-          context,
-          "Hata",
-          "Lütfen tüm alanları doldurun.",
-        );
-
-        return ResponseMessage(
-          status: false,
-          message: "Lütfen tüm alanları doldurun.",
-        );
+      // Validate input
+      final validationError = validatePatientData(name, surname, protocolNo);
+      if (validationError != null) {
+        return ResponseMessage(status: false, message: validationError);
       }
 
       Patient newPatient = Patient(
@@ -44,32 +53,14 @@ class PatientAddViewmodel extends ChangeNotifier {
       );
 
       ResponseMessage response = await patientViewModel.addPatient(newPatient);
-      if (!response.status) {
-        PopupService().showError(context, "Hata", response.message);
-        return response;
-      } else {
+      if (response.status) {
         LoggerUtil.i("Hasta başarıyla eklendi: ${response.message}");
-
-        NavigationService.instance.goBack();
-        NavigationService.instance.navigateTo('/patient-all-list');
-        PopupService().showSuccess(
-          context,
-          "Başarılı",
-          "Hasta başarıyla eklendi.",
-        );
       }
 
-      return ResponseMessage(status: true, message: "Hasta başarıyla eklendi.");
+      return response;
     } catch (e) {
-      PopupService().showError(
-        context,
-        "Hata",
-        "Hasta eklenirken bir hata oluştu: $e",
-      );
-      return ResponseMessage(
-        status: false,
-        message: "Hasta eklenirken bir hata oluştu: $e",
-      );
+      final errorMessage = ErrorHandler.handleError(e, 'Add Patient');
+      return ResponseMessage(status: false, message: errorMessage);
     }
   }
 }

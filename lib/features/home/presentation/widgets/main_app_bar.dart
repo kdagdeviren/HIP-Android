@@ -3,9 +3,10 @@ import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const MainAppBar({super.key, required this.title});
+  const MainAppBar({super.key, required this.title, this.onSettingsPressed});
 
   final String title;
+  final VoidCallback? onSettingsPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              onPressed: () {},
+              onPressed:
+                  onSettingsPressed ??
+                  () {
+                    // Default empty implementation
+                  },
               icon: Image.asset(
                 "assets/images/icons/settings_profile.png",
                 height: 3.h,

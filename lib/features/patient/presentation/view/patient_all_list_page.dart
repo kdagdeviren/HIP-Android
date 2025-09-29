@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patitent_all_list_viewmodel.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/patient_add_list.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/patient_list_view.dart';
@@ -24,19 +23,15 @@ class PatientAllListPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Consumer<PatientAddViewmodel>(
-                builder: (context, viewModel, _) {
-                  return Expanded(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 4.h),
-                        PatientAddList(idController: idController),
-                        SizedBox(height: 3.h),
-                        const Expanded(child: PatientListView()),
-                      ],
-                    ),
-                  );
-                },
+              Expanded(
+                child: Column(
+                  children: [
+                    SizedBox(height: 4.h),
+                    PatientAddList(idController: idController),
+                    SizedBox(height: 3.h),
+                    const Expanded(child: PatientListView()),
+                  ],
+                ),
               ),
             ],
           ),

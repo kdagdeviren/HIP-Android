@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
-import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patitent_all_list_viewmodel.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -10,8 +10,12 @@ class PatientListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<PatientViewModel, PatientAllListViewModel>(
-      builder: (context, patientViewModel, listViewModel, _) {
+    final listViewModel = Provider.of<PatientAllListViewModel>(
+      context,
+      listen: false,
+    );
+    return Consumer<PatientViewModel>(
+      builder: (context, patientViewModel, _) {
         final patients = patientViewModel.patients;
         final hasMore = patientViewModel.hasMore;
         return ListView.builder(

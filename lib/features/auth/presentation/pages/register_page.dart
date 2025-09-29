@@ -2,27 +2,54 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/viewmodel/register_viewmodel.dart';
-
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/auth_text_field.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/auth_verify_identity.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/bottom_text_navigator.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/logo_with_round_bg.dart';
 import 'package:flutter_medical_data_app/shared/widgets/inner_shadow.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
+import 'package:flutter_medical_data_app/core/services/loading_service.dart';
+import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:provider/provider.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final surnameController = TextEditingController();
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
-    final passwordRepeatController = TextEditingController();
+  State<RegisterPage> createState() => _RegisterPageState();
+}
 
+class _RegisterPageState extends State<RegisterPage> {
+  late final TextEditingController nameController;
+  late final TextEditingController surnameController;
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+  late final TextEditingController passwordRepeatController;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    surnameController = TextEditingController();
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+    passwordRepeatController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    surnameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    passwordRepeatController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => RegisterViewModel(AuthService()),
       child: Scaffold(
@@ -109,10 +136,11 @@ class RegisterPage extends StatelessWidget {
                                       ),
                                     ),
                                   MainButton(
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if (viewModel.isLoading) return;
-                                      viewModel.registerWithEmail(
-                                        context: context,
+
+                                      loading.show(context);
+                                      await viewModel.registerWithEmail(
                                         email: emailController.text.trim(),
                                         name: nameController.text.trim(),
                                         surname: surnameController.text.trim(),
@@ -122,6 +150,21 @@ class RegisterPage extends StatelessWidget {
                                             .text
                                             .trim(),
                                       );
+                                      loading.close();
+
+                                      if (mounted &&
+                                          viewModel.responseMessage != null) {
+                                        if (viewModel.responseMessage!.status) {
+                                          NavigationService.instance.navigateTo(
+                                            '/home',
+                                          );
+                                        } else {
+                                          ErrorHandler.showErrorSnackBar(
+                                            context,
+                                            viewModel.responseMessage!.message,
+                                          );
+                                        }
+                                      }
                                     },
                                     height: 5.h,
                                     buttonText: viewModel.isLoading

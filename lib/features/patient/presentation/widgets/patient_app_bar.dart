@@ -5,9 +5,10 @@ import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const PatientAppBar({super.key, required this.title});
+  const PatientAppBar({super.key, required this.title, this.onBackPressed});
 
   final String title;
+  final VoidCallback? onBackPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +38,11 @@ class PatientAppBar extends StatelessWidget implements PreferredSizeWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(5),
-                  onTap: () {
-                    NavigationService.instance.goBack();
-                  },
+                  onTap:
+                      onBackPressed ??
+                      () {
+                        NavigationService.instance.goBack();
+                      },
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Icon(

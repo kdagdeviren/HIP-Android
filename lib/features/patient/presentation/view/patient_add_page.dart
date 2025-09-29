@@ -9,17 +9,41 @@ import 'package:flutter_medical_data_app/features/patient/presentation/widgets/p
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/text_field_list_tile.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
+import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class PatientAddPage extends StatelessWidget {
+class PatientAddPage extends StatefulWidget {
   const PatientAddPage({super.key});
 
   @override
+  State<PatientAddPage> createState() => _PatientAddPageState();
+}
+
+class _PatientAddPageState extends State<PatientAddPage> {
+  late final TextEditingController nameController;
+  late final TextEditingController surnameController;
+  late final TextEditingController protocolNumber;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+    surnameController = TextEditingController();
+    protocolNumber = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    surnameController.dispose();
+    protocolNumber.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final surnameController = TextEditingController();
-    final protocolNumber = TextEditingController();
     return ChangeNotifierProvider(
       create: (_) => PatientAddViewmodel(context.read<PatientViewModel>()),
       child: Scaffold(
@@ -65,12 +89,31 @@ class PatientAddPage extends StatelessWidget {
                       SizedBox(height: 2.h),
                       SecondButton(
                         buttonText: "KAYDI OLUŞTUR",
-                        onPressed: () => viewModel.addPatient(
-                          context: context,
-                          name: nameController.text.trim(),
-                          surname: surnameController.text.trim(),
-                          protocolNo: protocolNumber.text.trim(),
-                        ),
+                        onPressed: () async {
+                          final response = await viewModel.addPatient(
+                            name: nameController.text.trim(),
+                            surname: surnameController.text.trim(),
+                            protocolNo: protocolNumber.text.trim(),
+                          );
+
+                          if (mounted) {
+                            if (response.status) {
+                              NavigationService.instance.goBack();
+                              NavigationService.instance.navigateTo(
+                                '/patient-all-list',
+                              );
+                              ErrorHandler.showSuccessSnackBar(
+                                context,
+                                "Hasta başarıyla eklendi.",
+                              );
+                            } else {
+                              ErrorHandler.showErrorSnackBar(
+                                context,
+                                response.message,
+                              );
+                            }
+                          }
+                        },
                         height: 5.5.h,
                       ),
                     ],
