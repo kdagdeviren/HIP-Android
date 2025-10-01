@@ -16,6 +16,7 @@ class PatientAddList extends StatelessWidget {
       showPaste: true,
       title: "HASTA EKLE",
       padding: EdgeInsets.only(top: 1.h, bottom: 1.h, left: 4.w, right: 4.w),
+
       textFieldListTiles: [
         TextFieldListTile(title: "ID", controller: idController),
       ],

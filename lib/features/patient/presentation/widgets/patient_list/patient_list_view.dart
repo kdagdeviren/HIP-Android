@@ -8,7 +8,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class PatientListView extends StatelessWidget {
   const PatientListView({super.key, required this.addDataCallback});
 
-  final VoidCallback addDataCallback;
+  final Function(String?) addDataCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +18,9 @@ class PatientListView extends StatelessWidget {
     );
     return Consumer<PatientViewModel>(
       builder: (context, patientViewModel, _) {
+        // Initialize the PatientViewModel in PatientAllListViewModel
+        listViewModel.initializePatientViewModel(patientViewModel);
+
         final patients = patientViewModel.patients;
         final hasMore = patientViewModel.hasMore;
         return ListView.builder(

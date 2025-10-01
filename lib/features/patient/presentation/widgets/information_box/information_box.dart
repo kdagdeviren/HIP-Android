@@ -48,27 +48,37 @@ class InformationBox extends StatelessWidget {
               children: [
                 if (fixedListTiles != null)
                   Column(
-                    children: fixedListTiles!
-                        .map(
-                          (e) => Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: e,
-                          ),
-                        )
-                        .toList(),
+                    children: fixedListTiles!.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final e = entry.value;
+                      final isLast = idx == fixedListTiles!.length - 1;
+                      // Eğer sadece 1 bilgi varsa veya sonuncu ise padding verme
+                      if (fixedListTiles!.length == 1 || isLast) {
+                        return e;
+                      }
+                      return Padding(
+                        padding: innerPadding ?? EdgeInsets.only(bottom: 2.h),
+                        child: e,
+                      );
+                    }).toList(),
                   ),
                 if (textFieldListTiles != null)
                   Column(
-                    children: textFieldListTiles!
-                        .map(
-                          (e) => Padding(
-                            padding: EdgeInsets.only(bottom: 2.h),
-                            child: e,
-                          ),
-                        )
-                        .toList(),
+                    children: textFieldListTiles!.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final e = entry.value;
+                      final isLast = idx == textFieldListTiles!.length - 1;
+                      // Eğer sadece 1 bilgi varsa veya sonuncu ise padding verme
+                      if (textFieldListTiles!.length == 1 || isLast) {
+                        return e;
+                      }
+                      return Padding(
+                        padding: innerPadding ?? EdgeInsets.only(bottom: 2.h),
+                        child: e,
+                      );
+                    }).toList(),
                   ),
-                if (buttonWidget != null) SizedBox(height: 0.2.h),
+                if (buttonWidget != null) SizedBox(height: 1.5.h),
                 buttonWidget ?? SizedBox.shrink(),
               ],
             ),

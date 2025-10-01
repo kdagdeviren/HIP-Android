@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 class LoadingService {
   static LoadingService? _instance;
@@ -28,9 +29,18 @@ class LoadingService {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Column(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [CircularProgressIndicator()],
+              children: [
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Lottie.asset(
+                    'assets/lottie/loading.json',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ],
             ),
           ),
         ),

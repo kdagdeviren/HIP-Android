@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
+import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
 
 class PatientAllListViewModel extends ChangeNotifier {
@@ -14,18 +15,33 @@ class PatientAllListViewModel extends ChangeNotifier {
   }
 
   void initializePatientViewModel(PatientViewModel patientViewModel) {
-    _patientViewModel = patientViewModel;
+    if (_patientViewModel != patientViewModel) {
+      _patientViewModel = patientViewModel;
+      LoggerUtil.d('PatientViewModel initialized successfully');
+    }
   }
 
   void _onScroll() {
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
-      _patientViewModel?.fetchPatients();
+      if (_patientViewModel != null) {
+        LoggerUtil.d('Triggering fetchPatients from scroll');
+        _patientViewModel!.fetchPatients();
+      } else {
+        LoggerUtil.e('_patientViewModel is null during scroll');
+      }
     }
   }
 
-  void addDataNavigation() {
-    NavigationService.instance.navigateTo('/patient-enter-data');
+  void addDataNavigation({String? patientId}) {
+    if (patientId != null) {
+      NavigationService.instance.navigateTo(
+        '/patient-enter-data',
+        arguments: {'patientId': patientId},
+      );
+    } else {
+      NavigationService.instance.navigateTo('/patient-enter-data');
+    }
     notifyListeners();
   }
 

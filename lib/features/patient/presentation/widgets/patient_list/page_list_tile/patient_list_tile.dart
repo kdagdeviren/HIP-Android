@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/box_decorations.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
+import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile_top.dart';
@@ -16,7 +17,7 @@ class PatientListTile extends StatelessWidget {
   });
 
   final Patient patient;
-  final VoidCallback addDataCallback;
+  final Function(String?) addDataCallback;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,10 @@ class PatientListTile extends StatelessWidget {
                             Expanded(
                               flex: 65,
                               child: PatientMedicalData(
-                                onPressed: addDataCallback,
+                                onPressed: () => addDataCallback(patient.docId),
+                                addedCategories:
+                                    patient.addedCategories ??
+                                    AddedCategories().getEmpty(),
                               ),
                             ),
                           ],

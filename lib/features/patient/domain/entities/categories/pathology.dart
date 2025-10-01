@@ -1,3 +1,4 @@
+// Pathology enums
 enum HistologicalType {
   mikstDuctalLobular,
   invasiveLobularCarcinoma,
@@ -228,5 +229,128 @@ extension TILLevelExtension on TILLevel {
       case TILLevel.unknown:
         return 'Veri Yok';
     }
+  }
+}
+
+class Pathology {
+  final HistologicalType? histologicalType;
+  final ERStatus? er;
+  final PRStatus? pr;
+  final HER2Status? her2;
+  final MolecularType? molecularType;
+  final Ki67Level? ki67;
+  final TubuleGrade? tubuleGrade;
+  final NuclearGrade? nuclearGrade;
+  final MitoticGrade? mitoticGrade;
+  final HistologicalGrade? histologicalGrade;
+  final ECadherinStatus? eCadherin;
+  final TILLevel? til;
+
+  Pathology({
+    this.histologicalType,
+    this.er,
+    this.pr,
+    this.her2,
+    this.molecularType,
+    this.ki67,
+    this.tubuleGrade,
+    this.nuclearGrade,
+    this.mitoticGrade,
+    this.histologicalGrade,
+    this.eCadherin,
+    this.til,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'histologicalType': histologicalType?.name,
+      'er': er?.name,
+      'pr': pr?.name,
+      'her2': her2?.name,
+      'molecularType': molecularType?.name,
+      'ki67': ki67?.name,
+      'tubuleGrade': tubuleGrade?.name,
+      'nuclearGrade': nuclearGrade?.name,
+      'mitoticGrade': mitoticGrade?.name,
+      'histologicalGrade': histologicalGrade?.name,
+      'eCadherin': eCadherin?.name,
+      'til': til?.name,
+    };
+  }
+
+  factory Pathology.fromMap(Map<String, dynamic> map) {
+    return Pathology(
+      histologicalType: map['histologicalType'] != null
+          ? HistologicalType.values.byName(map['histologicalType'])
+          : null,
+      er: map['er'] != null ? ERStatus.values.byName(map['er']) : null,
+      pr: map['pr'] != null ? PRStatus.values.byName(map['pr']) : null,
+      her2: map['her2'] != null ? HER2Status.values.byName(map['her2']) : null,
+      molecularType: map['molecularType'] != null
+          ? MolecularType.values.byName(map['molecularType'])
+          : null,
+      ki67: map['ki67'] != null ? Ki67Level.values.byName(map['ki67']) : null,
+      tubuleGrade: map['tubuleGrade'] != null
+          ? TubuleGrade.values.byName(map['tubuleGrade'])
+          : null,
+      nuclearGrade: map['nuclearGrade'] != null
+          ? NuclearGrade.values.byName(map['nuclearGrade'])
+          : null,
+      mitoticGrade: map['mitoticGrade'] != null
+          ? MitoticGrade.values.byName(map['mitoticGrade'])
+          : null,
+      histologicalGrade: map['histologicalGrade'] != null
+          ? HistologicalGrade.values.byName(map['histologicalGrade'])
+          : null,
+      eCadherin: map['eCadherin'] != null
+          ? ECadherinStatus.values.byName(map['eCadherin'])
+          : null,
+      til: map['til'] != null ? TILLevel.values.byName(map['til']) : null,
+    );
+  }
+
+  static List<Map<String, dynamic>> getDropdownConfigs() {
+    return [
+      {
+        'key': 'histologicalType',
+        'label': 'Histolojik Tip',
+        'values': HistologicalType.values,
+      },
+      {'key': 'er', 'label': 'ER Durumu', 'values': ERStatus.values},
+      {'key': 'pr', 'label': 'PR Durumu', 'values': PRStatus.values},
+      {'key': 'her2', 'label': 'HER2 Durumu', 'values': HER2Status.values},
+      {
+        'key': 'molecularType',
+        'label': 'Moleküler Tip',
+        'values': MolecularType.values,
+      },
+      {'key': 'ki67', 'label': 'Ki67 Seviyesi', 'values': Ki67Level.values},
+      {
+        'key': 'tubuleGrade',
+        'label': 'Tübül Derecesi',
+        'values': TubuleGrade.values,
+      },
+      {
+        'key': 'nuclearGrade',
+        'label': 'Nükleer Derece',
+        'values': NuclearGrade.values,
+      },
+      {
+        'key': 'mitoticGrade',
+        'label': 'Mitotik Derece',
+        'values': MitoticGrade.values,
+      },
+      {
+        'key': 'histologicalGrade',
+        'label': 'Histolojik Derece',
+        'values': HistologicalGrade.values,
+      },
+      {
+        'key': 'eCadherin',
+        'label': 'E-Cadherin Durumu',
+        'values': ECadherinStatus.values,
+      },
+      {'key': 'til', 'label': 'TIL Seviyesi', 'values': TILLevel.values},
+    ];
   }
 }

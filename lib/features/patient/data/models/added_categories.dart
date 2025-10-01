@@ -40,4 +40,36 @@ class AddedCategories {
       pet: map['pet'] ?? false,
     );
   }
+
+  AddedCategories copyWith({
+    bool? pathology,
+    bool? oncology,
+    bool? demography,
+    bool? comorbidity,
+    bool? biochemistry,
+    bool? radiology,
+    bool? pet,
+  }) {
+    return AddedCategories(
+      pathology: pathology ?? this.pathology,
+      oncology: oncology ?? this.oncology,
+      demography: demography ?? this.demography,
+      comorbidity: comorbidity ?? this.comorbidity,
+      biochemistry: biochemistry ?? this.biochemistry,
+      radiology: radiology ?? this.radiology,
+      pet: pet ?? this.pet,
+    );
+  }
+
+  AddedCategories getEmpty() {
+    return AddedCategories(
+      pathology: false,
+      oncology: false,
+      demography: false,
+      comorbidity: false,
+      biochemistry: false,
+      radiology: false,
+      pet: false,
+    );
+  }
 }

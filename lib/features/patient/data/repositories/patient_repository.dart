@@ -9,6 +9,9 @@ class PatientRepository {
 
   PatientRepository(this.remoteDataSource);
 
+  // Add getter to access lastDocument from data source
+  DocumentSnapshot? get lastDocument => remoteDataSource.lastDocument;
+
   Future<ResponseMessage> addPatient(Patient patient) =>
       remoteDataSource.addPatient(patient);
   Future<ResponseMessage> updatePatient(String docId, Patient patient) =>
@@ -22,4 +25,18 @@ class PatientRepository {
   ]) => remoteDataSource.getPatientsPaginated(limit, startAfter);
   Future<Patient?> getPatientById(String docId) =>
       remoteDataSource.getPatientById(docId);
+  Future<ResponseMessage> updatePatientCategory(
+    String docId,
+    String categoryKey,
+    Map<String, dynamic> categoryData,
+  ) async {
+    return await remoteDataSource.updatePatientCategory(
+      docId,
+      categoryKey,
+      categoryData,
+    );
+  }
+
+  Future<Patient?> getPatientAllDataById(String docId) =>
+      remoteDataSource.getPatientAllDataById(docId);
 }

@@ -7,7 +7,6 @@ import 'package:flutter_medical_data_app/features/auth/presentation/widgets/bott
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/logo_with_round_bg.dart';
 import 'package:flutter_medical_data_app/shared/widgets/inner_shadow.dart';
 import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
-import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:provider/provider.dart';
@@ -93,12 +92,11 @@ class _LoginPageState extends State<LoginPage> {
                                   onPressed: () async {
                                     if (isLoading) return;
 
-                                    loading.show(context);
                                     await viewModel.loginWithEmail(
                                       email: emailController.text.trim(),
                                       password: passwordController.text.trim(),
+                                      context: context,
                                     );
-                                    loading.close();
 
                                     if (!mounted ||
                                         viewModel.responseMessage == null) {

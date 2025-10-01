@@ -7,6 +7,31 @@ class PatientRemoteDataSource {
   final CollectionReference _patientsCollection = FirebaseFirestore.instance
       .collection('patients');
 
+  Future<ResponseMessage> updatePatientCategory(
+    String docId,
+    String categoryKey,
+    Map<String, dynamic> categoryData,
+  ) async {
+    try {
+      await _patientsCollection.doc(docId).update({
+        categoryKey: categoryData,
+        'addedCategories.$categoryKey': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      return ResponseMessage(
+        status: true,
+        message: 'Kategori başarıyla güncellendi',
+      );
+    } catch (e) {
+      LoggerUtil.e('Error updating patient category: $e');
+      return ResponseMessage(
+        status: false,
+        message: 'Kategori güncellenirken hata oluştu: $e',
+      );
+    }
+  }
+
   Future<ResponseMessage> addPatient(Patient patient) async {
     try {
       final docRef = _patientsCollection.doc();
@@ -61,11 +86,66 @@ class PatientRemoteDataSource {
     }
   }
 
-  Future<Patient?> getPatientById(String docId) async {
+  Future<Patient?> getPatientById(
+    String docId, {
+    bool forceRefresh = false,
+  }) async {
+    LoggerUtil.d('Fetching remote_data mapped patient with ID: $docId');
     try {
-      final doc = await _patientsCollection.doc(docId).get();
+      GetOptions options;
+
+      if (forceRefresh) {
+        // Force server'dan al
+        options = const GetOptions(source: Source.server);
+        LoggerUtil.d('Force refresh from server');
+      } else {
+        // Önce cache'e bak, yoksa server'dan al
+        options = const GetOptions(source: Source.serverAndCache);
+        LoggerUtil.d('Trying cache first');
+      }
+
+      final doc = await _patientsCollection.doc(docId).get(options);
+
       if (doc.exists) {
+        final fromCache = doc.metadata.isFromCache;
+        LoggerUtil.i('Data source: ${fromCache ? "CACHE" : "SERVER"}');
+
         return _mapDocumentToPatient(doc);
+      }
+      return null;
+    } catch (e) {
+      LoggerUtil.e('Hastayı getirirken hata oluştu: $e');
+      return null;
+    }
+  }
+
+  Future<Patient?> getPatientAllDataById(
+    String docId, {
+    bool forceRefresh = false,
+  }) async {
+    LoggerUtil.d('Fetching remote_data all patient with ID: $docId');
+    try {
+      GetOptions options;
+
+      if (forceRefresh) {
+        // Force server'dan al
+        options = const GetOptions(source: Source.server);
+        LoggerUtil.d('Force refresh from server');
+      } else {
+        // Önce cache'e bak, yoksa server'dan al
+        options = const GetOptions(source: Source.serverAndCache);
+        LoggerUtil.d('Trying cache first');
+      }
+
+      final doc = await _patientsCollection.doc(docId).get(options);
+
+      if (doc.exists) {
+        final fromCache = doc.metadata.isFromCache;
+        LoggerUtil.i('Data source: ${fromCache ? "CACHE" : "SERVER"}');
+
+        return Patient.fromMap(
+          doc.data() as Map<String, dynamic>,
+        ).copyWith(docId: doc.id);
       }
       return null;
     } catch (e) {
@@ -85,22 +165,36 @@ class PatientRemoteDataSource {
     }
   }
 
+  DocumentSnapshot? _lastDocument;
+
   Future<List<Patient>> getPatientsPaginated(
     int limit, [
     DocumentSnapshot? startAfter,
   ]) async {
     try {
-      Query query = _patientsCollection.limit(limit);
+      Query query = _patientsCollection
+          .orderBy('createdAt', descending: true)
+          .limit(limit);
       if (startAfter != null) {
         query = query.startAfterDocument(startAfter);
       }
       final snapshot = await query.get();
+
+      // Store the last document for next pagination
+      if (snapshot.docs.isNotEmpty) {
+        _lastDocument = snapshot.docs.last;
+        LoggerUtil.d('Stored last document: ${_lastDocument?.id}');
+      }
+
       return _mapDocumentsToPatients(snapshot.docs);
     } catch (e) {
       LoggerUtil.e('Hastalar paginated getirilirken hata: $e');
       return [];
     }
   }
+
+  // Add a getter to access the last document
+  DocumentSnapshot? get lastDocument => _lastDocument;
 
   /// Maps a single document to Patient object
   Patient? _mapDocumentToPatient(DocumentSnapshot doc) {

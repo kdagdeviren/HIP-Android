@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
@@ -30,7 +31,9 @@ class LoginViewmodel extends ChangeNotifier {
   Future<void> loginWithEmail({
     required String email,
     required String password,
+    required BuildContext context,
   }) async {
+    loading.show(context);
     LoggerUtil.i('Login attempt: $email');
 
     // Validate input
@@ -62,6 +65,8 @@ class LoginViewmodel extends ChangeNotifier {
       LoggerUtil.e('Giriş başarısız: $e');
     } finally {
       _isLoading = false;
+
+      loading.close();
       notifyListeners();
     }
   }

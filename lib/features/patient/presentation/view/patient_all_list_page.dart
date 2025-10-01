@@ -34,7 +34,8 @@ class PatientAllListPage extends StatelessWidget {
                     Expanded(
                       child: Consumer<PatientAllListViewModel>(
                         builder: (context, viewModel, child) => PatientListView(
-                          addDataCallback: viewModel.addDataNavigation,
+                          addDataCallback: (patientId) =>
+                              viewModel.addDataNavigation(patientId: patientId),
                         ),
                       ),
                     ),

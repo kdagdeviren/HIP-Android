@@ -3,10 +3,14 @@ import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/medical_data_tile/Icons/circular_icon_enum.dart';
 
 class MedicalDataTile extends StatelessWidget {
-  const MedicalDataTile({super.key, required this.title, required this.icon});
+  const MedicalDataTile({
+    super.key,
+    required this.title,
+    required this.isActive,
+  });
 
   final String title;
-  final Widget icon;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +22,9 @@ class MedicalDataTile extends StatelessWidget {
           textAlign: TextAlign.left,
           style: AppTextStyles.nunitoRegular20,
         ),
-        CircularIconEnum.error.widget,
+        isActive
+            ? CircularIconEnum.success.widget
+            : CircularIconEnum.error.widget,
       ],
     );
   }

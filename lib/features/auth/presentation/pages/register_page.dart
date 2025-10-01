@@ -189,9 +189,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
 
                     BottomTextNavigator(
-                      firstText: "Hesabınız yok mu? ",
-                      secondText: "Kayıt Ol",
-                      routeName: "/register",
+                      firstText: "Hesabınız var mı? ",
+                      secondText: "Giriş Yap",
+                      routeName: "/login",
                     ),
                   ],
                 ),

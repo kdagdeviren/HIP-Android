@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
-import 'package:flutter_medical_data_app/features/patient/data/models/categories/pet/pet.dart';
-
-import 'categories/pathology/pathology.dart';
-import 'categories/oncology/oncology.dart';
-import 'categories/demography/demography.dart';
-import 'categories/comorbidity/comorbidity.dart';
-import 'categories/biochemistry/biochemistry.dart';
-import 'categories/radiology/radiology.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pathology.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/oncology.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/demography.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/comorbidity.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/biochemistry.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/radiology.dart';
+import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pet.dart';
 
 class Patient {
   final String? docId;
@@ -67,6 +66,7 @@ class Patient {
   factory Patient.fromMap(Map<String, dynamic> map) {
     try {
       return Patient(
+        docId: map['docId'] as String?, // ← EKLE
         firstName: map['firstName'] as String? ?? '',
         lastName: map['lastName'] as String? ?? '',
         protocolNo: map['protocolNo'] as String? ?? '',
