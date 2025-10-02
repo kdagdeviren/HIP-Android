@@ -8,10 +8,14 @@ import 'package:flutter_medical_data_app/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter_medical_data_app/core/services/auth_guard.dart';
+import 'package:flutter_medical_data_app/core/services/deep_link_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize deep link service
+  await DeepLinkService().initialize();
 
   runApp(MultiProvider(providers: providers, child: const MyApp()));
 }

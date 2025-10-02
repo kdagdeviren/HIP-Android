@@ -29,6 +29,7 @@ class PatientListTile extends StatelessWidget {
             children: [
               InformationBox(
                 showCopy: true,
+                copyText: patient.docId,
                 customWidget: Padding(
                   padding: EdgeInsets.only(
                     top: 1.5.h,

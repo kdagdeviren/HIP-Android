@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
+import 'package:flutter_medical_data_app/core/utils/text_format_util.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class FixedListTile extends StatelessWidget {
@@ -14,7 +15,7 @@ class FixedListTile extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title,
+          TextFormatUtil.formatFieldValue(title),
           style: AppTextStyles.nunitoSemiBold20.copyWith(fontSize: 16.sp),
         ),
         Text(

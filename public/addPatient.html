@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasta Ekle - Medical Data App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .patient-id {
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 16px;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 30px;
+            word-break: break-all;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .download-links {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .download-links h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="loader" id="loader"></div>
+        <h1>Hasta Bilgisi Yükleniyor...</h1>
+        <p>Uygulama açılıyor...</p>
+
+        <div class="patient-id" id="patientId">ID: Yükleniyor...</div>
+
+        <div id="status" class="status"></div>
+
+        <button class="btn" id="openAppBtn" style="display:none;">
+            📱 Uygulamayı Aç
+        </button>
+
+        <div class="download-links">
+            <h3>Uygulama Yüklü Değil mi?</h3>
+            <p style="font-size: 14px; margin-bottom: 15px;">Medical Data App'i indirerek hasta bilgilerine
+                erişebilirsiniz.</p>
+            <a href="https://play.google.com/store" class="btn">
+                Google Play'den İndir
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // URL'den patient ID'yi al
+        const urlParams = new URLSearchParams(window.location.search);
+        const patientId = urlParams.get('id');
+
+        // Patient ID'yi göster
+        if (patientId) {
+            document.getElementById('patientId').textContent = `Hasta ID: ${patientId}`;
+        } else {
+            document.getElementById('patientId').textContent = 'Hasta ID bulunamadı';
+        }
+
+        // Deep link URL'leri
+        const customSchemeUrl = `myapp://addPatient?id=${patientId}`;
+        const httpsUrl = window.location.href;
+
+        // Uygulamayı açmayı dene
+        function openApp() {
+            console.log('Trying to open app with:', customSchemeUrl);
+
+            // Önce custom scheme'i dene
+            window.location.href = customSchemeUrl;
+
+            // 2 saniye sonra başarısız olup olmadığını kontrol et
+            setTimeout(() => {
+                const status = document.getElementById('status');
+                status.className = 'status error';
+                status.textContent = 'Uygulama açılamadı. Lütfen Medical Data App\'in yüklü olduğundan emin olun.';
+                status.style.display = 'block';
+
+                document.getElementById('loader').style.display = 'none';
+                document.querySelector('h1').textContent = 'Uygulama Bulunamadı';
+                document.querySelector('p').textContent = 'Uygulamayı indirmek için aşağıdaki butona tıklayın.';
+            }, 2000);
+        }
+
+        // Manuel açma butonu
+        document.getElementById('openAppBtn').addEventListener('click', openApp);
+
+        // Sayfa yüklendiğinde otomatik açmayı dene
+        window.addEventListener('load', () => {
+            if (patientId) {
+                // Mobil cihazlarda otomatik aç
+                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+                    setTimeout(openApp, 500);
+                } else {
+                    // Desktop'ta manuel buton göster
+                    document.getElementById('loader').style.display = 'none';
+                    document.querySelector('h1').textContent = 'Hasta Bilgisi Hazır';
+                    document.querySelector('p').textContent = 'Mobil cihazınızdan bu linki açın veya uygulamayı indirin.';
+                    document.getElementById('openAppBtn').style.display = 'inline-block';
+                }
+            }
+        });
+
+        // Uygulama açıldıysa sayfaya geri dönüldüğünü tespit et
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Uygulama muhtemelen açıldı
+                const status = document.getElementById('status');
+                status.className = 'status success';
+                status.textContent = '✓ Uygulama açılıyor...';
+                status.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+
+</html>

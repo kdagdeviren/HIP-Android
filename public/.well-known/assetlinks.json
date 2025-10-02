@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.flutter_medical_app.android",
+            "sha256_cert_fingerprints": [
+                "BURAYA_SHA256_FINGERPRINT_GELECEK"
+            ]
+        }
+    }
+]

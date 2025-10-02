@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_medical_data_app/core/constants/box_decorations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/fixed_list_tile.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/text_field_list_tile.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:share_plus/share_plus.dart';
 
 class InformationBox extends StatelessWidget {
   const InformationBox({
     super.key,
     this.title,
     this.showPaste = false,
+    this.divider,
+    this.copyText,
     required this.showCopy,
     this.padding,
     this.innerPadding,
@@ -23,6 +27,8 @@ class InformationBox extends StatelessWidget {
   final String? title;
   final bool showCopy;
   final bool showPaste;
+  final bool? divider;
+  final String? copyText;
   final EdgeInsets? padding;
   final EdgeInsets? innerPadding;
   final List<FixedListTile>? fixedListTiles;
@@ -42,7 +48,7 @@ class InformationBox extends StatelessWidget {
             width: double.infinity,
             padding:
                 padding ??
-                EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.2.h),
+                EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
             decoration: borderDecoration,
             child: Column(
               children: [
@@ -52,14 +58,20 @@ class InformationBox extends StatelessWidget {
                       final idx = entry.key;
                       final e = entry.value;
                       final isLast = idx == fixedListTiles!.length - 1;
-                      // Eğer sadece 1 bilgi varsa veya sonuncu ise padding verme
-                      if (fixedListTiles!.length == 1 || isLast) {
-                        return e;
+                      if (fixedListTiles!.length == 1 || isLast) {}
+                      if (divider == true && !isLast) {
+                        return Column(
+                          children: [
+                            e,
+                            Divider(color: AppColors.text),
+                          ],
+                        );
+                      } else {
+                        return Padding(
+                          padding: innerPadding ?? EdgeInsets.only(bottom: 2.h),
+                          child: e,
+                        );
                       }
-                      return Padding(
-                        padding: innerPadding ?? EdgeInsets.only(bottom: 2.h),
-                        child: e,
-                      );
                     }).toList(),
                   ),
                 if (textFieldListTiles != null)
@@ -68,10 +80,10 @@ class InformationBox extends StatelessWidget {
                       final idx = entry.key;
                       final e = entry.value;
                       final isLast = idx == textFieldListTiles!.length - 1;
-                      // Eğer sadece 1 bilgi varsa veya sonuncu ise padding verme
                       if (textFieldListTiles!.length == 1 || isLast) {
                         return e;
                       }
+
                       return Padding(
                         padding: innerPadding ?? EdgeInsets.only(bottom: 2.h),
                         child: e,
@@ -122,10 +134,19 @@ class InformationBox extends StatelessWidget {
                             color: Colors.transparent,
                             child: InkWell(
                               borderRadius: BorderRadius.circular(3),
-                              onTap: () {},
+                              onTap: () {
+                                if (copyText != null) {
+                                  Clipboard.setData(
+                                    ClipboardData(text: copyText.toString()),
+                                  );
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text("Kopyalandı")),
+                                  );
+                                }
+                              },
                               child: Icon(
                                 !showPaste ? Icons.copy : Icons.paste,
-                                size: 2.5.h,
+                                size: 4.h,
                                 color: AppColors.text,
                               ),
                             ),
@@ -141,10 +162,22 @@ class InformationBox extends StatelessWidget {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(3),
-                                    onTap: () {},
+                                    onTap: () {
+                                      final patientId = copyText;
+                                      final patientLink =
+                                          'https://medical-app-2c545.web.app/addPatient?id=$patientId';
+                                      final message =
+                                          'Hasta ID: $patientId\n\n'
+                                          'Yeni hasta bilgilerini eklemek için aşağıdaki linki kullanabilirsiniz:\n'
+                                          '$patientLink\n\n'
+                                          'Lütfen bilgilerin doğruluğunu kontrol edin ve linki güvenli bir şekilde paylaşın.';
+                                      SharePlus.instance.share(
+                                        ShareParams(text: message),
+                                      );
+                                    },
                                     child: Icon(
                                       Icons.share,
-                                      size: 2.5.h,
+                                      size: 4.h,
                                       color: AppColors.text,
                                     ),
                                   ),

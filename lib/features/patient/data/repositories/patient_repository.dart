@@ -23,8 +23,7 @@ class PatientRepository {
     int limit, [
     DocumentSnapshot? startAfter,
   ]) => remoteDataSource.getPatientsPaginated(limit, startAfter);
-  Future<Patient?> getPatientById(String docId) =>
-      remoteDataSource.getPatientById(docId);
+
   Future<ResponseMessage> updatePatientCategory(
     String docId,
     String categoryKey,
@@ -36,6 +35,9 @@ class PatientRepository {
       categoryData,
     );
   }
+
+  Future<Patient?> getPatientById(String docId) =>
+      remoteDataSource.getPatientById(docId);
 
   Future<Patient?> getPatientAllDataById(String docId) =>
       remoteDataSource.getPatientAllDataById(docId);

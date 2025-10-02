@@ -6,6 +6,8 @@ import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/fixed_list_tile.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_info_box.dart';
+import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -16,21 +18,30 @@ class PatientViewData extends StatelessWidget {
   const PatientViewData({super.key, this.patientId, required this.categoryKey});
 
   /// Kategoriye ait alan adlarını ve değerlerini FixedListTile olarak döndürür.
-  List<FixedListTile> _getCategoryTiles(PatientViewDataViewmodel viewModel) {
-    final data = viewModel.getCategoryData(categoryKey);
+  List<FixedListTile> _getCategoryTiles(
+    PatientViewDataViewmodel viewModel,
+    String _categoryKey,
+  ) {
+    final data = viewModel.getCategoryData(_categoryKey);
     if (data == null || data.isEmpty) {
       // Veri yoksa placeholder göster
-      return [FixedListTile(title: "HATA", field: "HATA")];
+      return [];
     }
-    // Her bir alan için: title = alan adı, field = alan değeri
+
     return data.entries
-        .map((e) => FixedListTile(title: e.key, field: e.value))
+        .map((e) => FixedListTile(title: e.key, field: e.value.toString()))
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final cardData = CategoryCardData.getCategoryById(categoryKey);
+    late final allCardData;
+    late final cardData;
+    if (categoryKey == "all") {
+      allCardData = CategoryCardData.getAllCardCategories();
+    } else {
+      cardData = CategoryCardData.getCategoryById(categoryKey);
+    }
     final patientViewModel = Provider.of<PatientViewModel>(
       context,
       listen: false,
@@ -61,16 +72,68 @@ class PatientViewData extends StatelessWidget {
                           if (viewModel.isLoading) {
                             return Center(child: CircularProgressIndicator());
                           }
-                          return Column(
-                            children: [
-                              SizedBox(height: 3.h),
-                              InformationBox(
-                                innerPadding: EdgeInsets.only(bottom: 1.h),
-                                showCopy: false,
-                                title: "${cardData.name} Verileri",
-                                fixedListTiles: _getCategoryTiles(viewModel),
-                              ),
-                            ],
+                          return SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(height: 3.h),
+                                PatientInfoBox(patient: viewModel.patient!),
+                                SizedBox(height: 3.h),
+                                if (categoryKey == "all")
+                                  ...allCardData.map((cardData) {
+                                    return Column(
+                                      children: [
+                                        InformationBox(
+                                          innerPadding: EdgeInsets.only(
+                                            bottom: 1.h,
+                                          ),
+                                          showCopy: false,
+                                          title: "${cardData.name} Verileri",
+                                          divider: true,
+                                          fixedListTiles: _getCategoryTiles(
+                                            viewModel,
+                                            cardData.id,
+                                          ),
+                                        ),
+                                        SizedBox(height: 3.h),
+                                      ],
+                                    );
+                                  }).toList()
+                                else
+                                  InformationBox(
+                                    innerPadding: EdgeInsets.only(bottom: 1.h),
+                                    showCopy: false,
+                                    title: "${cardData.name} Verileri",
+                                    divider: true,
+                                    fixedListTiles: _getCategoryTiles(
+                                      viewModel,
+                                      cardData.id,
+                                    ),
+                                  ),
+                                if (categoryKey == "all")
+                                  SecondButton(
+                                    buttonText: "ÇIKTI AL",
+                                    onPressed: () async {
+                                      final result = await viewModel
+                                          .exportToCsv();
+
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(result.message),
+                                            backgroundColor: result.success
+                                                ? Colors.green
+                                                : Colors.red,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    height: 6.h,
+                                  ),
+                                SizedBox(height: 3.h),
+                              ],
+                            ),
                           );
                         },
                       ),

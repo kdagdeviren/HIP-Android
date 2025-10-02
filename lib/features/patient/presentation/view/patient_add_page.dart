@@ -68,7 +68,7 @@ class _PatientAddPageState extends State<PatientAddPage> {
                     children: [
                       InformationBox(
                         title: "HASTA",
-                        showCopy: true,
+                        showCopy: false,
                         textFieldListTiles: [
                           TextFieldListTile(
                             title: "Adı",

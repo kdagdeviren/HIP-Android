@@ -97,24 +97,18 @@ class PatientRemoteDataSource {
       if (forceRefresh) {
         // Force server'dan al
         options = const GetOptions(source: Source.server);
-        LoggerUtil.d('Force refresh from server');
       } else {
         // Önce cache'e bak, yoksa server'dan al
         options = const GetOptions(source: Source.serverAndCache);
-        LoggerUtil.d('Trying cache first');
       }
 
       final doc = await _patientsCollection.doc(docId).get(options);
 
       if (doc.exists) {
-        final fromCache = doc.metadata.isFromCache;
-        LoggerUtil.i('Data source: ${fromCache ? "CACHE" : "SERVER"}');
-
         return _mapDocumentToPatient(doc);
       }
       return null;
     } catch (e) {
-      LoggerUtil.e('Hastayı getirirken hata oluştu: $e');
       return null;
     }
   }
@@ -123,26 +117,20 @@ class PatientRemoteDataSource {
     String docId, {
     bool forceRefresh = false,
   }) async {
-    LoggerUtil.d('Fetching remote_data all patient with ID: $docId');
     try {
       GetOptions options;
 
       if (forceRefresh) {
         // Force server'dan al
         options = const GetOptions(source: Source.server);
-        LoggerUtil.d('Force refresh from server');
       } else {
         // Önce cache'e bak, yoksa server'dan al
         options = const GetOptions(source: Source.serverAndCache);
-        LoggerUtil.d('Trying cache first');
       }
 
       final doc = await _patientsCollection.doc(docId).get(options);
 
       if (doc.exists) {
-        final fromCache = doc.metadata.isFromCache;
-        LoggerUtil.i('Data source: ${fromCache ? "CACHE" : "SERVER"}');
-
         return Patient.fromMap(
           doc.data() as Map<String, dynamic>,
         ).copyWith(docId: doc.id);
