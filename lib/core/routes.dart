@@ -33,6 +33,7 @@ final Map<String, WidgetBuilder> appRoutes = {
     return PatientUpdateCategoryPage(
       patientId: args?['patientId'],
       categoryKey: args?['categoryKey'] ?? "Kategori",
+      patientJson: args?['patient'],
     );
   },
   '/patient-enter-data': (context) {

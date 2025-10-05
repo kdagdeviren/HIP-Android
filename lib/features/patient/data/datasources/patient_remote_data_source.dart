@@ -105,10 +105,28 @@ class PatientRemoteDataSource {
       final doc = await _patientsCollection.doc(docId).get(options);
 
       if (doc.exists) {
-        return _mapDocumentToPatient(doc);
+        // Firebase'den gelen datayı temizle
+        final rawData = doc.data() as Map<String, dynamic>;
+        final cleanedData = _cleanNullStrings(rawData);
+
+        return Patient.fromMapBasic(cleanedData).copyWith(docId: doc.id);
       }
       return null;
     } catch (e) {
+      return null;
+    }
+  }
+
+  /// Maps a single document to Patient object
+  Patient? _mapDocumentToPatient(DocumentSnapshot doc) {
+    try {
+      // Firebase'den gelen datayı temizle
+      final rawData = doc.data() as Map<String, dynamic>;
+      final cleanedData = _cleanNullStrings(rawData);
+
+      return Patient.fromMapBasic(cleanedData).copyWith(docId: doc.id);
+    } catch (e) {
+      LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
       return null;
     }
   }
@@ -131,15 +149,41 @@ class PatientRemoteDataSource {
       final doc = await _patientsCollection.doc(docId).get(options);
 
       if (doc.exists) {
-        return Patient.fromMap(
-          doc.data() as Map<String, dynamic>,
-        ).copyWith(docId: doc.id);
+        // Firebase'den gelen datayı temizle
+        final rawData = doc.data() as Map<String, dynamic>;
+        final cleanedData = _cleanNullStrings(rawData);
+
+        return Patient.fromMap(cleanedData).copyWith(docId: doc.id);
       }
       return null;
     } catch (e) {
       LoggerUtil.e('Hastayı getirirken hata oluştu: $e');
       return null;
     }
+  }
+
+  /// "null" stringlerini gerçek null değere çevirir (Firebase'den okurken)
+  Map<String, dynamic> _cleanNullStrings(Map<String, dynamic> data) {
+    return data.map((key, value) {
+      if (value == "null" || value == "") {
+        return MapEntry(key, null);
+      } else if (value is Map<String, dynamic>) {
+        // Nested map varsa (kategori objeleri) onları da temizle
+        return MapEntry(key, _cleanNullStrings(value));
+      } else if (value is List) {
+        // List varsa içindeki map'leri de temizle
+        return MapEntry(
+          key,
+          value.map((item) {
+            if (item is Map<String, dynamic>) {
+              return _cleanNullStrings(item);
+            }
+            return item == "null" || item == "" ? null : item;
+          }).toList(),
+        );
+      }
+      return MapEntry(key, value);
+    });
   }
 
   Stream<List<Patient>> getPatients() {
@@ -183,18 +227,6 @@ class PatientRemoteDataSource {
 
   // Add a getter to access the last document
   DocumentSnapshot? get lastDocument => _lastDocument;
-
-  /// Maps a single document to Patient object
-  Patient? _mapDocumentToPatient(DocumentSnapshot doc) {
-    try {
-      return Patient.fromMapBasic(
-        doc.data() as Map<String, dynamic>,
-      ).copyWith(docId: doc.id);
-    } catch (e) {
-      LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
-      return null;
-    }
-  }
 
   /// Maps multiple documents to list of Patient objects
   List<Patient> _mapDocumentsToPatients(List<QueryDocumentSnapshot> docs) {

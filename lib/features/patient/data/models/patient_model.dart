@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pathology.dart';
@@ -58,8 +60,8 @@ class Patient {
       'pet': pet?.toMap(),
       'addedCategories': addedCategories?.toMap(),
       // Note: createdAt/updatedAt will be handled at datasource level with FieldValue.serverTimestamp()
-      if (createdAt != null) 'createdAt': createdAt,
-      if (updatedAt != null) 'updatedAt': updatedAt,
+      if (createdAt != null) 'createdAt': createdAt?.toIso8601String(),
+      if (updatedAt != null) 'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 
@@ -134,6 +136,15 @@ class Patient {
     } catch (e) {
       throw Exception('Error parsing Patient from map: $e, map: $map');
     }
+  }
+
+  static Map<String, dynamic> fromJsonString(String jsonString) {
+    return json.decode(jsonString) as Map<String, dynamic>;
+  }
+
+  String toJsonString() {
+    final map = toMap();
+    return json.encode(map);
   }
 
   Patient copyWith({

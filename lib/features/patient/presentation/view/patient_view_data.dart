@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
+import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_data_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
@@ -72,6 +73,17 @@ class PatientViewData extends StatelessWidget {
                           if (viewModel.isLoading) {
                             return Center(child: CircularProgressIndicator());
                           }
+
+                          // Patient null kontrolü ekle
+                          if (viewModel.patient == null) {
+                            return Center(
+                              child: Text(
+                                'Hasta bilgisi yüklenemedi',
+                                style: TextStyle(fontSize: 16.sp),
+                              ),
+                            );
+                          }
+
                           return SingleChildScrollView(
                             child: Column(
                               children: [
@@ -109,10 +121,13 @@ class PatientViewData extends StatelessWidget {
                                       cardData.id,
                                     ),
                                   ),
-                                if (categoryKey == "all")
-                                  SecondButton(
-                                    buttonText: "ÇIKTI AL",
-                                    onPressed: () async {
+                                SizedBox(height: 3.h),
+                                SecondButton(
+                                  buttonText: (categoryKey == "all")
+                                      ? "ÇIKTI AL"
+                                      : "GÜNCELLE",
+                                  onPressed: () async {
+                                    if (categoryKey == "all") {
                                       final result = await viewModel
                                           .exportToCsv();
 
@@ -128,9 +143,21 @@ class PatientViewData extends StatelessWidget {
                                           ),
                                         );
                                       }
-                                    },
-                                    height: 6.h,
-                                  ),
+                                    } else {
+                                      NavigationService.instance.navigateTo(
+                                        '/patient-update-data',
+                                        arguments: {
+                                          'navigationFrom': 'updateData',
+                                          'patientId': patientId,
+                                          'categoryKey': categoryKey,
+                                          'patient': viewModel.patient!
+                                              .toJsonString(),
+                                        },
+                                      );
+                                    }
+                                  },
+                                  height: 6.h,
+                                ),
                                 SizedBox(height: 3.h),
                               ],
                             ),

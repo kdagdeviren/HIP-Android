@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
-import 'package:flutter_medical_data_app/core/utils/enum_display_util.dart'; // Yeni utility import
+import 'package:flutter_medical_data_app/core/utils/enum_display_util.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_update_category_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
@@ -14,11 +14,13 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class PatientUpdateCategoryPage extends StatelessWidget {
   final String? patientId;
   final String categoryKey;
+  final String? patientJson;
 
   const PatientUpdateCategoryPage({
     super.key,
     this.patientId,
     required this.categoryKey,
+    this.patientJson,
   });
 
   @override
@@ -28,14 +30,16 @@ class PatientUpdateCategoryPage extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PatientAllListViewModel()),
         ChangeNotifierProvider(
           create: (_) => PatientUpdateCategoryViewmodel(
-            context.read<PatientViewModel>(), // PatientViewModel'i inject edin
+            context.read<PatientViewModel>(),
             categoryKey,
             patientId,
+            patientJson,
           ),
         ),
       ],
       child: Consumer<PatientUpdateCategoryViewmodel>(
         builder: (context, viewModel, child) {
+          // setInitialValues artık burada çağrılmıyor!
           return Scaffold(
             appBar: PatientAppBar(title: viewModel.categoryCardData.name),
             body: SafeArea(
@@ -96,10 +100,26 @@ class PatientUpdateCategoryPage extends StatelessWidget {
     List<Enum> values,
     PatientUpdateCategoryViewmodel viewModel,
   ) {
-    return DropdownButtonFormField<Enum>(
-      initialValue: viewModel.selectedValues[key] as Enum?,
-      hint: const Text('Seçin'),
+    // Güvenli cast: eğer Enum değilse null döndür
+    Enum? initialValue;
+    final storedValue = viewModel.selectedValues[key];
+    if (storedValue is Enum) {
+      initialValue = storedValue;
+    } else if (storedValue is String) {
+      // String ise Enum'a dönüştürmeyi dene
+      try {
+        initialValue = values.firstWhere(
+          (e) => e.name == storedValue,
+          orElse: () => values.first,
+        );
+      } catch (e) {
+        initialValue = null;
+      }
+    }
 
+    return DropdownButtonFormField<Enum>(
+      value: initialValue,
+      hint: const Text('Seçin'),
       style: AppTextStyles.nunitoBold20.copyWith(fontSize: 17.sp),
       decoration: InputDecoration(
         labelText: label,
@@ -114,7 +134,7 @@ class PatientUpdateCategoryPage extends StatelessWidget {
           borderSide: BorderSide(color: AppColors.text, width: 1.5),
         ),
       ),
-      dropdownColor: Colors.white, // Seçeneklerin background'ı beyaz
+      dropdownColor: Colors.white,
       items: values.map((e) {
         return DropdownMenuItem<Enum>(
           value: e,
@@ -122,7 +142,7 @@ class PatientUpdateCategoryPage extends StatelessWidget {
             EnumDisplayUtil.getDisplayText(e),
             style: AppTextStyles.nunitoBold20.copyWith(
               fontSize: 15.sp,
-              color: Colors.black, // Seçenek text rengi siyah
+              color: Colors.black,
             ),
           ),
         );

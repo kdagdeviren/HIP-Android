@@ -12,6 +12,7 @@ class PatientEnterDataViewModel extends ChangeNotifier {
 
   Patient? _currentPatient;
   bool _isLoading = false;
+  bool _isDisposed = false; // Dispose kontrolü için flag
 
   Patient? get currentPatient => _currentPatient;
   bool get isLoading => _isLoading;
@@ -19,18 +20,18 @@ class PatientEnterDataViewModel extends ChangeNotifier {
   Future<void> loadPatientById(String patientId, BuildContext context) async {
     try {
       _isLoading = true;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners(); // Dispose kontrolü
 
       loading.show(context);
       _currentPatient = await _patientRepository.getPatientById(patientId);
 
       _isLoading = false;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners(); // Dispose kontrolü
 
       loading.close();
     } catch (e) {
       _isLoading = false;
-      notifyListeners();
+      if (!_isDisposed) notifyListeners(); // Dispose kontrolü
       loading.close();
 
       // Hata durumunda kullanıcıyı bilgilendirin
@@ -40,6 +41,7 @@ class PatientEnterDataViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
+    _isDisposed = true; // Dispose edildiğini işaretle
     _currentPatient = null;
     _isLoading = false;
     super.dispose();
@@ -47,6 +49,6 @@ class PatientEnterDataViewModel extends ChangeNotifier {
 
   void clearCurrentPatient() {
     _currentPatient = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners(); // Dispose kontrolü
   }
 }
