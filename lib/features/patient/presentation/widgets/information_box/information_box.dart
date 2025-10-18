@@ -146,7 +146,7 @@ class InformationBox extends StatelessWidget {
                               },
                               child: Icon(
                                 !showPaste ? Icons.copy : Icons.paste,
-                                size: 4.h,
+                                size: 21.sp,
                                 color: AppColors.text,
                               ),
                             ),
@@ -177,7 +177,7 @@ class InformationBox extends StatelessWidget {
                                     },
                                     child: Icon(
                                       Icons.share,
-                                      size: 4.h,
+                                      size: 21.sp,
                                       color: AppColors.text,
                                     ),
                                   ),

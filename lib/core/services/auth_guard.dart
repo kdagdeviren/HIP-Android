@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_medical_data_app/features/auth/presentation/pages/waiting_verify_page.dart';
 import 'package:flutter_medical_data_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/pages/login_page.dart';
+
+bool verificaionDone = false;
 
 class AuthGuard extends StatelessWidget {
   const AuthGuard({super.key});
@@ -15,7 +18,11 @@ class AuthGuard extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasData) {
-          return const MainPage();
+          if (verificaionDone) {
+            return const MainPage();
+          } else {
+            return const WaitingVeirfyPage();
+          }
         } else {
           return const LoginPage();
         }

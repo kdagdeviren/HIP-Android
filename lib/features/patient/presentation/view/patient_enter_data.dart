@@ -71,7 +71,7 @@ class PatientEnterData extends StatelessWidget {
                               if (nonfinishedCategoriesCard.isNotEmpty)
                                 Column(
                                   children: [
-                                    PageInformationBox(title: "Bekleyen"),
+                                    PageInformationBox(title: "BEKLEYEN"),
                                     SizedBox(height: 1.h),
                                     DataList(
                                       isFin: true,
@@ -86,7 +86,7 @@ class PatientEnterData extends StatelessWidget {
                               if (finishedCategoriesCard.isNotEmpty)
                                 Column(
                                   children: [
-                                    PageInformationBox(title: "Tamamlanmış"),
+                                    PageInformationBox(title: "TAMAMLANMIŞ"),
 
                                     SizedBox(height: 1.h),
                                     SecondButton(

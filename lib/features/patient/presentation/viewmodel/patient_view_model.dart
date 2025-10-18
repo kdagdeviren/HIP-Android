@@ -1,14 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import '../../data/models/patient_model.dart';
 import '../../data/repositories/patient_repository.dart';
+import '../../data/repositories/patient_connection_repository.dart';
 
 class PatientViewModel extends ChangeNotifier {
   final PatientRepository repository;
+  final PatientConnectionRepository connectionRepository;
 
-  PatientViewModel(this.repository) {
+  PatientViewModel(this.repository, this.connectionRepository) {
     fetchPatients();
   }
 
@@ -34,16 +37,32 @@ class PatientViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
+      final currentUserId = FirebaseAuth.instance.currentUser?.uid;
+      if (currentUserId == null) {
+        LoggerUtil.e('User not authenticated');
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
       LoggerUtil.d(
-        'Starting fetchPatients - forceRefresh: $forceRefresh, page: $_currentPage, _lastDocument: $_lastDocument',
+        'Starting fetchPatients - forceRefresh: $forceRefresh, page: $_currentPage',
       );
 
-      final newPatients = await repository.getPatientsPaginated(
-        _limit,
-        forceRefresh ? null : _lastDocument,
-      );
+      // 1. Önce kullanıcının bağlı olduğu hasta ID'lerini al
+      final connectedPatientIds = await connectionRepository
+          .getPatientIdsByUserId(currentUserId);
 
-      LoggerUtil.d('Repository returned ${newPatients.length} patients');
+      if (connectedPatientIds.isEmpty) {
+        LoggerUtil.d('No connected patients found for user');
+        _patients = [];
+        _hasMore = false;
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      LoggerUtil.d('User has ${connectedPatientIds.length} connected patients');
 
       if (forceRefresh) {
         _patients.clear();
@@ -53,61 +72,54 @@ class PatientViewModel extends ChangeNotifier {
         _loadedPatientIds.clear();
       }
 
-      // Log patient details for debugging
-      for (int i = 0; i < newPatients.length; i++) {
-        LoggerUtil.d(
-          'Patient $i: docId=${newPatients[i].docId}, name=${newPatients[i].firstName}',
-        );
-      }
+      // 2. Bu ID'lere sahip hastaları getir (pagination ile)
+      // Firestore'da "in" sorgusu max 10 item destekler, bu yüzden batch'lere ayırıyoruz
+      final batchSize = 10;
+      List<Patient> newPatients = [];
 
-      // TEMPORARY: Skip duplicate filtering to test repository pagination
-      if (_currentPage == 0) {
-        // First page: add all patients
-        for (final patient in newPatients) {
-          if (patient.docId != null) {
-            _loadedPatientIds.add(patient.docId!);
-          }
+      for (int i = 0; i < connectedPatientIds.length; i += batchSize) {
+        final batch = connectedPatientIds.skip(i).take(batchSize).toList();
+
+        Query query = FirebaseFirestore.instance
+            .collection('patients')
+            .where(FieldPath.documentId, whereIn: batch)
+            .orderBy('createdAt', descending: true)
+            .limit(_limit);
+
+        if (_lastDocument != null && !forceRefresh) {
+          query = query.startAfterDocument(_lastDocument!);
         }
-        _patients.addAll(newPatients);
-        LoggerUtil.d('First page - added all ${newPatients.length} patients');
-      } else {
-        // Subsequent pages: check if repository is working correctly
-        final firstPatientId = newPatients.isNotEmpty
-            ? newPatients.first.docId
-            : 'none';
-        LoggerUtil.d('Subsequent page - first patient ID: $firstPatientId');
 
-        if (newPatients.isNotEmpty &&
-            _loadedPatientIds.contains(firstPatientId)) {
-          LoggerUtil.e(
-            'REPOSITORY ISSUE: Same patients returned on page $_currentPage',
-          );
-          _hasMore = false;
-        } else {
-          // Different patients, add them
-          for (final patient in newPatients) {
+        final snapshot = await query.get();
+
+        for (var doc in snapshot.docs) {
+          final data = doc.data() as Map<String, dynamic>;
+          final patient = Patient.fromMapBasic(data).copyWith(docId: doc.id);
+
+          if (!_loadedPatientIds.contains(patient.docId)) {
+            newPatients.add(patient);
             if (patient.docId != null) {
               _loadedPatientIds.add(patient.docId!);
             }
           }
-          _patients.addAll(newPatients);
-          LoggerUtil.d('Added ${newPatients.length} new patients');
         }
+
+        if (snapshot.docs.isNotEmpty) {
+          _lastDocument = snapshot.docs.last;
+        }
+
+        // İlk batch'ten sonra limit'e ulaştıysak dur
+        if (newPatients.length >= _limit) break;
       }
 
-      // Update _lastDocument from repository
-      _lastDocument = repository.lastDocument;
-      LoggerUtil.d('Updated _lastDocument to: ${_lastDocument?.id}');
+      LoggerUtil.d('Fetched ${newPatients.length} new patients');
 
+      _patients.addAll(newPatients);
       _currentPage++;
-      LoggerUtil.d('Total patients in list now: ${_patients.length}');
 
-      // Simple pagination logic
       if (newPatients.length < _limit) {
         _hasMore = false;
-        LoggerUtil.d(
-          'No more patients available - received ${newPatients.length} < $_limit',
-        );
+        LoggerUtil.d('No more patients available');
       }
     } catch (e) {
       LoggerUtil.e('Error fetching patients: $e');

@@ -5,9 +5,16 @@ import 'package:flutter_medical_data_app/shared/widgets/main_button.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class PatientAddList extends StatelessWidget {
-  const PatientAddList({super.key, required this.idController});
+  const PatientAddList({
+    super.key,
+    required this.idController,
+    required this.onAddPatient,
+    this.isLoading = false,
+  });
 
   final TextEditingController idController;
+  final VoidCallback onAddPatient;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +22,14 @@ class PatientAddList extends StatelessWidget {
       showCopy: true,
       showPaste: true,
       title: "HASTA EKLE",
-      padding: EdgeInsets.only(top: 1.h, bottom: 1.h, left: 4.w, right: 4.w),
+      padding: EdgeInsets.only(top: 2.3.h, bottom: 1.h, left: 4.w, right: 4.w),
 
       textFieldListTiles: [
         TextFieldListTile(title: "ID", controller: idController),
       ],
       buttonWidget: SecondButton(
-        buttonText: "Mevcut Hasta Ekle",
-        onPressed: () {},
+        buttonText: isLoading ? "Ekleniyor..." : "Mevcut Hasta Ekle",
+        onPressed: isLoading ? () {} : onAddPatient,
         height: 4.h,
       ),
     );

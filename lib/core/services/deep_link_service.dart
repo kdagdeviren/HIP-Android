@@ -44,33 +44,52 @@ class DeepLinkService {
   /// Parse and handle deep link
   void _handleDeepLink(Uri uri) {
     debugPrint('Deep link received: $uri');
+    debugPrint('Scheme: ${uri.scheme}, Host: ${uri.host}, Path: ${uri.path}');
+    debugPrint('Query parameters: ${uri.queryParameters}');
 
     String? patientId;
 
     // Handle both custom scheme (myapp://) and HTTPS universal links
-    if (uri.scheme == 'myapp' && uri.host == 'addPatient') {
-      // Custom scheme: myapp://addPatient?id=xxx
+    // Case-insensitive check
+    if (uri.scheme == 'myapp' && uri.host.toLowerCase() == 'addpatient') {
+      // Custom scheme: myapp://addpatient?id=xxx
       patientId = uri.queryParameters['id'];
-      debugPrint('Custom scheme detected');
-    } else if (uri.scheme == 'https' && uri.path.contains('addPatient')) {
+      debugPrint('Custom scheme detected - patientId: $patientId');
+    } else if (uri.scheme == 'https' &&
+        uri.path.toLowerCase().contains('addpatient')) {
       // HTTPS universal link: https://your-domain.web.app/addPatient?id=xxx
       patientId = uri.queryParameters['id'];
-      debugPrint('Universal link (HTTPS) detected');
+      debugPrint('Universal link (HTTPS) detected - patientId: $patientId');
     }
 
     if (patientId != null && patientId.isNotEmpty) {
       debugPrint('Patient ID from deep link: $patientId');
 
-      // Navigate to patient list page with the ID
-      NavigationService.instance.navigatorKey.currentState?.pushNamed(
-        '/patient-all-list',
-        arguments: {'patientId': patientId},
-      );
+      // Kısa gecikme ekle - NavigationService'in hazır olmasını bekle
+      Future.delayed(const Duration(milliseconds: 300), () {
+        final navigator = NavigationService.instance.navigatorKey.currentState;
 
-      // Notify listeners (e.g., PatientAllListPage)
-      if (onPatientIdReceived != null) {
-        onPatientIdReceived!(patientId);
-      }
+        if (navigator != null) {
+          debugPrint('Navigating to patient-all-list with autoAdd=true');
+
+          // Mevcut route'u kaldır ve yeni route'u ekle
+          navigator.pushNamedAndRemoveUntil(
+            '/patient-all-list',
+            (route) => route.settings.name == '/' || route.isFirst,
+            arguments: {
+              'patientId': patientId,
+              'autoAdd': true, // Otomatik ekleme flag'i
+            },
+          );
+        } else {
+          debugPrint('Navigator not ready, trying alternative method');
+
+          // Alternatif: Callback ile bildir
+          if (onPatientIdReceived != null && patientId != null) {
+            onPatientIdReceived!(patientId);
+          }
+        }
+      });
     } else {
       debugPrint('No patient ID found in deep link');
     }

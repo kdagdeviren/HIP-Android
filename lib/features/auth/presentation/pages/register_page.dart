@@ -159,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                                       if (viewModel.responseMessage!.status) {
                                         NavigationService.instance.navigateTo(
-                                          '/home',
+                                          '/auth-guard',
                                         );
                                       } else {
                                         ErrorHandler.showErrorSnackBar(

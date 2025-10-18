@@ -59,5 +59,4 @@ class DefaultFirebaseOptions {
     projectId: 'medical-app-2c545',
     storageBucket: 'medical-app-2c545.firebasestorage.app',
   );
-
 }

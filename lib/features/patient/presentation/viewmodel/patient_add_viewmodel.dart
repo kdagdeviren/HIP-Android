@@ -1,16 +1,21 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:flutter_medical_data_app/core/utils/validation_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
+import 'package:flutter_medical_data_app/features/patient/data/models/patient_connection_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_connection_viewmodel.dart';
 
 class PatientAddViewmodel extends ChangeNotifier {
   final PatientViewModel patientViewModel;
-  PatientAddViewmodel(this.patientViewModel);
+  final PatientConnectionViewModel connectionViewModel;
+
+  PatientAddViewmodel(this.patientViewModel, this.connectionViewModel);
 
   /// Validates patient form data
   String? validatePatientData(String name, String surname, String protocolNo) {
@@ -35,6 +40,14 @@ class PatientAddViewmodel extends ChangeNotifier {
     required String protocolNo,
   }) async {
     try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        return ResponseMessage(
+          status: false,
+          message: 'Kullanıcı oturumu bulunamadı',
+        );
+      }
+
       // Validate input
       final validationError = validatePatientData(name, surname, protocolNo);
       if (validationError != null) {
@@ -46,15 +59,31 @@ class PatientAddViewmodel extends ChangeNotifier {
         lastName: surname,
         protocolNo: protocolNo,
         createdAt: DateTime.now(),
-        mainDoctorId: FirebaseAuth.instance.currentUser!.uid,
+        mainDoctorId: currentUser.uid,
       );
 
       LoggerUtil.i(
         "Adding patient with mainDoctorId: ${newPatient.mainDoctorId}",
       );
 
+      // 1. Hastayı ekle
       ResponseMessage response = await patientViewModel.addPatient(newPatient);
-      if (response.status) {
+
+      if (response.status && response.docId != null) {
+        // 2. Kullanıcı-hasta bağlantısını oluştur (owner olarak)
+        final connectionResponse = await connectionViewModel.connectPatient(
+          patientId: response.docId!,
+          userId: currentUser.uid,
+          role: ConnectionRole.owner,
+        );
+
+        if (!connectionResponse.status) {
+          LoggerUtil.e(
+            'Patient created but connection failed: ${connectionResponse.message}',
+          );
+          // İsterseniz hastayı geri silip rollback yapabilirsiniz
+        }
+
         LoggerUtil.i("Hasta başarıyla eklendi: ${response.message}");
       }
 
@@ -71,17 +100,29 @@ class PatientAddViewmodel extends ChangeNotifier {
     required String surname,
     required String protocolNo,
   }) async {
-    final response = await addPatient(
-      name: name,
-      surname: surname,
-      protocolNo: protocolNo,
-    );
+    // Loading göster
+    loading.show(context);
 
-    if (response.status) {
-      _navigateToPatientList();
-      _showSuccessMessage(context);
-    } else {
-      _showErrorMessage(context, response.message);
+    try {
+      final response = await addPatient(
+        name: name,
+        surname: surname,
+        protocolNo: protocolNo,
+      );
+
+      if (response.status) {
+        _navigateToPatientList();
+        if (context.mounted) {
+          _showSuccessMessage(context);
+        }
+      } else {
+        if (context.mounted) {
+          _showErrorMessage(context, response.message);
+        }
+      }
+    } finally {
+      // Loading kapat
+      loading.close();
     }
   }
 

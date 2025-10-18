@@ -4,6 +4,7 @@ import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
+import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_connection_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/information_box/information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/page_information_box.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_app_bar.dart';
@@ -43,7 +44,10 @@ class _PatientAddPageState extends State<PatientAddPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => PatientAddViewmodel(context.read<PatientViewModel>()),
+      create: (_) => PatientAddViewmodel(
+        context.read<PatientViewModel>(),
+        context.read<PatientConnectionViewModel>(),
+      ),
       child: Scaffold(
         appBar: PatientAppBar(title: "Hasta Kaydı"),
         body: Padding(

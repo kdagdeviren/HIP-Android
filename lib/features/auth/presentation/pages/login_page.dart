@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
 
                                     if (viewModel.responseMessage!.status) {
                                       NavigationService.instance.navigateTo(
-                                        '/home',
+                                        '/auth-guard',
                                       );
                                     } else {
                                       ErrorHandler.showErrorSnackBar(
