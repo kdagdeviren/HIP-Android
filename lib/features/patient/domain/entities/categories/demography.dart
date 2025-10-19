@@ -5,11 +5,11 @@ extension BreastSideExtension on BreastSide {
   String get displayText {
     switch (this) {
       case BreastSide.right:
-        return 'Sağ';
+        return 'Sağ-1';
       case BreastSide.left:
-        return 'Sol';
+        return 'Sol-2';
       case BreastSide.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -28,19 +28,19 @@ extension BMIExtension on BMI {
   String get displayText {
     switch (this) {
       case BMI.grade2Obese:
-        return '2. Derece Obez';
+        return '2. Derece Obez-5';
       case BMI.overweight:
-        return 'Fazla kilolu';
+        return 'Fazla kilolu-3';
       case BMI.normal:
-        return 'Normal kilolu';
+        return 'Normal kilolu-2';
       case BMI.grade1Obese:
-        return '1. Derece Obez';
+        return '1. Derece Obez-4';
       case BMI.underweight:
-        return 'Zayıf';
+        return 'Zayıf-1';
       case BMI.grade3Obese:
-        return '3. Derece Obez';
+        return '3. Derece Obez-6';
       case BMI.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -59,19 +59,19 @@ extension AgeAtDiagnosisExtension on AgeAtDiagnosis {
   String get displayText {
     switch (this) {
       case AgeAtDiagnosis.lateMiddleAge:
-        return 'Geç Orta Yaş';
+        return 'Geç Orta Yaş-4';
       case AgeAtDiagnosis.earlyMiddleAge:
-        return 'Erken Orta Yaş';
+        return 'Erken Orta Yaş-2';
       case AgeAtDiagnosis.middleAge:
-        return 'Orta Yaş';
+        return 'Orta Yaş-3';
       case AgeAtDiagnosis.youngAdult:
-        return 'Genç Erişkin';
+        return 'Genç Erişkin-1';
       case AgeAtDiagnosis.elderly:
-        return 'Yaşlı';
+        return 'Yaşlı-5';
       case AgeAtDiagnosis.veryElderly:
-        return 'İleri Yaşlı';
+        return 'İleri Yaşlı-6';
       case AgeAtDiagnosis.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -92,23 +92,23 @@ extension BloodTypeExtension on BloodType {
   String get displayText {
     switch (this) {
       case BloodType.aPositive:
-        return 'A+';
+        return 'A Pozitif-4';
       case BloodType.bPositive:
-        return 'B+';
+        return 'B Pozitif-6';
       case BloodType.oPositive:
-        return '0+';
+        return '0 Pozitif-2';
       case BloodType.abNegative:
-        return 'AB-';
+        return 'AB Negatif-7';
       case BloodType.oNegative:
-        return '0-';
+        return '0 Negatif-1';
       case BloodType.aNegative:
-        return 'A-';
+        return 'A Negatif-3';
       case BloodType.abPositive:
-        return 'AB+';
+        return 'AB Pozitif-8';
       case BloodType.bNegative:
-        return 'B-';
+        return 'B Negatif-5';
       case BloodType.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -119,11 +119,11 @@ extension MenopauseExtension on Menopause {
   String get displayText {
     switch (this) {
       case Menopause.present:
-        return 'Var';
+        return 'Var-1';
       case Menopause.absent:
-        return 'Yok';
+        return 'Yok-2';
       case Menopause.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -134,13 +134,13 @@ extension SunExposureExtension on SunExposure {
   String get displayText {
     switch (this) {
       case SunExposure.high:
-        return 'Yüksek';
+        return 'Yüksek-3';
       case SunExposure.medium:
-        return 'Orta';
+        return 'Orta-2';
       case SunExposure.low:
-        return 'Düşük';
+        return 'Düşük-1';
       case SunExposure.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -174,38 +174,97 @@ class Demography {
   }
 
   factory Demography.fromMap(Map<String, dynamic> map) {
-    return Demography(
-      breastSide: map['breastSide'] != null
+    BreastSide? breastSide;
+    try {
+      breastSide = map['breastSide'] != null
           ? BreastSide.values.byName(map['breastSide'])
-          : null,
-      bmi: map['bmi'] != null ? BMI.values.byName(map['bmi']) : null,
-      ageAtDiagnosis: map['ageAtDiagnosis'] != null
+          : null;
+    } catch (e) {
+      breastSide = null;
+    }
+
+    BMI? bmi;
+    try {
+      bmi = map['bmi'] != null ? BMI.values.byName(map['bmi']) : null;
+    } catch (e) {
+      bmi = null;
+    }
+
+    AgeAtDiagnosis? ageAtDiagnosis;
+    try {
+      ageAtDiagnosis = map['ageAtDiagnosis'] != null
           ? AgeAtDiagnosis.values.byName(map['ageAtDiagnosis'])
-          : null,
-      bloodType: map['bloodType'] != null
+          : null;
+    } catch (e) {
+      ageAtDiagnosis = null;
+    }
+
+    BloodType? bloodType;
+    try {
+      bloodType = map['bloodType'] != null
           ? BloodType.values.byName(map['bloodType'])
-          : null,
-      menopause: map['menopause'] != null
+          : null;
+    } catch (e) {
+      bloodType = null;
+    }
+
+    Menopause? menopause;
+    try {
+      menopause = map['menopause'] != null
           ? Menopause.values.byName(map['menopause'])
-          : null,
-      sunExposure: map['sunExposure'] != null
+          : null;
+    } catch (e) {
+      menopause = null;
+    }
+
+    SunExposure? sunExposure;
+    try {
+      sunExposure = map['sunExposure'] != null
           ? SunExposure.values.byName(map['sunExposure'])
-          : null,
+          : null;
+    } catch (e) {
+      sunExposure = null;
+    }
+
+    return Demography(
+      breastSide: breastSide,
+      bmi: bmi,
+      ageAtDiagnosis: ageAtDiagnosis,
+      bloodType: bloodType,
+      menopause: menopause,
+      sunExposure: sunExposure,
     );
   }
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
-      {'key': 'breastSide', 'label': 'Hangi Meme', 'values': BreastSide.values},
-      {'key': 'bmi', 'label': 'VKI', 'values': BMI.values},
       {
+        'index': 16,
+        'key': 'breastSide',
+        'label': 'Hangi Meme',
+        'values': BreastSide.values,
+      },
+      {'index': 17, 'key': 'bmi', 'label': 'VKI', 'values': BMI.values},
+      {
+        'index': 18,
         'key': 'ageAtDiagnosis',
         'label': 'Tanı Yaşı',
         'values': AgeAtDiagnosis.values,
       },
-      {'key': 'bloodType', 'label': 'Kan Grubu', 'values': BloodType.values},
-      {'key': 'menopause', 'label': 'Menapoz', 'values': Menopause.values},
       {
+        'index': 19,
+        'key': 'bloodType',
+        'label': 'Kan Grubu',
+        'values': BloodType.values,
+      },
+      {
+        'index': 20,
+        'key': 'menopause',
+        'label': 'Menapoz',
+        'values': Menopause.values,
+      },
+      {
+        'index': 45,
         'key': 'sunExposure',
         'label': 'Güneşten Yararlanma',
         'values': SunExposure.values,

@@ -153,7 +153,12 @@ class PatientRemoteDataSource {
         final rawData = doc.data() as Map<String, dynamic>;
         final cleanedData = _cleanNullStrings(rawData);
 
-        return Patient.fromMap(cleanedData).copyWith(docId: doc.id);
+        try {
+          return Patient.fromMap(cleanedData).copyWith(docId: doc.id);
+        } catch (e) {
+          LoggerUtil.e('Error parsing Patient from map: $e');
+          return null;
+        }
       }
       return null;
     } catch (e) {

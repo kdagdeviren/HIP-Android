@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/core/utils/enum_display_util.dart';
@@ -7,10 +6,10 @@ import 'package:flutter_medical_data_app/features/patient/data/models/patient_mo
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
-import 'package:csv/csv.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:excel/excel.dart';
 
 class PatientViewDataViewmodel extends ChangeNotifier {
   final String? patientId;
@@ -93,7 +92,7 @@ class PatientViewDataViewmodel extends ChangeNotifier {
       String displayValue;
 
       if (value == null) {
-        displayValue = "Veri Yok";
+        displayValue = "Veri Yok-0";
       } else if (value is String) {
         // EnumDisplayUtil ile displayText'i al
         displayValue = EnumDisplayUtil.getDisplayTextByFieldName(
@@ -117,8 +116,8 @@ class PatientViewDataViewmodel extends ChangeNotifier {
     );
   }
 
-  /// CSV export işlemini gerçekleştirir
-  Future<ExportResult> exportToCsv() async {
+  /// XLSX export işlemini gerçekleştirir
+  Future<ExportResult> exportToXlsx() async {
     if (_patient == null) {
       return ExportResult(success: false, message: 'Hasta bilgisi bulunamadı');
     }
@@ -131,41 +130,85 @@ class PatientViewDataViewmodel extends ChangeNotifier {
     }
 
     try {
-      List<List<dynamic>> rows = [];
+      // XLSX dosyası oluştur
+      var excel = Excel.createExcel();
+      var sheet = excel['Sheet1'];
 
-      // Hasta bilgileri
-      rows.add(['HASTA BİLGİLERİ']);
-      rows.add(['Ad', _patient!.firstName]);
-      rows.add(['Soyad', _patient!.lastName]);
-      rows.add(['Protocol No', _patient!.protocolNo]);
-      rows.add([]); // Boş satır
+      // Başlık satırı
+      sheet.cell(CellIndex.indexByString('A1')).value = 'Değişken';
+      sheet.cell(CellIndex.indexByString('B1')).value = 'Değer';
+
+      int rowIndex = 2; // Başlıktan sonra başla (Excel'de 1-indexed)
 
       // Her kategori için verileri ekle
       final allCardData = CategoryCardData.getAllCardCategories();
       for (var cardData in allCardData) {
         final categoryData = getCategoryData(cardData.id);
         if (categoryData != null && categoryData.isNotEmpty) {
-          rows.add(['${cardData.name.toUpperCase()} VERİLERİ']);
+          // Get fieldConfigs for index mapping
+          List<Map<String, dynamic>>? fieldConfigs;
+          switch (cardData.id) {
+            case 'pathology':
+              fieldConfigs = Pathology.getDropdownConfigs();
+              break;
+            case 'oncology':
+              fieldConfigs = Oncology.getDropdownConfigs();
+              break;
+            case 'demography':
+              fieldConfigs = Demography.getDropdownConfigs();
+              break;
+            case 'comorbidity':
+              fieldConfigs = Comorbidity.getDropdownConfigs();
+              break;
+            case 'biochemistry':
+              fieldConfigs = Biochemistry.getDropdownConfigs();
+              break;
+            case 'radiology':
+              fieldConfigs = Radiology.getDropdownConfigs();
+              break;
+            case 'pet':
+              fieldConfigs = PET.getDropdownConfigs();
+              break;
+            default:
+              fieldConfigs = null;
+          }
+
+          // Create label to index map
+          Map<String, int> labelToIndex = {};
+          if (fieldConfigs != null) {
+            for (var config in fieldConfigs) {
+              labelToIndex[config['label'] as String] =
+                  (config['index'] as int?) ?? 0;
+            }
+          }
+
           categoryData.forEach((key, value) {
-            rows.add([key, value.toString()]);
+            int index = labelToIndex[key] ?? 0; // Default to 0 if not found
+            List<String> parts = value.split('-');
+            String code = parts.length > 1 ? parts[1] : value;
+
+            // Yeni satır ekle
+            sheet.cell(CellIndex.indexByString('A$rowIndex')).value = 'i$index';
+            sheet.cell(CellIndex.indexByString('B$rowIndex')).value = code;
+            //sheet.cell(CellIndex.indexByString('C$rowIndex')).value = value;
+            rowIndex++;
           });
-          rows.add([]); // Kategoriler arası boş satır
         }
       }
 
-      // CSV formatına çevir
-      String csv = const ListToCsvConverter().convert(rows);
+      // XLSX dosyasını byte array olarak al
+      var bytes = excel.encode();
 
       // Dosyayı kaydet ve paylaş
       final directory = await getApplicationDocumentsDirectory();
       final dateFormat = DateFormat('dd-MM-yyyy');
       final formattedDate = dateFormat.format(DateTime.now());
       final path =
-          '${directory.path}/hasta_${_patient!.protocolNo}_$formattedDate.csv';
+          '${directory.path}/hasta_${_patient!.protocolNo}_$formattedDate.xlsx';
       final file = File(path);
 
-      // UTF-8 encoding ile kaydet (BOM olmadan - Google Sheets uyumlu)
-      await file.writeAsString(csv, encoding: utf8);
+      // Dosyayı kaydet
+      await file.writeAsBytes(bytes!);
 
       // Dosyayı paylaş
       await Share.shareXFiles(
@@ -176,10 +219,10 @@ class PatientViewDataViewmodel extends ChangeNotifier {
 
       return ExportResult(
         success: true,
-        message: 'CSV dosyası oluşturuldu ve paylaşıldı',
+        message: 'XLSX dosyası oluşturuldu ve paylaşıldı',
       );
     } catch (e) {
-      LoggerUtil.e('CSV export error: $e');
+      LoggerUtil.e('XLSX export error: $e');
       return ExportResult(success: false, message: 'Hata: ${e.toString()}');
     }
   }

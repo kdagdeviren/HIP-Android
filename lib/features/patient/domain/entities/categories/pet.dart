@@ -5,11 +5,11 @@ extension PETResultExtension on PETResult {
   String get displayText {
     switch (this) {
       case PETResult.positive:
-        return 'Pozitif';
+        return 'Pozitif-2';
       case PETResult.negative:
-        return 'Negatif';
+        return 'Negatif-1';
       case PETResult.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -24,11 +24,16 @@ class PET {
   }
 
   factory PET.fromMap(Map<String, dynamic> map) {
-    return PET(
-      result: map['result'] != null
+    PETResult? result;
+    try {
+      result = map['result'] != null
           ? PETResult.values.byName(map['result'])
-          : null,
-    );
+          : null;
+    } catch (e) {
+      result = null;
+    }
+
+    return PET(result: result);
   }
 
   static List<Map<String, dynamic>> getDropdownConfigs() {

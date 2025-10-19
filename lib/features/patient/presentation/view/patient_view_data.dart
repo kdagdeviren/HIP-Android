@@ -129,7 +129,7 @@ class PatientViewData extends StatelessWidget {
                                   onPressed: () async {
                                     if (categoryKey == "all") {
                                       final result = await viewModel
-                                          .exportToCsv();
+                                          .exportToXlsx();
 
                                       if (context.mounted) {
                                         ScaffoldMessenger.of(

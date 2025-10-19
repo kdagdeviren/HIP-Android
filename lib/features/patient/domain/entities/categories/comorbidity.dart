@@ -5,11 +5,26 @@ extension PresenceExtension on Presence {
   String get displayText {
     switch (this) {
       case Presence.present:
-        return 'Var';
+        return 'Var-2';
       case Presence.absent:
-        return 'Yok';
+        return 'Yok-1';
       case Presence.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
+    }
+  }
+}
+
+enum PresenceNegative { present, absent, unk }
+
+extension PresenceExtensionNegative on PresenceNegative {
+  String get displayText {
+    switch (this) {
+      case PresenceNegative.present:
+        return 'Var-1';
+      case PresenceNegative.absent:
+        return 'Yok-2';
+      case PresenceNegative.unk:
+        return 'Veri Yok-0';
     }
   }
 }
@@ -55,54 +70,170 @@ class Comorbidity {
   }
 
   factory Comorbidity.fromMap(Map<String, dynamic> map) {
-    return Comorbidity(
-      ht: map['ht'] != null ? Presence.values.byName(map['ht']) : null,
-      dm: map['dm'] != null ? Presence.values.byName(map['dm']) : null,
-      copd: map['copd'] != null ? Presence.values.byName(map['copd']) : null,
-      smoking: map['smoking'] != null
+    Presence? ht;
+    try {
+      ht = map['ht'] != null ? Presence.values.byName(map['ht']) : null;
+    } catch (e) {
+      ht = null;
+    }
+
+    Presence? dm;
+    try {
+      dm = map['dm'] != null ? Presence.values.byName(map['dm']) : null;
+    } catch (e) {
+      dm = null;
+    }
+
+    Presence? copd;
+    try {
+      copd = map['copd'] != null ? Presence.values.byName(map['copd']) : null;
+    } catch (e) {
+      copd = null;
+    }
+
+    Presence? smoking;
+    try {
+      smoking = map['smoking'] != null
           ? Presence.values.byName(map['smoking'])
-          : null,
-      familyHistoryOfBreastCa: map['familyHistoryOfBreastCa'] != null
+          : null;
+    } catch (e) {
+      smoking = null;
+    }
+
+    Presence? familyHistoryOfBreastCa;
+    try {
+      familyHistoryOfBreastCa = map['familyHistoryOfBreastCa'] != null
           ? Presence.values.byName(map['familyHistoryOfBreastCa'])
-          : null,
-      thyroidDisease: map['thyroidDisease'] != null
+          : null;
+    } catch (e) {
+      familyHistoryOfBreastCa = null;
+    }
+
+    Presence? thyroidDisease;
+    try {
+      thyroidDisease = map['thyroidDisease'] != null
           ? Presence.values.byName(map['thyroidDisease'])
-          : null,
-      retinopathy: map['retinopathy'] != null
+          : null;
+    } catch (e) {
+      thyroidDisease = null;
+    }
+
+    Presence? retinopathy;
+    try {
+      retinopathy = map['retinopathy'] != null
           ? Presence.values.byName(map['retinopathy'])
-          : null,
-      neuropathy: map['neuropathy'] != null
+          : null;
+    } catch (e) {
+      retinopathy = null;
+    }
+
+    Presence? neuropathy;
+    try {
+      neuropathy = map['neuropathy'] != null
           ? Presence.values.byName(map['neuropathy'])
-          : null,
-      osteoporosis: map['osteoporosis'] != null
+          : null;
+    } catch (e) {
+      neuropathy = null;
+    }
+
+    Presence? osteoporosis;
+    try {
+      osteoporosis = map['osteoporosis'] != null
           ? Presence.values.byName(map['osteoporosis'])
-          : null,
-      depression: map['depression'] != null
+          : null;
+    } catch (e) {
+      osteoporosis = null;
+    }
+
+    Presence? depression;
+    try {
+      depression = map['depression'] != null
           ? Presence.values.byName(map['depression'])
-          : null,
+          : null;
+    } catch (e) {
+      depression = null;
+    }
+
+    return Comorbidity(
+      ht: ht,
+      dm: dm,
+      copd: copd,
+      smoking: smoking,
+      familyHistoryOfBreastCa: familyHistoryOfBreastCa,
+      thyroidDisease: thyroidDisease,
+      retinopathy: retinopathy,
+      neuropathy: neuropathy,
+      osteoporosis: osteoporosis,
+      depression: depression,
     );
   }
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
-      {'key': 'ht', 'label': 'HT', 'values': Presence.values},
-      {'key': 'dm', 'label': 'DM', 'values': Presence.values},
-      {'key': 'copd', 'label': 'KOAH', 'values': Presence.values},
-      {'key': 'smoking', 'label': 'Sigara', 'values': Presence.values},
+      {'index': 21, 'key': 'ht', 'label': 'HT', 'values': Presence.values},
+      {'index': 22, 'key': 'dm', 'label': 'DM', 'values': Presence.values},
       {
+        'index': 23,
+        'key': 'copd',
+        'label': 'KOAH',
+        'values': PresenceNegative.values,
+      },
+      {
+        'index': 24,
+        'key': 'smoking',
+        'label': 'Sigara',
+        'values': PresenceNegative.values,
+      },
+      {
+        'index': 25,
         'key': 'familyHistoryOfBreastCa',
         'label': 'Ailede Meme Kanseri Öyküsü',
         'values': Presence.values,
       },
       {
+        'index': 26,
         'key': 'thyroidDisease',
         'label': 'Tiroid Hastalığı',
+        'values': PresenceNegative.values,
+      },
+      {
+        'index': 27,
+        'key': 'retinopathy',
+        'label': 'Retinopati',
         'values': Presence.values,
       },
-      {'key': 'retinopathy', 'label': 'Retinopati', 'values': Presence.values},
-      {'key': 'neuropathy', 'label': 'Nöropati', 'values': Presence.values},
-      {'key': 'osteoporosis', 'label': 'Osteoporoz', 'values': Presence.values},
-      {'key': 'depression', 'label': 'Depresyon', 'values': Presence.values},
+      {
+        'index': 28,
+        'key': 'neuropathy',
+        'label': 'Nöropati',
+        'values': PresenceNegative.values,
+      },
+      {
+        'index': 29,
+        'key': 'osteoporosis',
+        'label': 'Osteoporoz',
+        'values': PresenceNegative.values,
+      },
+      {
+        'index': 30,
+        'key': 'depression',
+        'label': 'Depresyon',
+        'values': PresenceNegative.values,
+      },
     ];
   }
 }
+
+/*
+HT	Var=1, Yok=2
+DM	Var=1, Yok=2
+KOAH	Yok=2, Var=1
+Sigara	Yok=2, Var=1
+Ailede Meme CA Öyküsü	Var=1, Yok=2
+Tiroid	Yok=2, Var=1
+Retinopati	Var=1, Yok=2
+Nöropati	Yok=2, Var=1
+Osteoporoz	Yok=2, Var=1
+Depresyon	Yok=2, Var=1
+
+ */

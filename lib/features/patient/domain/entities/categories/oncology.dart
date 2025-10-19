@@ -5,11 +5,11 @@ extension MetastasisStatusExtension on MetastasisStatus {
   String get displayText {
     switch (this) {
       case MetastasisStatus.present:
-        return 'Var';
+        return 'Var-1';
       case MetastasisStatus.absent:
-        return 'Yok';
+        return 'Yok-2';
       case MetastasisStatus.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -20,15 +20,15 @@ extension MetastasisLocationExtension on MetastasisLocation {
   String get displayText {
     switch (this) {
       case MetastasisLocation.none:
-        return 'Yok';
+        return 'Yok-1';
       case MetastasisLocation.lymphNode:
-        return 'Lenf Nodu';
+        return 'Lenf Nodu-2';
       case MetastasisLocation.dermalLymphatic:
-        return 'Dermal Lenfatik';
+        return 'Dermal Lenfatik-3';
       case MetastasisLocation.distant:
-        return 'Uzak Metastaz';
+        return 'Uzak Metastaz-4';
       case MetastasisLocation.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -39,23 +39,23 @@ extension ClinicalStageExtension on ClinicalStage {
   String get displayText {
     switch (this) {
       case ClinicalStage.iib:
-        return 'Evre IIB';
+        return 'Evre IIB-4';
       case ClinicalStage.iia:
-        return 'Evre IIA';
+        return 'Evre IIA-3';
       case ClinicalStage.ia:
-        return 'Evre IA';
+        return 'Evre IA-1';
       case ClinicalStage.iiib:
-        return 'Evre IIIB';
+        return 'Evre IIIB-6';
       case ClinicalStage.ib:
-        return 'Evre IB';
+        return 'Evre IB-2';
       case ClinicalStage.iiia:
-        return 'Evre IIIA';
+        return 'Evre IIIA-5';
       case ClinicalStage.iv:
-        return 'Evre IV';
+        return 'Evre IV-8';
       case ClinicalStage.iiic:
-        return 'Evre IIIC';
+        return 'Evre IIIC-7';
       case ClinicalStage.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -72,15 +72,15 @@ extension ChemotherapyRegimenExtension on ChemotherapyRegimen {
   String get displayText {
     switch (this) {
       case ChemotherapyRegimen.anthracyclinePlusTaxane:
-        return 'Antrasiklin + Taksan';
+        return 'Antrasiklin + Taksan-1';
       case ChemotherapyRegimen.taxaneOnly:
-        return 'Sadece Taksan';
+        return 'Sadece Taksan-3';
       case ChemotherapyRegimen.anthracyclineOnly:
-        return 'Sadece Antrasiklin';
+        return 'Sadece Antrasiklin-2';
       case ChemotherapyRegimen.platinumAdded:
-        return 'Platin Eklenenler';
+        return 'Platin Eklenenler-4';
       case ChemotherapyRegimen.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -91,13 +91,13 @@ extension ChemotherapyCycleDensityExtension on ChemotherapyCycleDensity {
   String get displayText {
     switch (this) {
       case ChemotherapyCycleDensity.incomplete:
-        return 'Eksik Kür';
+        return 'Eksik Kür-2';
       case ChemotherapyCycleDensity.full:
-        return 'Tam Kür';
+        return 'Tam Kür-1';
       case ChemotherapyCycleDensity.intensive:
-        return 'Yoğun Kür';
+        return 'Yoğun Kür-3';
       case ChemotherapyCycleDensity.unknown:
-        return 'Veri Yok';
+        return 'Veri Yok-0';
     }
   }
 }
@@ -128,50 +128,90 @@ class Oncology {
   }
 
   factory Oncology.fromMap(Map<String, dynamic> map) {
-    return Oncology(
-      metastasisStatus: map['metastasisStatus'] != null
+    MetastasisStatus? metastasisStatus;
+    try {
+      metastasisStatus = map['metastasisStatus'] != null
           ? MetastasisStatus.values.byName(map['metastasisStatus'])
-          : null,
-      metastasisLocation: map['metastasisLocation'] != null
+          : null;
+    } catch (e) {
+      metastasisStatus = null;
+    }
+
+    MetastasisLocation? metastasisLocation;
+    try {
+      metastasisLocation = map['metastasisLocation'] != null
           ? MetastasisLocation.values.byName(map['metastasisLocation'])
-          : null,
-      clinicalStage: map['clinicalStage'] != null
+          : null;
+    } catch (e) {
+      metastasisLocation = null;
+    }
+
+    ClinicalStage? clinicalStage;
+    try {
+      clinicalStage = map['clinicalStage'] != null
           ? ClinicalStage.values.byName(map['clinicalStage'])
-          : null,
-      chemotherapyRegimen: map['chemotherapyRegimen'] != null
+          : null;
+    } catch (e) {
+      clinicalStage = null;
+    }
+
+    ChemotherapyRegimen? chemotherapyRegimen;
+    try {
+      chemotherapyRegimen = map['chemotherapyRegimen'] != null
           ? ChemotherapyRegimen.values.byName(map['chemotherapyRegimen'])
-          : null,
-      chemotherapyCycleDensity: map['chemotherapyCycleDensity'] != null
+          : null;
+    } catch (e) {
+      chemotherapyRegimen = null;
+    }
+
+    ChemotherapyCycleDensity? chemotherapyCycleDensity;
+    try {
+      chemotherapyCycleDensity = map['chemotherapyCycleDensity'] != null
           ? ChemotherapyCycleDensity.values.byName(
               map['chemotherapyCycleDensity'],
             )
-          : null,
+          : null;
+    } catch (e) {
+      chemotherapyCycleDensity = null;
+    }
+
+    return Oncology(
+      metastasisStatus: metastasisStatus,
+      metastasisLocation: metastasisLocation,
+      clinicalStage: clinicalStage,
+      chemotherapyRegimen: chemotherapyRegimen,
+      chemotherapyCycleDensity: chemotherapyCycleDensity,
     );
   }
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
       {
+        'index': 13,
         'key': 'metastasisStatus',
         'label': 'Metastaz Durumu',
         'values': MetastasisStatus.values,
       },
       {
+        'index': 14,
         'key': 'metastasisLocation',
         'label': 'Metastaz Yeri',
         'values': MetastasisLocation.values,
       },
       {
+        'index': 15,
         'key': 'clinicalStage',
         'label': 'Klinik Evre',
         'values': ClinicalStage.values,
       },
       {
+        'index': 46,
         'key': 'chemotherapyRegimen',
         'label': 'Kemoterapi Rejimi',
         'values': ChemotherapyRegimen.values,
       },
       {
+        'index': 47,
         'key': 'chemotherapyCycleDensity',
         'label': 'Kemoterapi Kür Yoğunluğu',
         'values': ChemotherapyCycleDensity.values,

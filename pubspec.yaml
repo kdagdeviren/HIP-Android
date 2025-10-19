@@ -16,7 +16,7 @@ dependencies:
   smart_popup: ^3.0.4
   logger: ^2.6.1
   flutter_launcher_icons: ^0.14.4
-  lottie: ^3.3.2
+  lottie: ^3.3.0
   #Firebase
   firebase_messaging: ^16.0.2
   google_sign_in: ^7.2.0
@@ -26,8 +26,8 @@ dependencies:
   dotted_border: ^3.1.0
   share_plus: ^12.0.0
   app_links: ^6.3.4
-  csv: ^6.0.0
   path_provider: ^2.1.5
+  excel: ^3.0.0
 
 dev_dependencies:
   flutter_test:

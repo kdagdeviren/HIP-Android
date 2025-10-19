@@ -8,7 +8,6 @@ import 'package:flutter_medical_data_app/features/patient/domain/entities/catego
 
 class EnumDisplayUtil {
   static String getDisplayText(Enum e) {
-    // Pathology enums
     if (e is HistologicalType) return e.displayText;
     if (e is ERStatus) return e.displayText;
     if (e is PRStatus) return e.displayText;
@@ -39,6 +38,7 @@ class EnumDisplayUtil {
 
     // Comorbidity enums
     if (e is Presence) return e.displayText;
+    if (e is PresenceNegative) return e.displayText;
 
     // Biochemistry enums
     if (e is BiochemistryLevel) return e.displayText;

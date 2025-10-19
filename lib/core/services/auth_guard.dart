@@ -18,7 +18,7 @@ class AuthGuard extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasData) {
-          if (verificaionDone) {
+          if (!verificaionDone) {
             return const MainPage();
           } else {
             return const WaitingVeirfyPage();
