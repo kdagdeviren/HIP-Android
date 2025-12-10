@@ -4,7 +4,6 @@ import 'package:flutter_medical_data_app/features/patient/domain/entities/catego
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/comorbidity.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/biochemistry.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/radiology.dart';
-import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pet.dart';
 
 class EnumDisplayUtil {
   static String getDisplayText(Enum e) {
@@ -62,9 +61,6 @@ class EnumDisplayUtil {
     if (e is SurgeryHistory) return e.displayText;
     if (e is CosmeticImplant) return e.displayText;
 
-    // PET enums
-    if (e is PETResult) return e.displayText;
-
     return e.name; // Fallback
   }
 
@@ -102,9 +98,6 @@ class EnumDisplayUtil {
           break;
         case 'radiology':
           configs = Radiology.getDropdownConfigs();
-          break;
-        case 'pet':
-          configs = PET.getDropdownConfigs();
           break;
         default:
           return enumValue;

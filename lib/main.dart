@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:flutter_medical_data_app/core/services/auth_guard.dart';
 import 'package:flutter_medical_data_app/core/services/deep_link_service.dart';
+import 'package:flutter_medical_data_app/core/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,9 @@ void main() async {
 
   // Initialize deep link service
   await DeepLinkService().initialize();
+
+  // Initialize notification service
+  await NotificationService().initialize();
 
   runApp(MultiProvider(providers: providers, child: const MyApp()));
 }

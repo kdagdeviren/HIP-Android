@@ -41,7 +41,7 @@ class MainPage extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             CustomCardWithImage(
-              title: "Çıkış yapmak için test alanı",
+              title: "Hesabınızdan çıkış yapın",
               buttonName: "ÇIKIŞ YAP",
               image: "assets/images/existing_patinet.png",
               buttonPressed: () async {

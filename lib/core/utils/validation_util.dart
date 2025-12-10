@@ -52,6 +52,12 @@ class ValidationUtil {
     return null;
   }
 
+  /// Returns password validation error message
+  static String? getIdentityVerifyErrorMessage(bool isIdentityVerified) {
+    if (isIdentityVerified == false) return 'Kimlik doğrulaması yapılmalıdır';
+    return null;
+  }
+
   /// Returns name validation error message
   static String? getNameErrorMessage(String name) {
     if (name.isEmpty) return 'Ad alanı boş olamaz';

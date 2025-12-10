@@ -60,14 +60,6 @@ class CategoryCardData {
     );
   }
 
-  static CategoryCardData pet() {
-    return const CategoryCardData(
-      id: 'pet',
-      name: 'PET',
-      imagePath: 'assets/images/pet.png',
-    );
-  }
-
   static CategoryCardData getCategoryById(String id) {
     switch (id) {
       case 'pathology':
@@ -82,8 +74,6 @@ class CategoryCardData {
         return biochemistry();
       case 'radiology':
         return radiology();
-      case 'pet':
-        return pet();
       default:
         throw Exception('Invalid category ID: $id');
     }
@@ -98,7 +88,6 @@ class CategoryCardData {
       comorbidity(),
       biochemistry(),
       radiology(),
-      pet(),
     ];
   }
 }

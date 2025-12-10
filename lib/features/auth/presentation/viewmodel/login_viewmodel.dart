@@ -16,6 +16,14 @@ class LoginViewmodel extends ChangeNotifier {
   ResponseMessage? _responseMessage;
   ResponseMessage? get responseMessage => _responseMessage;
 
+  bool _isDisposed = false;
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
+
   /// Validates login form data
   String? validateLoginData(String email, String password) {
     final emailError = ValidationUtil.getEmailErrorMessage(email);
@@ -43,13 +51,13 @@ class LoginViewmodel extends ChangeNotifier {
         status: false,
         message: validationError,
       );
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
       return;
     }
 
     _isLoading = true;
     _responseMessage = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
 
     try {
       await _authService.loginWithEmail(email: email, password: password);
@@ -67,12 +75,12 @@ class LoginViewmodel extends ChangeNotifier {
       _isLoading = false;
 
       loading.close();
-      notifyListeners();
+      if (!_isDisposed) notifyListeners();
     }
   }
 
   void clearMessage() {
     _responseMessage = null;
-    notifyListeners();
+    if (!_isDisposed) notifyListeners();
   }
 }

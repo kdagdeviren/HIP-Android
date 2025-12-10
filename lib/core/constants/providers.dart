@@ -6,6 +6,13 @@ import 'package:flutter_medical_data_app/features/patient/data/repositories/pati
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_add_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_connection_viewmodel.dart';
+import 'package:flutter_medical_data_app/features/admin/data/admin_service.dart';
+import 'package:flutter_medical_data_app/features/admin/data/repositories/admin_repository_impl.dart';
+import 'package:flutter_medical_data_app/features/admin/domain/repositories/admin_repository.dart';
+import 'package:flutter_medical_data_app/features/admin/domain/usecases/get_unverified_users_usecase.dart';
+import 'package:flutter_medical_data_app/features/admin/domain/usecases/verify_user_usecase.dart';
+import 'package:flutter_medical_data_app/features/admin/domain/usecases/reject_user_usecase.dart';
+import 'package:flutter_medical_data_app/features/admin/presentation/viewmodel/admin_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 var providers = [
@@ -23,6 +30,29 @@ var providers = [
   Provider<PatientConnectionRepository>(
     create: (context) => PatientConnectionRepository(
       context.read<PatientConnectionRemoteDataSource>(),
+    ),
+  ),
+
+  // Admin
+  Provider<AdminService>(create: (_) => AdminService()),
+  Provider<AdminRepository>(
+    create: (context) => AdminRepositoryImpl(context.read<AdminService>()),
+  ),
+  Provider<GetUnverifiedUsersUsecase>(
+    create: (context) =>
+        GetUnverifiedUsersUsecase(context.read<AdminRepository>()),
+  ),
+  Provider<VerifyUserUsecase>(
+    create: (context) => VerifyUserUsecase(context.read<AdminRepository>()),
+  ),
+  Provider<RejectUserUsecase>(
+    create: (context) => RejectUserUsecase(context.read<AdminRepository>()),
+  ),
+  ChangeNotifierProvider<AdminViewModel>(
+    create: (context) => AdminViewModel(
+      context.read<GetUnverifiedUsersUsecase>(),
+      context.read<VerifyUserUsecase>(),
+      context.read<RejectUserUsecase>(),
     ),
   ),
 

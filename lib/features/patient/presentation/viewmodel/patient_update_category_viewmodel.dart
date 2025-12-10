@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/services/popup_service.dart';
+import 'package:flutter_medical_data_app/core/services/notification_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
+import 'package:flutter_medical_data_app/features/patient/data/datasources/patient_connection_remote_data_source.dart';
+import 'package:flutter_medical_data_app/features/patient/data/models/patient_connection_model.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
@@ -15,6 +20,7 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
   final String? patientJson;
   Map<String, dynamic> selectedValues = {};
   bool _isInitialized = false;
+  Patient? _patient;
 
   PatientUpdateCategoryViewmodel(
     this.patientViewModel,
@@ -43,8 +49,6 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
         return Biochemistry.getDropdownConfigs();
       case 'radiology':
         return Radiology.getDropdownConfigs();
-      case 'pet':
-        return PET.getDropdownConfigs();
       default:
         return null;
     }
@@ -61,6 +65,7 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
           patientJson!,
         );
         patient = Patient.fromMap(patientMap);
+        _patient = patient; // Hasta bilgisini sakla
         LoggerUtil.d('Patient deserialized from JSON successfully');
       } catch (e) {
         LoggerUtil.e('Error deserializing patient JSON: $e');
@@ -91,9 +96,6 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
         break;
       case 'radiology':
         raw = patient.radiology?.toMap();
-        break;
-      case 'pet':
-        raw = patient.pet?.toMap();
         break;
       default:
         raw = {};
@@ -173,6 +175,9 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
         }
       });
 
+      // Check if this is an update or new entry
+      bool isUpdate = _isUpdate();
+
       // Update only this category in Firestore
       final response = await patientViewModel.updatePatientCategory(
         patientId!,
@@ -185,6 +190,10 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
         LoggerUtil.i(
           'Category $categoryKey updated successfully for patient $patientId',
         );
+
+        // Send notification to owners after successful save
+        await _sendNotificationToOwners(context, isUpdate);
+
         String? navigationFrom = NavigationService.instance
             .getPreviousRouteName();
         if (navigationFrom == '/patient-view-data') {
@@ -203,6 +212,121 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
       loading.close();
       LoggerUtil.e('Error saving category data: $e');
       PopupService().showError(context, "HATA", e.toString());
+    }
+  }
+
+  bool _isUpdate() {
+    // Check if any values are already set (indicating this is an update)
+    return selectedValues.values.any((value) => value != null);
+  }
+
+  Future<void> _sendNotificationToOwners(
+    BuildContext context,
+    bool isUpdate,
+  ) async {
+    try {
+      final connectionDataSource = PatientConnectionRemoteDataSource();
+
+      // Get all connections for this patient
+      final connections = await connectionDataSource.getConnectionsByPatientId(
+        patientId!,
+      );
+
+      // Filter connections with owner role
+      final ownerConnections = connections
+          .where((connection) => connection.role == ConnectionRole.owner)
+          .toList();
+
+      if (ownerConnections.isEmpty) {
+        LoggerUtil.i('No owner connections found for patient $patientId');
+        return;
+      }
+
+      // Get current user name
+      final currentUserName = await _getCurrentUserName();
+      final userInfo = currentUserName != null
+          ? '$currentUserName tarafından'
+          : '';
+
+      // Get patient name for notification
+      String patientName = 'Hasta';
+      if (_patient?.firstName != null && _patient?.lastName != null) {
+        patientName = '${_patient!.firstName} ${_patient!.lastName}';
+      }
+
+      // Get category display name
+      final categoryName = categoryCardData.name;
+
+      // Create notification message
+      final message = isUpdate
+          ? '$userInfo\n$patientName - $categoryName verileri güncellendi'
+          : '$userInfo\n$patientName - $categoryName verilerinin girişi tamamlandı';
+
+      // Send notification to each owner
+      final notificationService = NotificationService();
+      for (final connection in ownerConnections) {
+        try {
+          // Get FCM token for the owner user
+          // Note: You might need to store FCM tokens in user documents
+          // For now, we'll assume you have a way to get user FCM tokens
+          final ownerToken = await _getUserFCMToken(connection.userId);
+          if (ownerToken != null) {
+            await notificationService.sendNotification(
+              token: ownerToken,
+              title: 'Hasta Güncellemesi',
+              body: message,
+            );
+            LoggerUtil.i('Notification sent to owner ${connection.userId}');
+          } else {
+            LoggerUtil.w('No FCM token found for owner ${connection.userId}');
+          }
+        } catch (e) {
+          LoggerUtil.e(
+            'Error sending notification to owner ${connection.userId}: $e',
+          );
+        }
+      }
+    } catch (e) {
+      LoggerUtil.e('Error sending notifications to owners: $e');
+    }
+  }
+
+  Future<String?> _getCurrentUserName() async {
+    try {
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) return null;
+
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        final ad = data?['ad'] as String?;
+        final soyad = data?['soyad'] as String?;
+        if (ad != null && soyad != null) {
+          return '$ad $soyad';
+        }
+      }
+      return null;
+    } catch (e) {
+      LoggerUtil.e('Error getting current user name: $e');
+      return null;
+    }
+  }
+
+  Future<String?> _getUserFCMToken(String userId) async {
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      return userDoc.data()?['fcmToken'] as String?;
+    } catch (e) {
+      LoggerUtil.e('Error getting FCM token for user $userId: $e');
+      return null;
     }
   }
 }

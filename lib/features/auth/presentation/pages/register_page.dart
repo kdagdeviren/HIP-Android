@@ -114,12 +114,41 @@ class _RegisterPageState extends State<RegisterPage> {
                                     obscureText: true,
                                   ),
                                   SizedBox(height: 1.h),
-                                  AuthVerifyIdentity(
-                                    onTap: () {},
-                                    iconNameLeft: "select_image.png",
-                                    iconNameRight: "arrow_right.png",
-                                    hintText: "Kimlik Doğrulaması",
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: AuthVerifyIdentity(
+                                          onTap: () async {
+                                            await viewModel.changeImage(
+                                              context,
+                                            );
+                                          },
+                                          iconNameLeft: "select_image.png",
+                                          iconNameRight: "arrow_right.png",
+                                          hintText: "Kimlik Doğrulaması",
+                                        ),
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      Container(
+                                        padding: EdgeInsets.all(0.2),
+
+                                        decoration: BoxDecoration(
+                                          color: AppColors.text,
+                                          borderRadius: BorderRadius.circular(
+                                            360,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          Icons.check_circle,
+                                          color: viewModel.isIdentityVerified
+                                              ? AppColors.success
+                                              : Colors.white,
+                                          size: 20.sp,
+                                        ),
+                                      ),
+                                    ],
                                   ),
+
                                   SizedBox(height: 2.h),
                                   if (viewModel.responseMessage != null)
                                     Padding(

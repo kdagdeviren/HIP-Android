@@ -8,7 +8,6 @@ import 'package:flutter_medical_data_app/features/patient/domain/entities/catego
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/comorbidity.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/biochemistry.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/radiology.dart';
-import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pet.dart';
 
 class Patient {
   final String? docId;
@@ -24,7 +23,6 @@ class Patient {
   final Comorbidity? comorbidity;
   final Biochemistry? biochemistry;
   final Radiology? radiology;
-  final PET? pet;
   final AddedCategories? addedCategories;
 
   Patient({
@@ -41,7 +39,6 @@ class Patient {
     this.comorbidity,
     this.biochemistry,
     this.radiology,
-    this.pet,
     this.addedCategories,
   });
 
@@ -57,7 +54,6 @@ class Patient {
       'comorbidity': comorbidity?.toMap(),
       'biochemistry': biochemistry?.toMap(),
       'radiology': radiology?.toMap(),
-      'pet': pet?.toMap(),
       'addedCategories': addedCategories?.toMap(),
       // Note: createdAt/updatedAt will be handled at datasource level with FieldValue.serverTimestamp()
       if (createdAt != null) 'createdAt': createdAt?.toIso8601String(),
@@ -95,9 +91,6 @@ class Patient {
         radiology: map['radiology'] != null
             ? Radiology.fromMap(Map<String, dynamic>.from(map['radiology']))
             : null,
-        pet: map['pet'] != null
-            ? PET.fromMap(Map<String, dynamic>.from(map['pet']))
-            : null,
         addedCategories: map['addedCategories'] != null
             ? AddedCategories.fromMap(
                 Map<String, dynamic>.from(map['addedCategories']),
@@ -131,7 +124,6 @@ class Patient {
         comorbidity: null,
         biochemistry: null,
         radiology: null,
-        pet: null,
       );
     } catch (e) {
       throw Exception('Error parsing Patient from map: $e, map: $map');
@@ -161,7 +153,6 @@ class Patient {
     Comorbidity? comorbidity,
     Biochemistry? biochemistry,
     Radiology? radiology,
-    PET? pet,
     AddedCategories? addedCategories,
   }) {
     return Patient(
@@ -178,7 +169,6 @@ class Patient {
       comorbidity: comorbidity ?? this.comorbidity,
       biochemistry: biochemistry ?? this.biochemistry,
       radiology: radiology ?? this.radiology,
-      pet: pet ?? this.pet,
       addedCategories: addedCategories ?? this.addedCategories,
     );
   }

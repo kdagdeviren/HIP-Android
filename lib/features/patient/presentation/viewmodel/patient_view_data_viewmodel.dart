@@ -70,10 +70,6 @@ class PatientViewDataViewmodel extends ChangeNotifier {
         raw = _patient!.radiology?.toMap();
         fieldConfigs = Radiology.getDropdownConfigs();
         break;
-      case 'pet':
-        raw = _patient!.pet?.toMap();
-        fieldConfigs = PET.getDropdownConfigs();
-        break;
       default:
         return null;
     }
@@ -165,9 +161,6 @@ class PatientViewDataViewmodel extends ChangeNotifier {
               break;
             case 'radiology':
               fieldConfigs = Radiology.getDropdownConfigs();
-              break;
-            case 'pet':
-              fieldConfigs = PET.getDropdownConfigs();
               break;
             default:
               fieldConfigs = null;

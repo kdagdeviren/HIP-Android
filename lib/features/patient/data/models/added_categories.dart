@@ -5,7 +5,6 @@ class AddedCategories {
   final bool comorbidity;
   final bool biochemistry;
   final bool radiology;
-  final bool pet;
 
   AddedCategories({
     this.pathology = false,
@@ -14,7 +13,6 @@ class AddedCategories {
     this.comorbidity = false,
     this.biochemistry = false,
     this.radiology = false,
-    this.pet = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,7 +23,6 @@ class AddedCategories {
       'comorbidity': comorbidity,
       'biochemistry': biochemistry,
       'radiology': radiology,
-      'pet': pet,
     };
   }
 
@@ -37,7 +34,6 @@ class AddedCategories {
       comorbidity: map['comorbidity'] ?? false,
       biochemistry: map['biochemistry'] ?? false,
       radiology: map['radiology'] ?? false,
-      pet: map['pet'] ?? false,
     );
   }
 
@@ -48,7 +44,6 @@ class AddedCategories {
     bool? comorbidity,
     bool? biochemistry,
     bool? radiology,
-    bool? pet,
   }) {
     return AddedCategories(
       pathology: pathology ?? this.pathology,
@@ -57,7 +52,6 @@ class AddedCategories {
       comorbidity: comorbidity ?? this.comorbidity,
       biochemistry: biochemistry ?? this.biochemistry,
       radiology: radiology ?? this.radiology,
-      pet: pet ?? this.pet,
     );
   }
 
@@ -69,7 +63,6 @@ class AddedCategories {
       comorbidity: false,
       biochemistry: false,
       radiology: false,
-      pet: false,
     );
   }
 }
