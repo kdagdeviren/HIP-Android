@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
@@ -71,14 +72,17 @@ class PatientAllListViewModel extends ChangeNotifier {
   ) async {
     // Validasyon kontrolleri
     if (patientId.trim().isEmpty) {
-      return ResponseMessage(status: false, message: 'Hasta ID boş olamaz');
+      return ResponseMessage(
+        status: false,
+        message: L10n.current.patient_allList_idEmptyError,
+      );
     }
 
     // ID format kontrolü (minimum uzunluk)
     if (patientId.trim().length < 10) {
       return ResponseMessage(
         status: false,
-        message: 'Geçersiz hasta ID formatı',
+        message: L10n.current.patient_allList_idInvalidError,
       );
     }
 
@@ -86,7 +90,7 @@ class PatientAllListViewModel extends ChangeNotifier {
     if (currentUser == null) {
       return ResponseMessage(
         status: false,
-        message: 'Kullanıcı oturumu bulunamadı. Lütfen giriş yapın.',
+        message: L10n.current.patient_common_sessionNotFoundLogin,
       );
     }
 
@@ -94,7 +98,7 @@ class PatientAllListViewModel extends ChangeNotifier {
       LoggerUtil.e('ConnectionViewModel is not initialized');
       return ResponseMessage(
         status: false,
-        message: 'Bağlantı servisi hazır değil',
+        message: L10n.current.patient_allList_connectionServiceNotReady,
       );
     }
 
@@ -106,7 +110,10 @@ class PatientAllListViewModel extends ChangeNotifier {
     try {
       // Zaten bağlı mı kontrol et
       if (_connectionViewModel!.isConnectedToPatient(patientId)) {
-        return ResponseMessage(status: false, message: 'Bu hasta zaten mevcut');
+        return ResponseMessage(
+          status: false,
+          message: L10n.current.patient_allList_alreadyConnected,
+        );
       }
 
       // Bağlantı oluştur

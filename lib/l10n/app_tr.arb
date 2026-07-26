@@ -170,5 +170,50 @@
   "data_list_enterButton": "VERİ GİR",
   "patient_list_empty": "Kayıtlı hasta bulunamadı.",
   "patient_medicalData_title": "Mevcut Veriler",
-  "patient_medicalData_enterButton": "VERİ GİRİŞİ"
+  "patient_medicalData_enterButton": "VERİ GİRİŞİ",
+  "patient_viewModel_notAuthenticated": "Oturum bulunamadı. Lütfen tekrar giriş yapın.",
+  "patient_common_sessionNotFound": "Kullanıcı oturumu bulunamadı",
+  "patient_common_sessionNotFoundLogin": "Kullanıcı oturumu bulunamadı. Lütfen giriş yapın.",
+  "patient_allList_connectionServiceNotReady": "Bağlantı servisi hazır değil",
+  "patient_allList_alreadyConnected": "Bu hasta zaten mevcut",
+  "patient_add_namePrefix": "Ad: {error}",
+  "@patient_add_namePrefix": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_add_addSuccess": "Hasta başarıyla eklendi.",
+  "patient_connection_createFailed": "Bağlantı oluşturulamadı: {error}",
+  "@patient_connection_createFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_connection_deleteFailed": "Bağlantı silinemedi: {error}",
+  "@patient_connection_deleteFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_updateCategory_success": "Güncelleme başarılı",
+  "patient_updateCategory_errorTitle": "HATA",
+  "patient_updateCategory_notifTitle": "Hasta Güncellemesi",
+  "patient_updateCategory_notifBodyUpdated": "{userInfo}\n{patientName} - {categoryName} verileri güncellendi",
+  "@patient_updateCategory_notifBodyUpdated": {
+    "placeholders": { "userInfo": { "type": "String" }, "patientName": { "type": "String" }, "categoryName": { "type": "String" } }
+  },
+  "patient_updateCategory_notifBodyCompleted": "{userInfo}\n{patientName} - {categoryName} verilerinin girişi tamamlandı",
+  "@patient_updateCategory_notifBodyCompleted": {
+    "placeholders": { "userInfo": { "type": "String" }, "patientName": { "type": "String" }, "categoryName": { "type": "String" } }
+  },
+  "patient_updateCategory_byUser": "{userName} tarafından",
+  "@patient_updateCategory_byUser": {
+    "placeholders": { "userName": { "type": "String" } }
+  },
+  "patient_updateCategory_defaultPatientName": "Hasta",
+  "patient_viewData_patientInfoNotFound": "Hasta bilgisi bulunamadı",
+  "patient_viewData_categoriesIncomplete": "Tüm kategoriler doldurulmalıdır",
+  "patient_viewData_exportSubject": "Hasta Verileri - {fullName}",
+  "@patient_viewData_exportSubject": {
+    "placeholders": { "fullName": { "type": "String" } }
+  },
+  "patient_viewData_exportSuccess": "XLSX dosyası oluşturuldu ve paylaşıldı",
+  "patient_viewData_exportError": "Hata: {error}",
+  "@patient_viewData_exportError": {
+    "placeholders": { "error": { "type": "String" } }
+  }
 }

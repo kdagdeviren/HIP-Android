@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/enum_display_util.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_model.dart';
@@ -88,7 +89,7 @@ class PatientViewDataViewmodel extends ChangeNotifier {
       String displayValue;
 
       if (value == null) {
-        displayValue = "Veri Yok-0";
+        displayValue = L10n.current.common_noData;
       } else if (value is String) {
         // EnumDisplayUtil ile displayText'i al
         displayValue = EnumDisplayUtil.getDisplayTextByFieldName(
@@ -115,13 +116,16 @@ class PatientViewDataViewmodel extends ChangeNotifier {
   /// XLSX export işlemini gerçekleştirir
   Future<ExportResult> exportToXlsx() async {
     if (_patient == null) {
-      return ExportResult(success: false, message: 'Hasta bilgisi bulunamadı');
+      return ExportResult(
+        success: false,
+        message: L10n.current.patient_viewData_patientInfoNotFound,
+      );
     }
 
     if (!areAllCategoriesCompleted()) {
       return ExportResult(
         success: false,
-        message: 'Tüm kategoriler doldurulmalıdır',
+        message: L10n.current.patient_viewData_categoriesIncomplete,
       );
     }
 
@@ -130,7 +134,9 @@ class PatientViewDataViewmodel extends ChangeNotifier {
       var excel = Excel.createExcel();
       var sheet = excel['Sheet1'];
 
-      // Başlık satırı
+      // Excel sütun başlıkları bilinçli olarak lokalize edilmiyor: üretilen
+      // dosya analiz hattına ve yayına gidiyor, sütun adları dile göre
+      // değişmemeli.
       sheet.cell(CellIndex.indexByString('A1')).value = 'Değişken';
       sheet.cell(CellIndex.indexByString('B1')).value = 'Değer';
 
@@ -204,19 +210,25 @@ class PatientViewDataViewmodel extends ChangeNotifier {
       await file.writeAsBytes(bytes!);
 
       // Dosyayı paylaş
-      await Share.shareXFiles(
-        [XFile(path)],
-        subject:
-            'Hasta Verileri - ${_patient!.firstName} ${_patient!.lastName}',
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [XFile(path)],
+          subject: L10n.current.patient_viewData_exportSubject(
+            '${_patient!.firstName} ${_patient!.lastName}',
+          ),
+        ),
       );
 
       return ExportResult(
         success: true,
-        message: 'XLSX dosyası oluşturuldu ve paylaşıldı',
+        message: L10n.current.patient_viewData_exportSuccess,
       );
     } catch (e) {
       LoggerUtil.e('XLSX export error: $e');
-      return ExportResult(success: false, message: 'Hata: ${e.toString()}');
+      return ExportResult(
+        success: false,
+        message: L10n.current.patient_viewData_exportError(e.toString()),
+      );
     }
   }
 }

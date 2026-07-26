@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/services/popup_service.dart';
@@ -202,16 +204,31 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
         } else {
           NavigationService.instance.goBack();
         }
-        PopupService().showSuccess(context, "Başarılı", "Güncelleme başarılı");
+        final l10n = AppLocalizations.of(context)!;
+        PopupService().showSuccess(
+          context,
+          l10n.common_success,
+          l10n.patient_updateCategory_success,
+        );
       } else {
         loading.close();
         LoggerUtil.e('Failed to update category: ${response.message}');
-        PopupService().showError(context, "HATA", response.message);
+        final l10n = AppLocalizations.of(context)!;
+        PopupService().showError(
+          context,
+          l10n.patient_updateCategory_errorTitle,
+          response.message,
+        );
       }
     } catch (e) {
       loading.close();
       LoggerUtil.e('Error saving category data: $e');
-      PopupService().showError(context, "HATA", e.toString());
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showError(
+        context,
+        l10n.patient_updateCategory_errorTitle,
+        e.toString(),
+      );
     }
   }
 
@@ -245,11 +262,11 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
       // Get current user name
       final currentUserName = await _getCurrentUserName();
       final userInfo = currentUserName != null
-          ? '$currentUserName tarafından'
+          ? L10n.current.patient_updateCategory_byUser(currentUserName)
           : '';
 
       // Get patient name for notification
-      String patientName = 'Hasta';
+      String patientName = L10n.current.patient_updateCategory_defaultPatientName;
       if (_patient?.firstName != null && _patient?.lastName != null) {
         patientName = '${_patient!.firstName} ${_patient!.lastName}';
       }
@@ -259,8 +276,16 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
 
       // Create notification message
       final message = isUpdate
-          ? '$userInfo\n$patientName - $categoryName verileri güncellendi'
-          : '$userInfo\n$patientName - $categoryName verilerinin girişi tamamlandı';
+          ? L10n.current.patient_updateCategory_notifBodyUpdated(
+              userInfo,
+              patientName,
+              categoryName,
+            )
+          : L10n.current.patient_updateCategory_notifBodyCompleted(
+              userInfo,
+              patientName,
+              categoryName,
+            );
 
       // Send notification to each owner
       final notificationService = NotificationService();
@@ -273,7 +298,7 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
           if (ownerToken != null) {
             await notificationService.sendNotification(
               token: ownerToken,
-              title: 'Hasta Güncellemesi',
+              title: L10n.current.patient_updateCategory_notifTitle,
               body: message,
             );
             LoggerUtil.i('Notification sent to owner ${connection.userId}');

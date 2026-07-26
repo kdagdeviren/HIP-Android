@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_connection_model.dart';
@@ -63,7 +64,7 @@ class PatientConnectionViewModel extends ChangeNotifier {
       LoggerUtil.e('Error connecting patient: $e');
       return ResponseMessage(
         status: false,
-        message: 'Bağlantı oluşturulamadı: $e',
+        message: L10n.current.patient_connection_createFailed(e.toString()),
       );
     }
   }
@@ -85,7 +86,10 @@ class PatientConnectionViewModel extends ChangeNotifier {
       return response;
     } catch (e) {
       LoggerUtil.e('Error disconnecting patient: $e');
-      return ResponseMessage(status: false, message: 'Bağlantı silinemedi: $e');
+      return ResponseMessage(
+        status: false,
+        message: L10n.current.patient_connection_deleteFailed(e.toString()),
+      );
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
@@ -45,7 +46,7 @@ class PatientViewModel extends ChangeNotifier {
         // Without this the list keeps hasMore == true and renders an endless
         // spinner over an empty list.
         _hasMore = false;
-        _errorMessage = 'Oturum bulunamadı. Lütfen tekrar giriş yapın.';
+        _errorMessage = L10n.current.patient_viewModel_notAuthenticated;
         return;
       }
 
