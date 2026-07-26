@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/viewmodel/login_viewmodel.dart';
@@ -39,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ChangeNotifierProvider(
       create: (_) => LoginViewmodel(AuthService()),
       child: Scaffold(
@@ -77,13 +79,13 @@ class _LoginPageState extends State<LoginPage> {
                                 AuthTextField(
                                   controller: emailController,
                                   iconName: "email.png",
-                                  hintText: "Email",
+                                  hintText: l10n.auth_login_emailHint,
                                 ),
                                 SizedBox(height: 1.h),
                                 AuthTextField(
                                   controller: passwordController,
                                   iconName: "pass.png",
-                                  hintText: "Şifre",
+                                  hintText: l10n.auth_login_passwordHint,
                                   obscureText: true,
                                   iconHeight: 2.h,
                                 ),
@@ -116,8 +118,8 @@ class _LoginPageState extends State<LoginPage> {
                                   },
                                   height: 5.h,
                                   buttonText: isLoading
-                                      ? "Giriş Yapılıyor..."
-                                      : "GİRİŞ YAP",
+                                      ? l10n.auth_login_submittingButton
+                                      : l10n.auth_login_submitButton,
                                 ),
                               ],
                             ),
@@ -132,8 +134,8 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                     BottomTextNavigator(
-                      firstText: "Hesabınız yok mu? ",
-                      secondText: "Kayıt Ol",
+                      firstText: l10n.auth_login_noAccountPrompt,
+                      secondText: l10n.auth_login_registerLink,
                       routeName: "/register",
                     ),
                   ],

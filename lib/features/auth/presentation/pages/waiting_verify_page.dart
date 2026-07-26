@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/bottom_text_navigator.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/widgets/logo_with_round_bg.dart';
@@ -11,6 +12,7 @@ class WaitingVeirfyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -37,12 +39,12 @@ class WaitingVeirfyPage extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 15.h,
                             child: Lottie.asset("assets/lottie/identity.json"),
                           ),
                           Text(
-                            "Hesabınız doğrulanmayı bekliyor.\n24 saat içinde doğrulama yapılacaktır.",
+                            l10n.auth_waitingVerify_message,
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18,
@@ -65,8 +67,8 @@ class WaitingVeirfyPage extends StatelessWidget {
               ),
 
               BottomTextNavigator(
-                firstText: "Hesap değiştirmek ister misiniz? ",
-                secondText: "Giriş Yap",
+                firstText: l10n.auth_waitingVerify_changeAccountPrompt,
+                secondText: l10n.auth_common_loginLink,
                 routeName: "/login",
               ),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/pages/waiting_verify_page.dart';
@@ -52,14 +53,14 @@ class _AuthGuardState extends State<AuthGuard> {
       final profile = isAdmin ? null : await _authService.getUser(user.uid);
 
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
       setState(() {
         _isAdmin = isAdmin;
         _userModel = profile;
         _loadedUid = user.uid;
         _isLoadingUserData = false;
         _errorMessage = (!isAdmin && profile == null)
-            ? 'Hesabınıza ait kullanıcı kaydı bulunamadı. '
-                  'Yönetici ile iletişime geçin veya tekrar kayıt olun.'
+            ? l10n.auth_guard_profileNotFound
             : null;
       });
     } catch (e) {
@@ -133,7 +134,9 @@ class _AuthGuardState extends State<AuthGuard> {
 
         if (_errorMessage != null || _userModel == null) {
           return _AuthGuardError(
-            message: _errorMessage ?? 'Kullanıcı bilgileri okunamadı.',
+            message:
+                _errorMessage ??
+                AppLocalizations.of(context)!.auth_guard_userDataUnreadable,
             onRetry: _retry,
             onSignOut: _signOut,
           );
@@ -173,6 +176,7 @@ class _AuthGuardError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Center(
         child: Padding(
@@ -186,10 +190,10 @@ class _AuthGuardError extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 24),
-              FilledButton(onPressed: onRetry, child: const Text('Tekrar dene')),
+              FilledButton(onPressed: onRetry, child: Text(l10n.common_retry)),
               TextButton(
                 onPressed: onSignOut,
-                child: const Text('Çıkış yap'),
+                child: Text(l10n.auth_guard_signOut),
               ),
             ],
           ),

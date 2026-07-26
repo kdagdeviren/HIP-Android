@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
@@ -64,7 +65,7 @@ class LoginViewmodel extends ChangeNotifier {
 
       _responseMessage = ResponseMessage(
         status: true,
-        message: 'Giriş Başarılı!',
+        message: L10n.current.auth_login_successMessage,
       );
       LoggerUtil.i('Giriş başarılı!');
     } catch (e) {

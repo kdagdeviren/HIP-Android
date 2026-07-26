@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/popup_service.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
@@ -56,7 +58,12 @@ class RegisterViewModel extends ChangeNotifier {
       _identityImage = pickedFile;
       _isIdentityVerified = true;
     } else {
-      PopupService().showError(context, "Hata", "Resim çekilemedi.");
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showError(
+        context,
+        l10n.common_error,
+        l10n.auth_register_imageCaptureFailed,
+      );
     }
     loading.close();
     notifyListeners();
@@ -74,7 +81,11 @@ class RegisterViewModel extends ChangeNotifier {
     if (nameError != null) return nameError;
 
     final surnameError = ValidationUtil.getNameErrorMessage(surname);
-    if (surnameError != null) return "Soyad: ${surnameError.toLowerCase()}";
+    if (surnameError != null) {
+      return L10n.current.auth_register_surnamePrefix(
+        surnameError.toLowerCase(),
+      );
+    }
 
     final emailError = ValidationUtil.getEmailErrorMessage(email);
     if (emailError != null) return emailError;
@@ -163,14 +174,13 @@ class RegisterViewModel extends ChangeNotifier {
 
         _responseMessage = ResponseMessage(
           status: true,
-          message: 'Kayıt başarılı!',
+          message: L10n.current.auth_register_successMessage,
         );
         await NotificationService().sendNotification(
           token:
               "dPRfBPYHTeK_16SNjlRmQs:APA91bEkl04aWPANWMFNTNTZYADaJRUYCM4tApSJaUozRXy6N93Fjazcgj5E613a91wKiUDxaAilsLgWQdeadKdb5-V4pHtpFz-M-0oA7-IJtaq7cWjnN4M",
-          title: 'Yeni Kayıt Var',
-          body:
-              'Uygulamaya yeni bir kullanıcı kaydoldu: $name $surname. Kimlik doğrulaması bekliyor.',
+          title: L10n.current.auth_register_newUserNotifTitle,
+          body: L10n.current.auth_register_newUserNotifBody(name, surname),
         );
         LoggerUtil.i('Kayıt başarılı!');
       } else {

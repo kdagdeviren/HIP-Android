@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/viewmodel/register_viewmodel.dart';
@@ -50,6 +51,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ChangeNotifierProvider(
       create: (_) => RegisterViewModel(AuthService()),
       child: Scaffold(
@@ -85,32 +87,33 @@ class _RegisterPageState extends State<RegisterPage> {
                                   AuthTextField(
                                     controller: nameController,
                                     iconName: "name.png",
-                                    hintText: "Ad",
+                                    hintText: l10n.auth_register_nameHint,
                                   ),
                                   SizedBox(height: 1.h),
                                   AuthTextField(
                                     controller: surnameController,
                                     iconName: "name.png",
-                                    hintText: "Soyad",
+                                    hintText: l10n.auth_register_surnameHint,
                                   ),
                                   SizedBox(height: 1.h),
                                   AuthTextField(
                                     controller: emailController,
                                     iconName: "email.png",
-                                    hintText: "Email",
+                                    hintText: l10n.auth_login_emailHint,
                                   ),
                                   SizedBox(height: 1.h),
                                   AuthTextField(
                                     controller: passwordController,
                                     iconName: "pass.png",
-                                    hintText: "Şifre",
+                                    hintText: l10n.auth_login_passwordHint,
                                     obscureText: true,
                                   ),
                                   SizedBox(height: 1.h),
                                   AuthTextField(
                                     controller: passwordRepeatController,
                                     iconName: "pass.png",
-                                    hintText: "Şifre Tekrar",
+                                    hintText:
+                                        l10n.auth_register_passwordRepeatHint,
                                     obscureText: true,
                                   ),
                                   SizedBox(height: 1.h),
@@ -125,7 +128,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                           },
                                           iconNameLeft: "select_image.png",
                                           iconNameRight: "arrow_right.png",
-                                          hintText: "Kimlik Doğrulaması",
+                                          hintText: l10n
+                                              .auth_register_identityVerifyHint,
                                         ),
                                       ),
                                       SizedBox(width: 2.w),
@@ -199,8 +203,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                     },
                                     height: 5.h,
                                     buttonText: viewModel.isLoading
-                                        ? "Kayıt Olunuyor..."
-                                        : "KAYIT OL",
+                                        ? l10n.auth_register_submittingButton
+                                        : l10n.auth_register_submitButton,
                                   ),
                                 ],
                               ),
@@ -218,8 +222,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
 
                     BottomTextNavigator(
-                      firstText: "Hesabınız var mı? ",
-                      secondText: "Giriş Yap",
+                      firstText: l10n.auth_register_haveAccountPrompt,
+                      secondText: l10n.auth_common_loginLink,
                       routeName: "/login",
                     ),
                   ],

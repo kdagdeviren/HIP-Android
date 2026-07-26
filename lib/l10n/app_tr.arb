@@ -65,5 +65,36 @@
   "validation_protocolInvalid": "Protokol numarası sadece rakam içermelidir",
   "validation_passwordConfirmEmpty": "Şifre tekrarı boş olamaz",
   "validation_passwordMismatch": "Şifreler eşleşmiyor",
-  "validation_identityNotVerified": "Kimlik doğrulaması yapılmalıdır"
+  "validation_identityNotVerified": "Kimlik doğrulaması yapılmalıdır",
+  "auth_login_emailHint": "Email",
+  "auth_login_passwordHint": "Şifre",
+  "auth_login_submittingButton": "Giriş Yapılıyor...",
+  "auth_login_submitButton": "GİRİŞ YAP",
+  "auth_login_noAccountPrompt": "Hesabınız yok mu? ",
+  "auth_login_registerLink": "Kayıt Ol",
+  "auth_login_successMessage": "Giriş Başarılı!",
+  "auth_common_loginLink": "Giriş Yap",
+  "auth_register_nameHint": "Ad",
+  "auth_register_surnameHint": "Soyad",
+  "auth_register_passwordRepeatHint": "Şifre Tekrar",
+  "auth_register_identityVerifyHint": "Kimlik Doğrulaması",
+  "auth_register_submittingButton": "Kayıt Olunuyor...",
+  "auth_register_submitButton": "KAYIT OL",
+  "auth_register_haveAccountPrompt": "Hesabınız var mı? ",
+  "auth_register_imageCaptureFailed": "Resim çekilemedi.",
+  "auth_register_surnamePrefix": "Soyad: {error}",
+  "@auth_register_surnamePrefix": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "auth_register_successMessage": "Kayıt başarılı!",
+  "auth_register_newUserNotifTitle": "Yeni Kayıt Var",
+  "auth_register_newUserNotifBody": "Uygulamaya yeni bir kullanıcı kaydoldu: {name} {surname}. Kimlik doğrulaması bekliyor.",
+  "@auth_register_newUserNotifBody": {
+    "placeholders": { "name": { "type": "String" }, "surname": { "type": "String" } }
+  },
+  "auth_waitingVerify_message": "Hesabınız doğrulanmayı bekliyor.\n24 saat içinde doğrulama yapılacaktır.",
+  "auth_waitingVerify_changeAccountPrompt": "Hesap değiştirmek ister misiniz? ",
+  "auth_guard_profileNotFound": "Hesabınıza ait kullanıcı kaydı bulunamadı. Yönetici ile iletişime geçin veya tekrar kayıt olun.",
+  "auth_guard_userDataUnreadable": "Kullanıcı bilgileri okunamadı.",
+  "auth_guard_signOut": "Çıkış yap"
 }

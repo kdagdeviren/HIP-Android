@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -50,7 +51,7 @@ class AuthVerifyIdentity extends StatelessWidget {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    "Kimlik Doğrulaması",
+                    AppLocalizations.of(context)!.auth_register_identityVerifyHint,
                     style: AppTextStyles.nunitoRegular20.copyWith(
                       color: AppColors.text,
                     ),
