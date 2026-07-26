@@ -1,0 +1,165 @@
+rules_version = '2';
+
+// Access model
+// ------------
+// Every rule below is deny-by-default: the catch-all at the bottom rejects any
+// path not explicitly matched above it.
+//
+// Three roles exist:
+//   admin     - carries the `admin` custom claim, granted only by
+//               tool/set_admin_claim.js. Approves accounts and can clean up.
+//   verified  - signed in AND users/{uid}.isVerified == true. An account an
+//               admin has approved. Only these can touch patient data.
+//   owner     - the verified user recorded as patients/{id}.mainDoctorId.
+//               Controls who else may access that patient.
+//
+// Authorization for a patient is read from patients/{id}.authorizedUserIds.
+// Rules cannot run queries, so that list is denormalized from
+// patient_connections and kept in sync by a batched write on the client.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function uid() {
+      return request.auth.uid;
+    }
+
+    // Granted only by tool/set_admin_claim.js. On accounts without the claim
+    // the emulator logs "Property admin is undefined" while evaluating a denied
+    // request; the decision is still a correct deny, and the log is noise.
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
+    }
+
+    // An approved account. The exists() check keeps this from erroring out for
+    // a signed-in user whose profile document was never created.
+    function isVerified() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(uid()))
+        && get(/databases/$(database)/documents/users/$(uid())).data.isVerified == true;
+    }
+
+    function patientData(patientId) {
+      return get(/databases/$(database)/documents/patients/$(patientId)).data;
+    }
+
+    match /users/{userId} {
+      // A user reads only their own profile; admins read any, and may list the
+      // collection to find accounts awaiting approval.
+      allow get: if isAdmin() || (isSignedIn() && uid() == userId);
+      allow list: if isAdmin();
+
+      // Registration writes its own document and cannot self-approve.
+      allow create: if isSignedIn()
+        && uid() == userId
+        && request.resource.data.docID == userId
+        && request.resource.data.isVerified == false;
+
+      // A user may edit their profile but never their approval flag or id.
+      allow update: if isAdmin()
+        || (isSignedIn()
+            && uid() == userId
+            && request.resource.data.isVerified == resource.data.isVerified
+            && request.resource.data.docID == resource.data.docID);
+
+      allow delete: if isAdmin();
+    }
+
+    match /patients/{patientId} {
+
+      function accessList() {
+        return resource.data.authorizedUserIds;
+      }
+
+      function newAccessList() {
+        return request.resource.data.authorizedUserIds;
+      }
+
+      function onlyAccessListChanged() {
+        return request.resource.data.diff(resource.data)
+          .affectedKeys().hasOnly(['authorizedUserIds']);
+      }
+
+      function isOwner() {
+        return isVerified() && resource.data.mainDoctorId == uid();
+      }
+
+      function isAuthorized() {
+        return isVerified() && uid() in accessList();
+      }
+
+      // Accepting a shared link: the caller adds themselves and nothing else.
+      // Both hasAll and hasOnly are needed - the first proves no one was
+      // dropped, the second proves no one but the caller was added.
+      function joiningSelf() {
+        return isVerified()
+          && onlyAccessListChanged()
+          && !(uid() in accessList())
+          && newAccessList().hasAll(accessList())
+          && newAccessList().hasOnly(accessList().concat([uid()]));
+      }
+
+      // Leaving a shared patient: the caller removes only themselves.
+      function leavingSelf() {
+        return isVerified()
+          && onlyAccessListChanged()
+          && uid() in accessList()
+          && accessList().hasAll(newAccessList())
+          && accessList().hasOnly(newAccessList().concat([uid()]));
+      }
+
+      // Queries must carry an arrayContains filter on authorizedUserIds,
+      // otherwise the whole query is rejected rather than filtered.
+      allow get, list: if isAdmin() || isAuthorized();
+
+      // The creator must record themselves as owner and authorize themselves,
+      // or the document would be born unreachable.
+      allow create: if isVerified()
+        && request.resource.data.mainDoctorId == uid()
+        && uid() in request.resource.data.authorizedUserIds;
+
+      // Clinical data may be edited by anyone authorized, but the access list
+      // itself is the owner's to change - other than joining or leaving.
+      allow update: if isAdmin()
+        || isOwner()
+        || (isAuthorized() && newAccessList() == accessList())
+        || joiningSelf()
+        || leavingSelf();
+
+      allow delete: if isAdmin() || isOwner();
+    }
+
+    match /patient_connections/{connectionId} {
+
+      function connectionPatient() {
+        return patientData(resource.data.patientId);
+      }
+
+      // Own connections, or any connection on a patient the caller may access -
+      // the sharing screen lists who else holds a connection.
+      allow get, list: if isAdmin()
+        || (isVerified() && resource.data.userId == uid())
+        || (isVerified() && uid() in connectionPatient().authorizedUserIds);
+
+      // A connection may only ever be created for oneself.
+      allow create: if isVerified() && request.resource.data.userId == uid();
+
+      // Roles are the owning doctor's to assign.
+      allow update: if isAdmin()
+        || (isVerified() && connectionPatient().mainDoctorId == uid());
+
+      allow delete: if isAdmin()
+        || (isVerified() && resource.data.userId == uid())
+        || (isVerified() && connectionPatient().mainDoctorId == uid());
+    }
+
+    // Anything not matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

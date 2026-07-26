@@ -44,12 +44,19 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Firebase 
-firebase.json
+# Firebase
+# firebase.json is intentionally tracked: it wires firestore.rules and
+# firestore.indexes.json into the deploy, so the security rules stay versioned.
+# google-services.json stays out - each developer generates their own with
+# `flutterfire configure` against their own Firebase project.
 /android/app/google-services.json
 
 # Environment variables - never commit real secrets
 .env
+
+# Node dependencies for the Firestore rule tests and the tool/ scripts
+node_modules/
+package-lock.json
 
 # TODO List
 TODO.md

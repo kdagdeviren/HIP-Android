@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
+import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/pages/waiting_verify_page.dart';
 import 'package:flutter_medical_data_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_medical_data_app/features/auth/presentation/pages/login_page.dart';
 import 'package:flutter_medical_data_app/features/auth/data/auth_service.dart';
 import 'package:flutter_medical_data_app/features/auth/data/models/user_model.dart';
-import 'package:flutter_medical_data_app/shared/admin_settings.dart';
 import 'package:flutter_medical_data_app/features/admin/presentation/pages/admin_home_page.dart';
 
 //AuthModelden alınacak
@@ -19,33 +20,82 @@ class AuthGuard extends StatefulWidget {
 
 class _AuthGuardState extends State<AuthGuard> {
   final AuthService _authService = AuthService();
+
   UserModel? _userModel;
   bool _isLoadingUserData = false;
+  bool _isAdmin = false;
+  String? _errorMessage;
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  /// The uid whose profile load has finished, successfully or not.
+  ///
+  /// Without this the build method reschedules the load on every rebuild as
+  /// long as [_userModel] is null, so a failed or missing profile turns into an
+  /// endless retry loop behind a spinner.
+  String? _loadedUid;
 
-  Future<void> _loadUserData(String userId) async {
-    if (_isLoadingUserData) return; // Zaten yükleniyor
+  Future<void> _loadUserData(User user, {bool forceTokenRefresh = false}) async {
+    if (_isLoadingUserData) return;
 
     setState(() {
       _isLoadingUserData = true;
+      _errorMessage = null;
     });
 
     try {
-      _userModel = await _authService.getUser(userId);
+      // The admin flag comes from the auth token, so it cannot be forged by the
+      // client. A freshly granted claim only appears after the token refreshes,
+      // which is what the retry path forces.
+      final token = await user.getIdTokenResult(forceTokenRefresh);
+      final isAdmin = token.claims?['admin'] == true;
+
+      // Admins manage accounts and are not required to have a profile document.
+      final profile = isAdmin ? null : await _authService.getUser(user.uid);
+
+      if (!mounted) return;
+      setState(() {
+        _isAdmin = isAdmin;
+        _userModel = profile;
+        _loadedUid = user.uid;
+        _isLoadingUserData = false;
+        _errorMessage = (!isAdmin && profile == null)
+            ? 'Hesabınıza ait kullanıcı kaydı bulunamadı. '
+                  'Yönetici ile iletişime geçin veya tekrar kayıt olun.'
+            : null;
+      });
     } catch (e) {
-      // Handle error if needed
-      _userModel = null;
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoadingUserData = false;
-        });
-      }
+      LoggerUtil.e('AuthGuard could not load user ${user.uid}: $e');
+      if (!mounted) return;
+      setState(() {
+        _isAdmin = false;
+        _userModel = null;
+        _loadedUid = user.uid;
+        _isLoadingUserData = false;
+        _errorMessage = ErrorHandler.handleError(e, 'Load User');
+      });
     }
+  }
+
+  void _retry() {
+    setState(() {
+      _loadedUid = null;
+      _errorMessage = null;
+      _forceTokenRefresh = true;
+    });
+  }
+
+  /// Set by [_retry] so a just-granted admin claim is picked up without waiting
+  /// for the token's own refresh cycle.
+  bool _forceTokenRefresh = false;
+
+  Future<void> _signOut() async {
+    await _authService.logout();
+    if (!mounted) return;
+    setState(() {
+      _userModel = null;
+      _isAdmin = false;
+      _loadedUid = null;
+      _errorMessage = null;
+    });
   }
 
   @override
@@ -54,40 +104,97 @@ class _AuthGuardState extends State<AuthGuard> {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return const _AuthGuardLoading();
         }
 
-        if (snapshot.hasData) {
-          final user = snapshot.data!;
-
-          // Admin kontrolü
-          if (user.email == adminEmail) {
-            return const AdminHomePage();
-          }
-
-          // Kullanıcı verisi yükleniyor ise loading göster
-          if (_isLoadingUserData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // Kullanıcı verisi henüz yüklenmemişse yükle (build sonrası)
-          if (_userModel == null) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _loadUserData(user.uid);
-            });
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // Kullanıcı verisi yüklendi, doğrulama durumuna göre yönlendir
-          if (_userModel!.isVerified) {
-            return const MainPage();
-          } else {
-            return const WaitingVeirfyPage();
-          }
-        } else {
+        final user = snapshot.data;
+        if (user == null) {
           return const LoginPage();
         }
+
+        if (_isLoadingUserData) {
+          return const _AuthGuardLoading();
+        }
+
+        // Kullanıcı verisi bu uid için henüz yüklenmemişse yükle (build sonrası)
+        if (_loadedUid != user.uid) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            final force = _forceTokenRefresh;
+            _forceTokenRefresh = false;
+            _loadUserData(user, forceTokenRefresh: force);
+          });
+          return const _AuthGuardLoading();
+        }
+
+        // Admin kontrolü - yetki token'daki custom claim'den gelir
+        if (_isAdmin) {
+          return const AdminHomePage();
+        }
+
+        if (_errorMessage != null || _userModel == null) {
+          return _AuthGuardError(
+            message: _errorMessage ?? 'Kullanıcı bilgileri okunamadı.',
+            onRetry: _retry,
+            onSignOut: _signOut,
+          );
+        }
+
+        // Kullanıcı verisi yüklendi, doğrulama durumuna göre yönlendir
+        if (_userModel!.isVerified) {
+          return const MainPage();
+        }
+        return const WaitingVeirfyPage();
       },
+    );
+  }
+}
+
+/// Wrapped in a [Scaffold] so it renders on the theme background instead of the
+/// bare black canvas an unparented widget gets.
+class _AuthGuardLoading extends StatelessWidget {
+  const _AuthGuardLoading();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
+  }
+}
+
+class _AuthGuardError extends StatelessWidget {
+  const _AuthGuardError({
+    required this.message,
+    required this.onRetry,
+    required this.onSignOut,
+  });
+
+  final String message;
+  final VoidCallback onRetry;
+  final VoidCallback onSignOut;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 24),
+              FilledButton(onPressed: onRetry, child: const Text('Tekrar dene')),
+              TextButton(
+                onPressed: onSignOut,
+                child: const Text('Çıkış yap'),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

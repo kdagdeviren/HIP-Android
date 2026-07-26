@@ -1,0 +1,9 @@
+{
+  "name": "hip-admin-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "One-off maintenance scripts run against Firebase with Admin SDK credentials.",
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}
