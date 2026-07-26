@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/features/admin/domain/usecases/get_unverified_users_usecase.dart';
 import 'package:flutter_medical_data_app/features/admin/domain/usecases/verify_user_usecase.dart';
 import 'package:flutter_medical_data_app/features/admin/domain/usecases/reject_user_usecase.dart';
@@ -46,16 +48,25 @@ class AdminViewModel extends ChangeNotifier {
       final user = _unverifiedUsers.firstWhere((u) => u.docID == userId);
       await _notificationService.sendNotification(
         token: user.fcmToken,
-        title: 'Hesabınız Onaylandı',
-        body:
-            'Kimlik doğrulama işleminiz başarılı. Artık uygulamayı kullanabilirsiniz.',
+        title: L10n.current.admin_approvedNotifTitle,
+        body: L10n.current.admin_approvedNotifBody,
       );
       // Remove from list
       _unverifiedUsers.removeWhere((u) => u.docID == userId);
       notifyListeners();
-      PopupService().showSuccess(context, "Başarılı", "Kullanıcı onaylandı.");
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showSuccess(
+        context,
+        l10n.common_success,
+        l10n.admin_userApproved,
+      );
     } catch (e) {
-      PopupService().showError(context, "Hata", "Kullanıcı onaylanamadı.");
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showError(
+        context,
+        l10n.common_error,
+        l10n.admin_userApproveFailed,
+      );
     }
   }
 
@@ -66,15 +77,25 @@ class AdminViewModel extends ChangeNotifier {
       final user = _unverifiedUsers.firstWhere((u) => u.docID == userId);
       await _notificationService.sendNotification(
         token: user.fcmToken,
-        title: 'Hesabınız Reddedildi',
-        body: 'Kimlik doğrulama işleminiz başarısız. Lütfen tekrar deneyin.',
+        title: L10n.current.admin_rejectedNotifTitle,
+        body: L10n.current.admin_rejectedNotifBody,
       );
       // Remove from list
       _unverifiedUsers.removeWhere((u) => u.docID == userId);
       notifyListeners();
-      PopupService().showSuccess(context, "Başarılı", "Kullanıcı reddedildi.");
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showSuccess(
+        context,
+        l10n.common_success,
+        l10n.admin_userRejected,
+      );
     } catch (e) {
-      PopupService().showError(context, "Hata", "Kullanıcı reddedilemedi.");
+      final l10n = AppLocalizations.of(context)!;
+      PopupService().showError(
+        context,
+        l10n.common_error,
+        l10n.admin_userRejectFailed,
+      );
     }
   }
 }

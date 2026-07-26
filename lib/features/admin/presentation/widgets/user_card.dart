@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/auth/data/models/user_model.dart';
@@ -20,6 +21,7 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
       decoration: BoxDecoration(
@@ -36,7 +38,7 @@ class UserCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Kullanıcı Bilgileri\n${user.ad} ${user.soyad}",
+                  l10n.admin_userCard_infoTitle('${user.ad} ${user.soyad}'),
                   textAlign: TextAlign.start,
                   style: AppTextStyles.nunitoBold25.copyWith(
                     height: 1,
@@ -46,7 +48,7 @@ class UserCard extends StatelessWidget {
                 ),
                 SizedBox(height: 1.h),
                 Text(
-                  "ID: ${user.docID} ",
+                  l10n.admin_userCard_idLabel(user.docID),
                   textAlign: TextAlign.start,
                   style: AppTextStyles.nunitoBold25.copyWith(
                     height: 1,
@@ -59,7 +61,7 @@ class UserCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: SecondButton(
-                        buttonText: "Reddet",
+                        buttonText: l10n.admin_userCard_reject,
                         buttonColor: AppColors.error,
                         onPressed: onReject,
                         height: 4.h,
@@ -68,7 +70,7 @@ class UserCard extends StatelessWidget {
                     SizedBox(width: 2.w),
                     Expanded(
                       child: SecondButton(
-                        buttonText: "Onayla",
+                        buttonText: l10n.admin_userCard_approve,
                         buttonColor: AppColors.success,
                         onPressed: onApprove,
                         height: 4.h,
@@ -88,7 +90,7 @@ class UserCard extends StatelessWidget {
                   return Stack(
                     children: [
                       // Yarı şeffaf arka plan
-                      Container(color: Colors.black.withOpacity(0.7)),
+                      Container(color: Colors.black.withValues(alpha: 0.7)),
                       Center(
                         child: SizedBox(
                           height: 90.h,
@@ -114,7 +116,9 @@ class UserCard extends StatelessWidget {
                             size: 30,
                           ),
                           style: IconButton.styleFrom(
-                            backgroundColor: Colors.black.withOpacity(0.5),
+                            backgroundColor: Colors.black.withValues(
+                              alpha: 0.5,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),

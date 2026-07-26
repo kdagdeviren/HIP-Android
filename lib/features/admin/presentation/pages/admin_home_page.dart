@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/page_information_box.dart';
 import 'package:flutter_medical_data_app/shared/widgets/custom_card_with_image.dart';
@@ -26,6 +27,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Consumer<AdminViewModel>(
@@ -35,8 +37,8 @@ class _AdminHomePageState extends State<AdminHomePage> {
               child: Column(
                 children: [
                   CustomCardWithImage(
-                    title: "Hesabınızdan çıkış yapın",
-                    buttonName: "ÇIKIŞ YAP",
+                    title: l10n.admin_home_signOutTitle,
+                    buttonName: l10n.admin_home_signOutButton,
                     image: "assets/images/existing_patinet.png",
                     buttonPressed: () async {
                       await FirebaseAuth.instance.signOut();
@@ -46,13 +48,13 @@ class _AdminHomePageState extends State<AdminHomePage> {
                     },
                   ),
                   SizedBox(height: 1.h),
-                  PageInformationBox(title: "Kullanıcı Onayları"),
+                  PageInformationBox(title: l10n.admin_home_approvalsTitle),
                   SizedBox(height: 1.h),
                   if (viewModel.isLoading)
                     const Center(child: CircularProgressIndicator()),
 
                   if (viewModel.unverifiedUsers.isEmpty && !viewModel.isLoading)
-                    const Center(child: Text('Onay bekleyen kullanıcı yok.')),
+                    Center(child: Text(l10n.admin_home_noPendingUsers)),
 
                   RefreshIndicator(
                     onRefresh: () async {

@@ -96,5 +96,27 @@
   "auth_waitingVerify_changeAccountPrompt": "Hesap değiştirmek ister misiniz? ",
   "auth_guard_profileNotFound": "Hesabınıza ait kullanıcı kaydı bulunamadı. Yönetici ile iletişime geçin veya tekrar kayıt olun.",
   "auth_guard_userDataUnreadable": "Kullanıcı bilgileri okunamadı.",
-  "auth_guard_signOut": "Çıkış yap"
+  "auth_guard_signOut": "Çıkış yap",
+  "admin_home_signOutTitle": "Hesabınızdan çıkış yapın",
+  "admin_home_signOutButton": "ÇIKIŞ YAP",
+  "admin_home_approvalsTitle": "Kullanıcı Onayları",
+  "admin_home_noPendingUsers": "Onay bekleyen kullanıcı yok.",
+  "admin_userCard_infoTitle": "Kullanıcı Bilgileri\n{fullName}",
+  "@admin_userCard_infoTitle": {
+    "placeholders": { "fullName": { "type": "String" } }
+  },
+  "admin_userCard_idLabel": "ID: {docId} ",
+  "@admin_userCard_idLabel": {
+    "placeholders": { "docId": { "type": "String" } }
+  },
+  "admin_userCard_reject": "Reddet",
+  "admin_userCard_approve": "Onayla",
+  "admin_approvedNotifTitle": "Hesabınız Onaylandı",
+  "admin_approvedNotifBody": "Kimlik doğrulama işleminiz başarılı. Artık uygulamayı kullanabilirsiniz.",
+  "admin_rejectedNotifTitle": "Hesabınız Reddedildi",
+  "admin_rejectedNotifBody": "Kimlik doğrulama işleminiz başarısız. Lütfen tekrar deneyin.",
+  "admin_userApproved": "Kullanıcı onaylandı.",
+  "admin_userApproveFailed": "Kullanıcı onaylanamadı.",
+  "admin_userRejected": "Kullanıcı reddedildi.",
+  "admin_userRejectFailed": "Kullanıcı reddedilemedi."
 }
