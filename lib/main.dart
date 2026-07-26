@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_medical_data_app/core/constants/providers.dart';
 import 'package:flutter_medical_data_app/core/routes.dart';
@@ -31,15 +32,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ResponsiveSizer(
       builder: (context, orientation, screenType) {
-        return Center(
-          child: MaterialApp(
-            theme: AppTheme.lightTheme,
-            navigatorKey: NavigationService.instance.navigatorKey,
-            debugShowCheckedModeBanner: false,
-            title: 'Medical App',
-            routes: appRoutes,
-            home: const AuthGuard(),
-          ),
+        return MaterialApp(
+          onGenerateTitle: (context) => AppLocalizations.of(context)!.app_title,
+          theme: AppTheme.lightTheme,
+          navigatorKey: NavigationService.instance.navigatorKey,
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('tr'),
+          routes: appRoutes,
+          home: const AuthGuard(),
         );
       },
     );
