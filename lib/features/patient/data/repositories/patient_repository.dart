@@ -9,20 +9,16 @@ class PatientRepository {
 
   PatientRepository(this.remoteDataSource);
 
-  // Add getter to access lastDocument from data source
-  DocumentSnapshot? get lastDocument => remoteDataSource.lastDocument;
-
   Future<ResponseMessage> addPatient(Patient patient) =>
       remoteDataSource.addPatient(patient);
   Future<ResponseMessage> updatePatient(String docId, Patient patient) =>
       remoteDataSource.updatePatient(docId, patient);
   Future<ResponseMessage> deletePatient(String id) =>
       remoteDataSource.deletePatient(id);
-  Stream<List<Patient>> getPatients() => remoteDataSource.getPatients();
-  Future<List<Patient>> getPatientsPaginated(
-    int limit, [
-    DocumentSnapshot? startAfter,
-  ]) => remoteDataSource.getPatientsPaginated(limit, startAfter);
+
+  Future<({List<Patient> patients, DocumentSnapshot? cursor})>
+  getPatientsForUser(String userId, int limit, [DocumentSnapshot? startAfter]) =>
+      remoteDataSource.getPatientsForUser(userId, limit, startAfter);
 
   Future<ResponseMessage> updatePatientCategory(
     String docId,

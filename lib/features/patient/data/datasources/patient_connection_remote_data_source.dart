@@ -7,6 +7,11 @@ class PatientConnectionRemoteDataSource {
   final CollectionReference _connectionsCollection = FirebaseFirestore.instance
       .collection('patient_connections');
 
+  /// Needed because every connection change must also update the patient's
+  /// `authorizedUserIds` index that security rules read.
+  final CollectionReference _patientsCollection = FirebaseFirestore.instance
+      .collection('patients');
+
   /// Yeni bir hasta-kullanıcı bağlantısı oluşturur
   /// Aynı kullanıcı zaten bağlıysa hata döner
   Future<ResponseMessage> createConnection(PatientConnection connection) async {
@@ -27,7 +32,14 @@ class PatientConnectionRemoteDataSource {
       final connectionData = connection.toMap();
       connectionData['createdAt'] = FieldValue.serverTimestamp();
 
-      await docRef.set(connectionData);
+      // Bağlantı ile yetki dizisi tek batch'te yazılır; ikisi birlikte başarılı
+      // olur ya da birlikte başarısız olur, arada tutarsız durum oluşamaz.
+      final batch = FirebaseFirestore.instance.batch();
+      batch.set(docRef, connectionData);
+      batch.update(_patientsCollection.doc(connection.patientId), {
+        'authorizedUserIds': FieldValue.arrayUnion([connection.userId]),
+      });
+      await batch.commit();
 
       return ResponseMessage(
         status: true,
@@ -75,10 +87,28 @@ class PatientConnectionRemoteDataSource {
     }
   }
 
-  /// Bir bağlantıyı siler
+  /// Bir bağlantıyı siler ve hastanın yetki dizisinden kullanıcıyı çıkarır
   Future<ResponseMessage> deleteConnection(String connectionId) async {
     try {
-      await _connectionsCollection.doc(connectionId).delete();
+      // patientId/userId yalnızca bağlantı dokümanında; diziyi güncelleyebilmek
+      // için önce okunması gerekiyor.
+      final connectionRef = _connectionsCollection.doc(connectionId);
+      final snapshot = await connectionRef.get();
+
+      if (!snapshot.exists) {
+        return ResponseMessage(status: false, message: 'Bağlantı bulunamadı');
+      }
+
+      final data = snapshot.data() as Map<String, dynamic>;
+      final connection = PatientConnection.fromMap(data);
+
+      final batch = FirebaseFirestore.instance.batch();
+      batch.delete(connectionRef);
+      batch.update(_patientsCollection.doc(connection.patientId), {
+        'authorizedUserIds': FieldValue.arrayRemove([connection.userId]),
+      });
+      await batch.commit();
+
       return ResponseMessage(
         status: true,
         message: 'Bağlantı başarıyla silindi',

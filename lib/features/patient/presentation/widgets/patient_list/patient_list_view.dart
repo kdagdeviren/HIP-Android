@@ -23,6 +23,19 @@ class PatientListView extends StatelessWidget {
 
         final patients = patientViewModel.patients;
         final hasMore = patientViewModel.hasMore;
+        final errorMessage = patientViewModel.errorMessage;
+
+        if (patients.isEmpty && errorMessage != null) {
+          return _EmptyState(
+            message: errorMessage,
+            onRetry: patientViewModel.refresh,
+          );
+        }
+
+        if (patients.isEmpty && !hasMore && !patientViewModel.isLoading) {
+          return const _EmptyState(message: 'Kayıtlı hasta bulunamadı.');
+        }
+
         return ListView.builder(
           controller: listViewModel.scrollController,
           padding: EdgeInsets.zero,
@@ -48,6 +61,36 @@ class PatientListView extends StatelessWidget {
           itemCount: patients.length + (hasMore ? 1 : 0),
         );
       },
+    );
+  }
+}
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState({required this.message, this.onRetry});
+
+  final String message;
+  final Future<void> Function()? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 6.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            if (onRetry != null) ...[
+              SizedBox(height: 2.h),
+              TextButton(onPressed: onRetry, child: const Text('Tekrar dene')),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

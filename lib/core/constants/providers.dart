@@ -58,10 +58,7 @@ var providers = [
 
   // ViewModels
   ChangeNotifierProvider<PatientViewModel>(
-    create: (context) => PatientViewModel(
-      context.read<PatientRepository>(),
-      context.read<PatientConnectionRepository>(),
-    ),
+    create: (context) => PatientViewModel(context.read<PatientRepository>()),
   ),
   ChangeNotifierProvider<PatientConnectionViewModel>(
     create: (context) =>

@@ -25,6 +25,14 @@ class Patient {
   final Radiology? radiology;
   final AddedCategories? addedCategories;
 
+  /// UIDs allowed to read and write this patient.
+  ///
+  /// Denormalized from `patient_connections` so security rules can authorize a
+  /// request from the patient document alone — rules cannot run queries. The
+  /// connection documents remain the source of truth for roles; this list is a
+  /// derived index maintained by [PatientConnectionRemoteDataSource].
+  final List<String> authorizedUserIds;
+
   Patient({
     this.docId,
     required this.firstName,
@@ -40,6 +48,7 @@ class Patient {
     this.biochemistry,
     this.radiology,
     this.addedCategories,
+    this.authorizedUserIds = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -55,6 +64,9 @@ class Patient {
       'biochemistry': biochemistry?.toMap(),
       'radiology': radiology?.toMap(),
       'addedCategories': addedCategories?.toMap(),
+      // Note: authorizedUserIds is deliberately omitted. It is written only by
+      // the connection flow via arrayUnion/arrayRemove, so a stale in-memory
+      // copy can never overwrite the authoritative list.
       // Note: createdAt/updatedAt will be handled at datasource level with FieldValue.serverTimestamp()
       if (createdAt != null) 'createdAt': createdAt?.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt?.toIso8601String(),
@@ -96,6 +108,7 @@ class Patient {
                 Map<String, dynamic>.from(map['addedCategories']),
               )
             : null,
+        authorizedUserIds: _parseStringList(map['authorizedUserIds']),
       );
     } catch (e) {
       throw Exception('Error parsing Patient from map: $e, map: $map');
@@ -117,6 +130,7 @@ class Patient {
                 Map<String, dynamic>.from(map['addedCategories']),
               )
             : null,
+        authorizedUserIds: _parseStringList(map['authorizedUserIds']),
         // Diğer fields'lar çekilmiyor, performans için
         pathology: null,
         oncology: null,
@@ -154,6 +168,7 @@ class Patient {
     Biochemistry? biochemistry,
     Radiology? radiology,
     AddedCategories? addedCategories,
+    List<String>? authorizedUserIds,
   }) {
     return Patient(
       docId: docId ?? this.docId,
@@ -170,7 +185,14 @@ class Patient {
       biochemistry: biochemistry ?? this.biochemistry,
       radiology: radiology ?? this.radiology,
       addedCategories: addedCategories ?? this.addedCategories,
+      authorizedUserIds: authorizedUserIds ?? this.authorizedUserIds,
     );
+  }
+
+  /// Parses a Firestore array field into a typed string list
+  static List<String> _parseStringList(dynamic value) {
+    if (value is! List) return const [];
+    return value.whereType<String>().toList();
   }
 
   /// Parses DateTime from various formats (Timestamp, String, or null)

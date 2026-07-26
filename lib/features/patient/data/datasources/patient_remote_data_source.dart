@@ -39,6 +39,9 @@ class PatientRemoteDataSource {
       // Use server timestamp for createdAt and updatedAt
       patientData['createdAt'] = FieldValue.serverTimestamp();
       patientData['updatedAt'] = FieldValue.serverTimestamp();
+      // Seed the authorization index with the creating doctor. Security rules
+      // reject a patient document that does not authorize its own creator.
+      patientData['authorizedUserIds'] = [patient.mainDoctorId];
 
       await docRef.set(patientData);
       return ResponseMessage(
@@ -117,20 +120,6 @@ class PatientRemoteDataSource {
     }
   }
 
-  /// Maps a single document to Patient object
-  Patient? _mapDocumentToPatient(DocumentSnapshot doc) {
-    try {
-      // Firebase'den gelen datayı temizle
-      final rawData = doc.data() as Map<String, dynamic>;
-      final cleanedData = _cleanNullStrings(rawData);
-
-      return Patient.fromMapBasic(cleanedData).copyWith(docId: doc.id);
-    } catch (e) {
-      LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
-      return null;
-    }
-  }
-
   Future<Patient?> getPatientAllDataById(
     String docId, {
     bool forceRefresh = false,
@@ -191,54 +180,48 @@ class PatientRemoteDataSource {
     });
   }
 
-  Stream<List<Patient>> getPatients() {
-    try {
-      return _patientsCollection.snapshots().map(
-        (snapshot) => _mapDocumentsToPatients(snapshot.docs),
-      );
-    } catch (e) {
-      LoggerUtil.e('Hastalar getirilirken hata oluştu: $e');
-      return Stream.value([]);
-    }
-  }
-
-  DocumentSnapshot? _lastDocument;
-
-  Future<List<Patient>> getPatientsPaginated(
+  /// One page of patients plus the cursor needed to request the next one.
+  ///
+  /// [cursor] is null when the page came back empty, which also means the
+  /// caller has reached the end of the collection.
+  Future<({List<Patient> patients, DocumentSnapshot? cursor})>
+  getPatientsForUser(
+    String userId,
     int limit, [
     DocumentSnapshot? startAfter,
   ]) async {
-    try {
-      Query query = _patientsCollection
-          .orderBy('createdAt', descending: true)
-          .limit(limit);
-      if (startAfter != null) {
-        query = query.startAfterDocument(startAfter);
-      }
-      final snapshot = await query.get();
+    // Query failures deliberately propagate. A missing composite index or a
+    // rules rejection must reach the UI - swallowing it here produces an empty
+    // list that is indistinguishable from "this user has no patients".
+    Query query = _patientsCollection
+        .where('authorizedUserIds', arrayContains: userId)
+        .orderBy('createdAt', descending: true)
+        .limit(limit);
 
-      // Store the last document for next pagination
-      if (snapshot.docs.isNotEmpty) {
-        _lastDocument = snapshot.docs.last;
-        LoggerUtil.d('Stored last document: ${_lastDocument?.id}');
-      }
-
-      return _mapDocumentsToPatients(snapshot.docs);
-    } catch (e) {
-      LoggerUtil.e('Hastalar paginated getirilirken hata: $e');
-      return [];
+    if (startAfter != null) {
+      query = query.startAfterDocument(startAfter);
     }
-  }
 
-  // Add a getter to access the last document
-  DocumentSnapshot? get lastDocument => _lastDocument;
-
-  /// Maps multiple documents to list of Patient objects
-  List<Patient> _mapDocumentsToPatients(List<QueryDocumentSnapshot> docs) {
-    return docs
-        .map((doc) => _mapDocumentToPatient(doc))
-        .where((patient) => patient != null)
-        .cast<Patient>()
+    final snapshot = await query.get();
+    final patients = snapshot.docs
+        .map((doc) {
+          // A single malformed document should not fail the whole page.
+          try {
+            final cleanedData = _cleanNullStrings(
+              doc.data() as Map<String, dynamic>,
+            );
+            return Patient.fromMapBasic(cleanedData).copyWith(docId: doc.id);
+          } catch (e) {
+            LoggerUtil.e('Error mapping patient doc ${doc.id}: $e');
+            return null;
+          }
+        })
+        .whereType<Patient>()
         .toList();
+
+    return (
+      patients: patients,
+      cursor: snapshot.docs.isEmpty ? null : snapshot.docs.last,
+    );
   }
 }

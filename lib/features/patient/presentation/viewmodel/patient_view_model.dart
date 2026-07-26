@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/utils/error_handler.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import '../../data/models/patient_model.dart';
 import '../../data/repositories/patient_repository.dart';
-import '../../data/repositories/patient_connection_repository.dart';
 
 class PatientViewModel extends ChangeNotifier {
   final PatientRepository repository;
-  final PatientConnectionRepository connectionRepository;
 
-  PatientViewModel(this.repository, this.connectionRepository) {
+  PatientViewModel(this.repository) {
     fetchPatients();
   }
 
@@ -25,104 +24,55 @@ class PatientViewModel extends ChangeNotifier {
   bool _hasMore = true;
   bool get hasMore => _hasMore;
 
+  /// Set when a fetch fails, so the list can say what went wrong instead of
+  /// spinning forever on an empty page.
+  String? _errorMessage;
+  String? get errorMessage => _errorMessage;
+
   DocumentSnapshot? _lastDocument;
   final int _limit = 3; // Back to 3 patients per page
-  final Set<String> _loadedPatientIds =
-      {}; // Track loaded patients to avoid duplicates
-  int _currentPage = 0; // Use page-based pagination as fallback
 
   Future<void> fetchPatients([bool forceRefresh = false]) async {
     if (_isLoading || (!_hasMore && !forceRefresh)) return;
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
       final currentUserId = FirebaseAuth.instance.currentUser?.uid;
       if (currentUserId == null) {
         LoggerUtil.e('User not authenticated');
-        _isLoading = false;
-        notifyListeners();
-        return;
-      }
-
-      LoggerUtil.d(
-        'Starting fetchPatients - forceRefresh: $forceRefresh, page: $_currentPage',
-      );
-
-      // 1. Önce kullanıcının bağlı olduğu hasta ID'lerini al
-      final connectedPatientIds = await connectionRepository
-          .getPatientIdsByUserId(currentUserId);
-
-      if (connectedPatientIds.isEmpty) {
-        LoggerUtil.d('No connected patients found for user');
-        _patients = [];
+        // Without this the list keeps hasMore == true and renders an endless
+        // spinner over an empty list.
         _hasMore = false;
-        _isLoading = false;
-        notifyListeners();
+        _errorMessage = 'Oturum bulunamadı. Lütfen tekrar giriş yapın.';
         return;
       }
-
-      LoggerUtil.d('User has ${connectedPatientIds.length} connected patients');
 
       if (forceRefresh) {
         _patients.clear();
         _lastDocument = null;
         _hasMore = true;
-        _currentPage = 0;
-        _loadedPatientIds.clear();
       }
 
-      // 2. Bu ID'lere sahip hastaları getir (pagination ile)
-      // Firestore'da "in" sorgusu max 10 item destekler, bu yüzden batch'lere ayırıyoruz
-      final batchSize = 10;
-      List<Patient> newPatients = [];
+      // Yetki dizisi üzerinden tek sorgu. Eskiden önce bağlantı ID'leri
+      // çekilip hastalar 10'arlı `whereIn` batch'leriyle alınıyordu; imleç
+      // batch'ler arasında paylaşıldığı için sayfalama da hatalıydı.
+      final page = await repository.getPatientsForUser(
+        currentUserId,
+        _limit,
+        _lastDocument,
+      );
 
-      for (int i = 0; i < connectedPatientIds.length; i += batchSize) {
-        final batch = connectedPatientIds.skip(i).take(batchSize).toList();
+      _patients.addAll(page.patients);
+      _lastDocument = page.cursor;
+      _hasMore = page.patients.length == _limit;
 
-        Query query = FirebaseFirestore.instance
-            .collection('patients')
-            .where(FieldPath.documentId, whereIn: batch)
-            .orderBy('createdAt', descending: true)
-            .limit(_limit);
-
-        if (_lastDocument != null && !forceRefresh) {
-          query = query.startAfterDocument(_lastDocument!);
-        }
-
-        final snapshot = await query.get();
-
-        for (var doc in snapshot.docs) {
-          final data = doc.data() as Map<String, dynamic>;
-          final patient = Patient.fromMapBasic(data).copyWith(docId: doc.id);
-
-          if (!_loadedPatientIds.contains(patient.docId)) {
-            newPatients.add(patient);
-            if (patient.docId != null) {
-              _loadedPatientIds.add(patient.docId!);
-            }
-          }
-        }
-
-        if (snapshot.docs.isNotEmpty) {
-          _lastDocument = snapshot.docs.last;
-        }
-
-        // İlk batch'ten sonra limit'e ulaştıysak dur
-        if (newPatients.length >= _limit) break;
-      }
-
-      LoggerUtil.d('Fetched ${newPatients.length} new patients');
-
-      _patients.addAll(newPatients);
-      _currentPage++;
-
-      if (newPatients.length < _limit) {
-        _hasMore = false;
-        LoggerUtil.d('No more patients available');
-      }
+      LoggerUtil.d('Fetched ${page.patients.length} new patients');
     } catch (e) {
       LoggerUtil.e('Error fetching patients: $e');
+      _hasMore = false;
+      _errorMessage = ErrorHandler.handleError(e, 'Fetch Patients');
     } finally {
       LoggerUtil.d(
         'Fetching patients completed. Total patients: ${_patients.length}, hasMore: $_hasMore',
@@ -142,8 +92,6 @@ class PatientViewModel extends ChangeNotifier {
     _patients.clear();
     _lastDocument = null;
     _hasMore = true;
-    _currentPage = 0;
-    _loadedPatientIds.clear();
     notifyListeners();
   }
 
