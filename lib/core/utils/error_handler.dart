@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 
 class ErrorHandler {
   /// Handles and logs errors, returns user-friendly message
@@ -16,58 +18,59 @@ class ErrorHandler {
 
   /// Maps different error types to user-friendly messages
   static String _getErrorMessage(dynamic error) {
-    if (error == null) return 'Bilinmeyen bir hata oluştu';
+    final l10n = L10n.current;
+    if (error == null) return l10n.error_unknown;
 
     String errorString = error.toString().toLowerCase();
 
     // Firebase Auth errors
     if (errorString.contains('user-not-found')) {
-      return 'Kullanıcı bulunamadı';
+      return l10n.error_userNotFound;
     } else if (errorString.contains('wrong-password')) {
-      return 'Yanlış şifre';
+      return l10n.error_wrongPassword;
     } else if (errorString.contains('email-already-in-use')) {
-      return 'Bu email adresi zaten kullanımda';
+      return l10n.error_emailAlreadyInUse;
     } else if (errorString.contains('weak-password')) {
-      return 'Şifre çok zayıf';
+      return l10n.error_weakPassword;
     } else if (errorString.contains('invalid-email')) {
-      return 'Geçersiz email adresi';
+      return l10n.error_invalidEmail;
     } else if (errorString.contains('operation-not-allowed')) {
-      return 'Bu işlem şu anda mümkün değil';
+      return l10n.error_operationNotAllowed;
     } else if (errorString.contains('too-many-requests')) {
-      return 'Çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin';
+      return l10n.error_tooManyRequests;
     } else if (errorString.contains('network-request-failed')) {
-      return 'İnternet bağlantısını kontrol edin';
+      return l10n.error_networkFailed;
     }
     // Firestore errors
     else if (errorString.contains('permission-denied')) {
-      return 'Bu işlem için yetkiniz yok';
+      return l10n.error_permissionDenied;
     } else if (errorString.contains('not-found')) {
-      return 'Aradığınız veri bulunamadı';
+      return l10n.error_notFound;
     } else if (errorString.contains('already-exists')) {
-      return 'Bu veri zaten mevcut';
+      return l10n.error_alreadyExists;
     } else if (errorString.contains('deadline-exceeded')) {
-      return 'İşlem zaman aşımına uğradı';
+      return l10n.error_timeout;
     } else if (errorString.contains('unavailable')) {
-      return 'Servis şu anda kullanılamıyor';
+      return l10n.error_unavailable;
     }
     // Network errors
     else if (errorString.contains('socketexception') ||
         errorString.contains('handshakeexception')) {
-      return 'İnternet bağlantısı sorunu';
+      return l10n.error_networkIssue;
     }
     // Validation errors
     else if (errorString.contains('validation')) {
-      return 'Girilen bilgiler geçersiz';
+      return l10n.error_validationInvalid;
     }
     // Generic errors
     else if (errorString.contains('timeout')) {
-      return 'İşlem zaman aşımına uğradı';
+      return l10n.error_timeout;
     } else if (errorString.contains('cancelled')) {
-      return 'İşlem iptal edildi';
+      return l10n.error_cancelled;
     }
 
     // Default message
-    return 'Bir hata oluştu. Lütfen tekrar deneyin';
+    return l10n.error_generic;
   }
 
   /// Shows error dialog
@@ -76,6 +79,7 @@ class ErrorHandler {
     String title,
     String message,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -84,7 +88,7 @@ class ErrorHandler {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Tamam'),
+            child: Text(l10n.common_ok),
           ),
         ],
       ),
