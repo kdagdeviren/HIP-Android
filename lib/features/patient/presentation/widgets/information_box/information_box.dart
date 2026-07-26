@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/box_decorations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
@@ -38,6 +39,7 @@ class InformationBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -140,7 +142,11 @@ class InformationBox extends StatelessWidget {
                                     ClipboardData(text: copyText.toString()),
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text("Kopyalandı")),
+                                    SnackBar(
+                                      content: Text(
+                                        l10n.information_box_copied,
+                                      ),
+                                    ),
                                   );
                                 }
                               },
@@ -166,11 +172,11 @@ class InformationBox extends StatelessWidget {
                                       final patientId = copyText;
                                       final patientLink =
                                           'https://medical-app-2c545.web.app/addPatient?id=$patientId';
-                                      final message =
-                                          'Hasta ID: $patientId\n\n'
-                                          'Yeni hasta bilgilerini eklemek için aşağıdaki linki kullanabilirsiniz:\n'
-                                          '$patientLink\n\n'
-                                          'Lütfen bilgilerin doğruluğunu kontrol edin ve linki güvenli bir şekilde paylaşın.';
+                                      final message = l10n
+                                          .information_box_shareMessage(
+                                            patientId.toString(),
+                                            patientLink,
+                                          );
                                       SharePlus.instance.share(
                                         ShareParams(text: message),
                                       );

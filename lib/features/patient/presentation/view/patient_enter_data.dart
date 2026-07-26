@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
@@ -37,8 +38,9 @@ class PatientEnterData extends StatelessWidget {
             });
           }
 
+          final l10n = AppLocalizations.of(context)!;
           return Scaffold(
-            appBar: PatientAppBar(title: "Hasta Bilgileri"),
+            appBar: PatientAppBar(title: l10n.patient_enterData_appBarTitle),
             body: Padding(
               padding: mainPadding,
               child: Consumer<PatientEnterDataViewModel>(
@@ -71,7 +73,9 @@ class PatientEnterData extends StatelessWidget {
                               if (nonfinishedCategoriesCard.isNotEmpty)
                                 Column(
                                   children: [
-                                    PageInformationBox(title: "BEKLEYEN"),
+                                    PageInformationBox(
+                                      title: l10n.patient_enterData_pendingTitle,
+                                    ),
                                     SizedBox(height: 1.h),
                                     DataList(
                                       isFin: true,
@@ -86,11 +90,15 @@ class PatientEnterData extends StatelessWidget {
                               if (finishedCategoriesCard.isNotEmpty)
                                 Column(
                                   children: [
-                                    PageInformationBox(title: "TAMAMLANMIŞ"),
+                                    PageInformationBox(
+                                      title:
+                                          l10n.patient_enterData_finishedTitle,
+                                    ),
 
                                     SizedBox(height: 1.h),
                                     SecondButton(
-                                      buttonText: "TÜMÜNÜ GÖRÜNTÜLE",
+                                      buttonText:
+                                          l10n.patient_enterData_viewAllButton,
                                       onPressed: () {
                                         NavigationService.instance.navigateTo(
                                           '/patient-view-data',

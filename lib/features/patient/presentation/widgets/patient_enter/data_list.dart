@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
@@ -19,6 +20,7 @@ class DataList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ListView.builder(
       itemCount: categoryCardData.length,
       shrinkWrap: true,
@@ -28,9 +30,12 @@ class DataList extends StatelessWidget {
           children: [
             if (index != 0) SizedBox(height: 0.7.h),
             CustomCardWithImage(
-              title:
-                  "${categoryCardData[index].name} verilerinin girişini yapın",
-              buttonName: !isFin ? "GÖRÜNTÜLE" : "VERİ GİR",
+              title: l10n.data_list_categoryDataEntryTitle(
+                categoryCardData[index].name,
+              ),
+              buttonName: !isFin
+                  ? l10n.data_list_viewButton
+                  : l10n.data_list_enterButton,
               buttonColor: !isFin
                   ? AppColors.thirdButtonColor
                   : AppColors.buttonColor,

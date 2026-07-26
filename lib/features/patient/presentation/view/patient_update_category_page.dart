@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
@@ -39,6 +40,7 @@ class PatientUpdateCategoryPage extends StatelessWidget {
       ],
       child: Consumer<PatientUpdateCategoryViewmodel>(
         builder: (context, viewModel, child) {
+          final l10n = AppLocalizations.of(context)!;
           // setInitialValues artık burada çağrılmıyor!
           return Scaffold(
             appBar: PatientAppBar(title: viewModel.categoryCardData.name),
@@ -53,13 +55,15 @@ class PatientUpdateCategoryPage extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Padding(
                           padding: EdgeInsets.only(top: 1.h, bottom: 2.h),
-                          child: Column(children: _buildDropdowns(viewModel)),
+                          child: Column(
+                            children: _buildDropdowns(viewModel, l10n),
+                          ),
                         ),
                       ),
                     ),
                     SecondButton(
                       height: 5.h,
-                      buttonText: "KAYDI TAMAMLA",
+                      buttonText: l10n.patient_updateCategory_submitButton,
                       onPressed: () {
                         viewModel.save(context);
                       },
@@ -74,7 +78,10 @@ class PatientUpdateCategoryPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildDropdowns(PatientUpdateCategoryViewmodel viewModel) {
+  List<Widget> _buildDropdowns(
+    PatientUpdateCategoryViewmodel viewModel,
+    AppLocalizations l10n,
+  ) {
     final configs = viewModel.dropdownConfigs;
     if (configs != null) {
       return configs.map((config) {
@@ -85,13 +92,14 @@ class PatientUpdateCategoryPage extends StatelessWidget {
               config['label'] as String,
               config['values'] as List<Enum>,
               viewModel,
+              l10n,
             ),
             SizedBox(height: 2.h),
           ],
         );
       }).toList();
     }
-    return [const Text('Bu kategori için dropdown henüz tanımlanmadı.')];
+    return [Text(l10n.patient_updateCategory_noDropdown)];
   }
 
   Widget _buildDropdown(
@@ -99,6 +107,7 @@ class PatientUpdateCategoryPage extends StatelessWidget {
     String label,
     List<Enum> values,
     PatientUpdateCategoryViewmodel viewModel,
+    AppLocalizations l10n,
   ) {
     // Güvenli cast: eğer Enum değilse null döndür
     Enum? initialValue;
@@ -119,7 +128,7 @@ class PatientUpdateCategoryPage extends StatelessWidget {
 
     return DropdownButtonFormField<Enum>(
       value: initialValue,
-      hint: const Text('Seçin'),
+      hint: Text(l10n.patient_updateCategory_selectHint),
       style: AppTextStyles.nunitoBold20.copyWith(fontSize: 17.sp),
       decoration: InputDecoration(
         labelText: label,

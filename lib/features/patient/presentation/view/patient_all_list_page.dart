@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
@@ -113,8 +114,9 @@ class _PatientAllListPageState extends State<PatientAllListPage> {
             });
           }
 
+          final l10n = AppLocalizations.of(context)!;
           return Scaffold(
-            appBar: PatientAppBar(title: "Hasta Kaydı"),
+            appBar: PatientAppBar(title: l10n.patient_add_appBarTitle),
             body: Padding(
               padding: mainPadding,
               child: Column(
@@ -134,7 +136,7 @@ class _PatientAllListPageState extends State<PatientAllListPage> {
                               ),
                         ),
                         SizedBox(height: 2.h),
-                        PageInformationBox(title: "HASTA LİSTESİ"),
+                        PageInformationBox(title: l10n.patient_allList_title),
                         SizedBox(height: 1.h),
                         Expanded(
                           child: Consumer<PatientAllListViewModel>(
@@ -164,10 +166,10 @@ class _PatientAllListPageState extends State<PatientAllListPage> {
     if (patientId.isEmpty) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Hasta ID boş olamaz'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.patient_allList_idEmptyError),
             backgroundColor: Colors.orange,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -178,10 +180,10 @@ class _PatientAllListPageState extends State<PatientAllListPage> {
     if (patientId.length < 10) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Geçersiz hasta ID formatı'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.patient_allList_idInvalidError),
             backgroundColor: Colors.orange,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -213,7 +215,11 @@ class _PatientAllListPageState extends State<PatientAllListPage> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Bir hata oluştu: $e'),
+            content: Text(
+              AppLocalizations.of(
+                context,
+              )!.patient_allList_genericError(e.toString()),
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),

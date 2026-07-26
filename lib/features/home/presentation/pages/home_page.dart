@@ -1,13 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/features/home/presentation/widgets/main_app_bar.dart';
 import 'package:flutter_medical_data_app/shared/widgets/custom_card_with_image.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-String getCurrentUserName() {
-  return FirebaseAuth.instance.currentUser?.displayName ?? "Ana Sayfa";
+String getCurrentUserName(AppLocalizations l10n) {
+  return FirebaseAuth.instance.currentUser?.displayName ?? l10n.home_defaultTitle;
 }
 
 class MainPage extends StatelessWidget {
@@ -15,7 +16,8 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String name = getCurrentUserName();
+    final l10n = AppLocalizations.of(context)!;
+    String name = getCurrentUserName(l10n);
     return Scaffold(
       appBar: MainAppBar(title: name),
       body: Padding(
@@ -23,8 +25,8 @@ class MainPage extends StatelessWidget {
         child: Column(
           children: [
             CustomCardWithImage(
-              title: "Yeni bir hasta kaydı oluşturun",
-              buttonName: "KAYIT AÇ",
+              title: l10n.home_newPatientTitle,
+              buttonName: l10n.home_newPatientButton,
               image: "assets/images/new_patient.png",
               buttonPressed: () {
                 NavigationService.instance.navigateTo('/patient-add');
@@ -32,8 +34,8 @@ class MainPage extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             CustomCardWithImage(
-              title: "Mevcut bir hastanın verilerini girin",
-              buttonName: "HASTALARI GÖR",
+              title: l10n.home_existingPatientTitle,
+              buttonName: l10n.home_existingPatientButton,
               image: "assets/images/existing_patinet.png",
               buttonPressed: () {
                 NavigationService.instance.navigateTo('/patient-all-list');
@@ -41,8 +43,8 @@ class MainPage extends StatelessWidget {
             ),
             SizedBox(height: 1.h),
             CustomCardWithImage(
-              title: "Hesabınızdan çıkış yapın",
-              buttonName: "ÇIKIŞ YAP",
+              title: l10n.admin_home_signOutTitle,
+              buttonName: l10n.admin_home_signOutButton,
               image: "assets/images/existing_patinet.png",
               buttonPressed: () async {
                 await FirebaseAuth.instance.signOut();

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
@@ -18,6 +19,7 @@ class PatientMedicalData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Map<String, dynamic> addedCategoriesMap = addedCategories.toMap();
     double spaceHeight = 0.5.h;
     return Padding(
@@ -27,7 +29,7 @@ class PatientMedicalData extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Text(
-            "Mevcut Veriler",
+            l10n.patient_medicalData_title,
             textAlign: TextAlign.left,
             style: AppTextStyles.nunitoBold25.copyWith(
               fontSize: 16.sp,
@@ -51,7 +53,7 @@ class PatientMedicalData extends StatelessWidget {
           ),
           SizedBox(height: spaceHeight),
           SecondButton(
-            buttonText: "VERİ GİRİŞİ",
+            buttonText: l10n.patient_medicalData_enterButton,
             onPressed: onPressed,
             height: 4.h,
           ),

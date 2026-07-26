@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
@@ -43,23 +44,24 @@ class _PatientAddPageState extends State<PatientAddPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return ChangeNotifierProvider(
       create: (_) => PatientAddViewmodel(
         context.read<PatientViewModel>(),
         context.read<PatientConnectionViewModel>(),
       ),
       child: Scaffold(
-        appBar: PatientAppBar(title: "Hasta Kaydı"),
+        appBar: PatientAppBar(title: l10n.patient_add_appBarTitle),
         body: Padding(
           padding: mainPadding,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              PageInformationBox(title: "Yeni Hasta Kaydı Oluşturun"),
+              PageInformationBox(title: l10n.patient_add_pageTitle),
               SizedBox(height: 0.5.h),
               Text(
-                "Hasta ID'sini paylaşmak için kopyala veya paylaş butonlarını kullanabilirsiniz.",
+                l10n.patient_add_shareHint,
                 textAlign: TextAlign.center,
                 style: AppTextStyles.nunitoLight15.copyWith(
                   color: AppColors.text,
@@ -71,26 +73,26 @@ class _PatientAddPageState extends State<PatientAddPage> {
                   return Column(
                     children: [
                       InformationBox(
-                        title: "HASTA",
+                        title: l10n.patient_add_sectionTitle,
                         showCopy: false,
                         textFieldListTiles: [
                           TextFieldListTile(
-                            title: "Adı",
+                            title: l10n.patient_add_nameLabel,
                             controller: nameController,
                           ),
                           TextFieldListTile(
-                            title: "Soyadı",
+                            title: l10n.patient_add_surnameLabel,
                             controller: surnameController,
                           ),
                           TextFieldListTile(
-                            title: "Protokol\nNo",
+                            title: l10n.patient_add_protocolLabel,
                             controller: protocolNumber,
                           ),
                         ],
                       ),
                       SizedBox(height: 2.h),
                       SecondButton(
-                        buttonText: "KAYDI OLUŞTUR",
+                        buttonText: l10n.patient_add_submitButton,
                         onPressed: () async {
                           await viewModel.handleAddPatient(
                             context,

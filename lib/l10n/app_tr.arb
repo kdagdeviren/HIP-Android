@@ -118,5 +118,57 @@
   "admin_userApproved": "Kullanıcı onaylandı.",
   "admin_userApproveFailed": "Kullanıcı onaylanamadı.",
   "admin_userRejected": "Kullanıcı reddedildi.",
-  "admin_userRejectFailed": "Kullanıcı reddedilemedi."
+  "admin_userRejectFailed": "Kullanıcı reddedilemedi.",
+  "home_defaultTitle": "Ana Sayfa",
+  "home_newPatientTitle": "Yeni bir hasta kaydı oluşturun",
+  "home_newPatientButton": "KAYIT AÇ",
+  "home_existingPatientTitle": "Mevcut bir hastanın verilerini girin",
+  "home_existingPatientButton": "HASTALARI GÖR",
+  "patient_add_appBarTitle": "Hasta Kaydı",
+  "patient_add_pageTitle": "Yeni Hasta Kaydı Oluşturun",
+  "patient_add_shareHint": "Hasta ID'sini paylaşmak için kopyala veya paylaş butonlarını kullanabilirsiniz.",
+  "patient_add_sectionTitle": "HASTA",
+  "patient_add_nameLabel": "Adı",
+  "patient_add_surnameLabel": "Soyadı",
+  "patient_add_protocolLabel": "Protokol\nNo",
+  "patient_add_submitButton": "KAYDI OLUŞTUR",
+  "patient_enterData_appBarTitle": "Hasta Bilgileri",
+  "patient_enterData_pendingTitle": "BEKLEYEN",
+  "patient_enterData_finishedTitle": "TAMAMLANMIŞ",
+  "patient_enterData_viewAllButton": "TÜMÜNÜ GÖRÜNTÜLE",
+  "patient_viewData_appBarTitle": "Bilgileri Gör",
+  "patient_viewData_patientLoadFailed": "Hasta bilgisi yüklenemedi",
+  "patient_viewData_title": "{categoryName} Verileri",
+  "@patient_viewData_title": {
+    "placeholders": { "categoryName": { "type": "String" } }
+  },
+  "patient_viewData_exportButton": "ÇIKTI AL",
+  "patient_viewData_updateButton": "GÜNCELLE",
+  "patient_allList_title": "HASTA LİSTESİ",
+  "patient_allList_idEmptyError": "Hasta ID boş olamaz",
+  "patient_allList_idInvalidError": "Geçersiz hasta ID formatı",
+  "patient_allList_genericError": "Bir hata oluştu: {error}",
+  "@patient_allList_genericError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_updateCategory_selectHint": "Seçin",
+  "patient_updateCategory_noDropdown": "Bu kategori için dropdown henüz tanımlanmadı.",
+  "patient_updateCategory_submitButton": "KAYDI TAMAMLA",
+  "patient_infoBox_title": "HASTA BİLGİLERİ",
+  "patient_infoBox_idLabel": "ID",
+  "patient_infoBox_loading": "Yükleniyor...",
+  "information_box_copied": "Kopyalandı",
+  "information_box_shareMessage": "Hasta ID: {patientId}\n\nYeni hasta bilgilerini eklemek için aşağıdaki linki kullanabilirsiniz:\n{link}\n\nLütfen bilgilerin doğruluğunu kontrol edin ve linki güvenli bir şekilde paylaşın.",
+  "@information_box_shareMessage": {
+    "placeholders": { "patientId": { "type": "String" }, "link": { "type": "String" } }
+  },
+  "data_list_categoryDataEntryTitle": "{categoryName} verilerinin girişini yapın",
+  "@data_list_categoryDataEntryTitle": {
+    "placeholders": { "categoryName": { "type": "String" } }
+  },
+  "data_list_viewButton": "GÖRÜNTÜLE",
+  "data_list_enterButton": "VERİ GİR",
+  "patient_list_empty": "Kayıtlı hasta bulunamadı.",
+  "patient_medicalData_title": "Mevcut Veriler",
+  "patient_medicalData_enterButton": "VERİ GİRİŞİ"
 }

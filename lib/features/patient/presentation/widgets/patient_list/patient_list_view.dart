@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/patient_list_tile.dart';
@@ -33,7 +34,9 @@ class PatientListView extends StatelessWidget {
         }
 
         if (patients.isEmpty && !hasMore && !patientViewModel.isLoading) {
-          return const _EmptyState(message: 'Kayıtlı hasta bulunamadı.');
+          return _EmptyState(
+            message: AppLocalizations.of(context)!.patient_list_empty,
+          );
         }
 
         return ListView.builder(
@@ -86,7 +89,10 @@ class _EmptyState extends StatelessWidget {
             ),
             if (onRetry != null) ...[
               SizedBox(height: 2.h),
-              TextButton(onPressed: onRetry, child: const Text('Tekrar dene')),
+              TextButton(
+                onPressed: onRetry,
+                child: Text(AppLocalizations.of(context)!.common_retry),
+              ),
             ],
           ],
         ),

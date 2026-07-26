@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
@@ -47,6 +48,7 @@ class PatientViewData extends StatelessWidget {
       context,
       listen: false,
     );
+    final l10n = AppLocalizations.of(context)!;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -57,7 +59,7 @@ class PatientViewData extends StatelessWidget {
         ),
       ],
       child: Scaffold(
-        appBar: PatientAppBar(title: "Bilgileri Gör"),
+        appBar: PatientAppBar(title: l10n.patient_viewData_appBarTitle),
         body: Padding(
           padding: mainPadding,
           child: Column(
@@ -78,7 +80,7 @@ class PatientViewData extends StatelessWidget {
                           if (viewModel.patient == null) {
                             return Center(
                               child: Text(
-                                'Hasta bilgisi yüklenemedi',
+                                l10n.patient_viewData_patientLoadFailed,
                                 style: TextStyle(fontSize: 16.sp),
                               ),
                             );
@@ -99,7 +101,9 @@ class PatientViewData extends StatelessWidget {
                                             bottom: 1.h,
                                           ),
                                           showCopy: false,
-                                          title: "${cardData.name} Verileri",
+                                          title: l10n.patient_viewData_title(
+                                            cardData.name,
+                                          ),
                                           divider: true,
                                           fixedListTiles: _getCategoryTiles(
                                             viewModel,
@@ -114,7 +118,9 @@ class PatientViewData extends StatelessWidget {
                                   InformationBox(
                                     innerPadding: EdgeInsets.only(bottom: 1.h),
                                     showCopy: false,
-                                    title: "${cardData.name} Verileri",
+                                    title: l10n.patient_viewData_title(
+                                      cardData.name,
+                                    ),
                                     divider: true,
                                     fixedListTiles: _getCategoryTiles(
                                       viewModel,
@@ -124,8 +130,8 @@ class PatientViewData extends StatelessWidget {
                                 SizedBox(height: 3.h),
                                 SecondButton(
                                   buttonText: (categoryKey == "all")
-                                      ? "ÇIKTI AL"
-                                      : "GÜNCELLE",
+                                      ? l10n.patient_viewData_exportButton
+                                      : l10n.patient_viewData_updateButton,
                                   onPressed: () async {
                                     if (categoryKey == "all") {
                                       final result = await viewModel
