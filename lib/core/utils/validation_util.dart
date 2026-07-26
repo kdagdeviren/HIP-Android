@@ -1,7 +1,10 @@
+import 'package:flutter_medical_data_app/core/constants/validation_constants.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
+
 class ValidationUtil {
   // Email validation regex pattern
   static final RegExp _emailRegex = RegExp(
-    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    ValidationConstants.emailRegexPattern,
   );
 
   /// Validates email format
@@ -13,15 +16,15 @@ class ValidationUtil {
   /// Validates password strength
   static bool isValidPassword(String password) {
     if (password.isEmpty) return false;
-    if (password.length < 6) return false;
+    if (password.length < ValidationConstants.passwordMinLength) return false;
     return true;
   }
 
   /// Validates name field
   static bool isValidName(String name) {
     if (name.isEmpty) return false;
-    if (name.length < 2) return false;
-    if (name.length > 50) return false;
+    if (name.length < ValidationConstants.nameMinLength) return false;
+    if (name.length > ValidationConstants.nameMaxLength) return false;
     return true;
   }
 
@@ -29,7 +32,9 @@ class ValidationUtil {
   static bool isValidProtocolNumber(String protocolNumber) {
     if (protocolNumber.isEmpty) return false;
     // Protocol number should contain only digits and be at least 3 characters
-    if (protocolNumber.length < 3) return false;
+    if (protocolNumber.length < ValidationConstants.protocolNumberMinLength) {
+      return false;
+    }
     return RegExp(r'^\d+$').hasMatch(protocolNumber);
   }
 
@@ -40,40 +45,50 @@ class ValidationUtil {
 
   /// Returns email validation error message
   static String? getEmailErrorMessage(String email) {
-    if (email.isEmpty) return 'Email alanı boş olamaz';
-    if (!isValidEmail(email)) return 'Geçerli bir email adresi giriniz';
+    if (email.isEmpty) return ValidationConstants.emailEmptyError;
+    if (!isValidEmail(email)) return ValidationConstants.emailInvalidError;
     return null;
   }
 
   /// Returns password validation error message
   static String? getPasswordErrorMessage(String password) {
-    if (password.isEmpty) return 'Şifre alanı boş olamaz';
-    if (password.length < 6) return 'Şifre en az 6 karakter olmalıdır';
+    if (password.isEmpty) return ValidationConstants.passwordEmptyError;
+    if (password.length < ValidationConstants.passwordMinLength) {
+      return ValidationConstants.passwordTooShortError;
+    }
     return null;
   }
 
   /// Returns password validation error message
   static String? getIdentityVerifyErrorMessage(bool isIdentityVerified) {
-    if (isIdentityVerified == false) return 'Kimlik doğrulaması yapılmalıdır';
+    if (isIdentityVerified == false) {
+      return L10n.current.validation_identityNotVerified;
+    }
     return null;
   }
 
   /// Returns name validation error message
   static String? getNameErrorMessage(String name) {
-    if (name.isEmpty) return 'Ad alanı boş olamaz';
-    if (name.length < 2) return 'Ad en az 2 karakter olmalıdır';
-    if (name.length > 50) return 'Ad en fazla 50 karakter olabilir';
+    if (name.isEmpty) return ValidationConstants.nameEmptyError;
+    if (name.length < ValidationConstants.nameMinLength) {
+      return ValidationConstants.nameTooShortError;
+    }
+    if (name.length > ValidationConstants.nameMaxLength) {
+      return ValidationConstants.nameTooLongError;
+    }
     return null;
   }
 
   /// Returns protocol number validation error message
   static String? getProtocolNumberErrorMessage(String protocolNumber) {
-    if (protocolNumber.isEmpty) return 'Protokol numarası boş olamaz';
-    if (protocolNumber.length < 3) {
-      return 'Protokol numarası en az 3 karakter olmalıdır';
+    if (protocolNumber.isEmpty) {
+      return ValidationConstants.protocolNumberEmptyError;
+    }
+    if (protocolNumber.length < ValidationConstants.protocolNumberMinLength) {
+      return ValidationConstants.protocolNumberTooShortError;
     }
     if (!RegExp(r'^\d+$').hasMatch(protocolNumber)) {
-      return 'Protokol numarası sadece rakam içermelidir';
+      return ValidationConstants.protocolNumberInvalidError;
     }
     return null;
   }
@@ -83,9 +98,11 @@ class ValidationUtil {
     String password,
     String confirmPassword,
   ) {
-    if (confirmPassword.isEmpty) return 'Şifre tekrarı boş olamaz';
+    if (confirmPassword.isEmpty) {
+      return ValidationConstants.passwordConfirmationEmptyError;
+    }
     if (!doPasswordsMatch(password, confirmPassword)) {
-      return 'Şifreler eşleşmiyor';
+      return ValidationConstants.passwordMismatchError;
     }
     return null;
   }

@@ -27,5 +27,43 @@
   "error_networkIssue": "İnternet bağlantısı sorunu",
   "error_validationInvalid": "Girilen bilgiler geçersiz",
   "error_cancelled": "İşlem iptal edildi",
-  "error_generic": "Bir hata oluştu. Lütfen tekrar deneyin"
+  "error_generic": "Bir hata oluştu. Lütfen tekrar deneyin",
+  "validation_emailEmpty": "Email alanı boş olamaz",
+  "validation_emailInvalid": "Geçerli bir email adresi giriniz",
+  "validation_passwordEmpty": "Şifre alanı boş olamaz",
+  "validation_passwordTooShort": "Şifre en az {min} karakter olmalıdır",
+  "@validation_passwordTooShort": {
+    "placeholders": { "min": { "type": "int" } }
+  },
+  "validation_passwordTooLong": "Şifre en fazla {max} karakter olabilir",
+  "@validation_passwordTooLong": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "validation_nameEmpty": "Ad alanı boş olamaz",
+  "validation_nameTooShort": "Ad en az {min} karakter olmalıdır",
+  "@validation_nameTooShort": {
+    "placeholders": { "min": { "type": "int" } }
+  },
+  "validation_nameTooLong": "Ad en fazla {max} karakter olabilir",
+  "@validation_nameTooLong": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "validation_surnameEmpty": "Soyad alanı boş olamaz",
+  "validation_surnameTooShort": "Soyad en az {min} karakter olmalıdır",
+  "@validation_surnameTooShort": {
+    "placeholders": { "min": { "type": "int" } }
+  },
+  "validation_surnameTooLong": "Soyad en fazla {max} karakter olabilir",
+  "@validation_surnameTooLong": {
+    "placeholders": { "max": { "type": "int" } }
+  },
+  "validation_protocolEmpty": "Protokol numarası boş olamaz",
+  "validation_protocolTooShort": "Protokol numarası en az {min} karakter olmalıdır",
+  "@validation_protocolTooShort": {
+    "placeholders": { "min": { "type": "int" } }
+  },
+  "validation_protocolInvalid": "Protokol numarası sadece rakam içermelidir",
+  "validation_passwordConfirmEmpty": "Şifre tekrarı boş olamaz",
+  "validation_passwordMismatch": "Şifreler eşleşmiyor",
+  "validation_identityNotVerified": "Kimlik doğrulaması yapılmalıdır"
 }

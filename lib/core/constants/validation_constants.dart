@@ -1,4 +1,8 @@
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
+
 class ValidationConstants {
+  const ValidationConstants._();
+
   // Password constraints
   static const int passwordMinLength = 6;
   static const int passwordMaxLength = 128;
@@ -19,30 +23,33 @@ class ValidationConstants {
   static const String emailRegexPattern =
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
 
-  // Error messages
-  static const String emailEmptyError = 'Email alanı boş olamaz';
-  static const String emailInvalidError = 'Geçerli bir email adresi giriniz';
-  static const String passwordEmptyError = 'Şifre alanı boş olamaz';
-  static const String passwordTooShortError =
-      'Şifre en az $passwordMinLength karakter olmalıdır';
-  static const String passwordTooLongError =
-      'Şifre en fazla $passwordMaxLength karakter olabilir';
-  static const String nameEmptyError = 'Ad alanı boş olamaz';
-  static const String nameTooShortError =
-      'Ad en az $nameMinLength karakter olmalıdır';
-  static const String nameTooLongError =
-      'Ad en fazla $nameMaxLength karakter olabilir';
-  static const String surnameEmptyError = 'Soyad alanı boş olamaz';
-  static const String surnameTooShortError =
-      'Soyad en az $surnameMinLength karakter olmalıdır';
-  static const String surnameTooLongError =
-      'Soyad en fazla $surnameMaxLength karakter olabilir';
-  static const String protocolNumberEmptyError = 'Protokol numarası boş olamaz';
-  static const String protocolNumberTooShortError =
-      'Protokol numarası en az $protocolNumberMinLength karakter olmalıdır';
-  static const String protocolNumberInvalidError =
-      'Protokol numarası sadece rakam içermelidir';
-  static const String passwordConfirmationEmptyError =
-      'Şifre tekrarı boş olamaz';
-  static const String passwordMismatchError = 'Şifreler eşleşmiyor';
+  // Error messages — çalışma zamanında çözülür
+  static String get emailEmptyError => L10n.current.validation_emailEmpty;
+  static String get emailInvalidError => L10n.current.validation_emailInvalid;
+  static String get passwordEmptyError =>
+      L10n.current.validation_passwordEmpty;
+  static String get passwordTooShortError =>
+      L10n.current.validation_passwordTooShort(passwordMinLength);
+  static String get passwordTooLongError =>
+      L10n.current.validation_passwordTooLong(passwordMaxLength);
+  static String get nameEmptyError => L10n.current.validation_nameEmpty;
+  static String get nameTooShortError =>
+      L10n.current.validation_nameTooShort(nameMinLength);
+  static String get nameTooLongError =>
+      L10n.current.validation_nameTooLong(nameMaxLength);
+  static String get surnameEmptyError => L10n.current.validation_surnameEmpty;
+  static String get surnameTooShortError =>
+      L10n.current.validation_surnameTooShort(surnameMinLength);
+  static String get surnameTooLongError =>
+      L10n.current.validation_surnameTooLong(surnameMaxLength);
+  static String get protocolNumberEmptyError =>
+      L10n.current.validation_protocolEmpty;
+  static String get protocolNumberTooShortError =>
+      L10n.current.validation_protocolTooShort(protocolNumberMinLength);
+  static String get protocolNumberInvalidError =>
+      L10n.current.validation_protocolInvalid;
+  static String get passwordConfirmationEmptyError =>
+      L10n.current.validation_passwordConfirmEmpty;
+  static String get passwordMismatchError =>
+      L10n.current.validation_passwordMismatch;
 }
