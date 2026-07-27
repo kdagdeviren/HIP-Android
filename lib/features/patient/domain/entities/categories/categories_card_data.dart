@@ -1,11 +1,9 @@
 class CategoryCardData {
-  final String name;
   final String imagePath;
   final String id;
   final Object? extraData;
 
   const CategoryCardData({
-    required this.name,
     required this.imagePath,
     required this.id,
     this.extraData,
@@ -15,7 +13,6 @@ class CategoryCardData {
   static CategoryCardData pathology() {
     return const CategoryCardData(
       id: 'pathology',
-      name: 'Patoloji',
       imagePath: 'assets/images/pathology.png',
     );
   }
@@ -23,7 +20,6 @@ class CategoryCardData {
   static CategoryCardData oncology() {
     return const CategoryCardData(
       id: 'oncology',
-      name: 'Onkoloji',
       imagePath: 'assets/images/oncology.png',
     );
   }
@@ -31,7 +27,6 @@ class CategoryCardData {
   static CategoryCardData demography() {
     return const CategoryCardData(
       id: 'demography',
-      name: 'Demografik',
       imagePath: 'assets/images/demography.png',
     );
   }
@@ -39,7 +34,6 @@ class CategoryCardData {
   static CategoryCardData comorbidity() {
     return const CategoryCardData(
       id: 'comorbidity',
-      name: 'Komorbite',
       imagePath: 'assets/images/comorbidity.png',
     );
   }
@@ -47,7 +41,6 @@ class CategoryCardData {
   static CategoryCardData biochemistry() {
     return const CategoryCardData(
       id: 'biochemistry',
-      name: 'Biyokimya',
       imagePath: 'assets/images/biochemistry.png',
     );
   }
@@ -55,7 +48,6 @@ class CategoryCardData {
   static CategoryCardData radiology() {
     return const CategoryCardData(
       id: 'radiology',
-      name: 'Radyoloji',
       imagePath: 'assets/images/radiology.png',
     );
   }

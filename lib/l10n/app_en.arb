@@ -154,7 +154,7 @@
   "patient_updateCategory_selectHint": "Select",
   "patient_updateCategory_noDropdown": "No dropdown is defined for this category yet.",
   "patient_updateCategory_submitButton": "COMPLETE RECORD",
-  "patient_infoBox_title": "PATIENT INFORMATION",
+  "patient_infoBox_title": "PATIENT INFO",
   "patient_infoBox_idLabel": "ID",
   "patient_infoBox_loading": "Loading...",
   "information_box_copied": "Copied",
@@ -573,5 +573,12 @@
   "settings_appBarTitle": "Settings",
   "settings_languageSectionTitle": "Language",
   "settings_language_turkish": "Turkish",
-  "settings_language_english": "English"
+  "settings_language_english": "English",
+
+  "category_pathology_name": "Pathology",
+  "category_oncology_name": "Oncology",
+  "category_demography_name": "Demographics",
+  "category_comorbidity_name": "Comorbidity",
+  "category_biochemistry_name": "Biochemistry",
+  "category_radiology_name": "Radiology"
 }

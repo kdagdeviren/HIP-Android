@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
+import 'package:flutter_medical_data_app/core/utils/category_display_util.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_data_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_view_model.dart';
@@ -102,7 +103,9 @@ class PatientViewData extends StatelessWidget {
                                           ),
                                           showCopy: false,
                                           title: l10n.patient_viewData_title(
-                                            cardData.name,
+                                            CategoryDisplayUtil.getName(
+                                              cardData.id,
+                                            ),
                                           ),
                                           divider: true,
                                           fixedListTiles: _getCategoryTiles(
@@ -119,7 +122,9 @@ class PatientViewData extends StatelessWidget {
                                     innerPadding: EdgeInsets.only(bottom: 1.h),
                                     showCopy: false,
                                     title: l10n.patient_viewData_title(
-                                      cardData.name,
+                                      CategoryDisplayUtil.getName(
+                                        cardData.id,
+                                      ),
                                     ),
                                     divider: true,
                                     fixedListTiles: _getCategoryTiles(

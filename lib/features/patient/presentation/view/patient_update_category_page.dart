@@ -3,6 +3,7 @@ import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/constants/paddings.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
+import 'package:flutter_medical_data_app/core/utils/category_display_util.dart';
 import 'package:flutter_medical_data_app/core/utils/enum_display_util.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_all_list_viewmodel.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/viewmodel/patient_update_category_viewmodel.dart';
@@ -43,7 +44,9 @@ class PatientUpdateCategoryPage extends StatelessWidget {
           final l10n = AppLocalizations.of(context)!;
           // setInitialValues artık burada çağrılmıyor!
           return Scaffold(
-            appBar: PatientAppBar(title: viewModel.categoryCardData.name),
+            appBar: PatientAppBar(
+              title: CategoryDisplayUtil.getName(viewModel.categoryCardData.id),
+            ),
             body: SafeArea(
               bottom: false,
               child: Padding(

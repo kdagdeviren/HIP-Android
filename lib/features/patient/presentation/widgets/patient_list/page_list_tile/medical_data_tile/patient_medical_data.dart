@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/theme/text_theme.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
+import 'package:flutter_medical_data_app/core/utils/category_display_util.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/added_categories.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/widgets/patient_list/page_list_tile/medical_data_tile/medical_data_tile.dart';
@@ -45,7 +46,7 @@ class PatientMedicalData extends StatelessWidget {
               return Padding(
                 padding: EdgeInsets.only(bottom: spaceHeight),
                 child: MedicalDataTile(
-                  title: category.name,
+                  title: CategoryDisplayUtil.getName(category.id),
                   isActive: isActive,
                 ),
               );

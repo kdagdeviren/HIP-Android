@@ -7,6 +7,7 @@ import 'package:flutter_medical_data_app/core/services/loading_service.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/services/popup_service.dart';
 import 'package:flutter_medical_data_app/core/services/notification_service.dart';
+import 'package:flutter_medical_data_app/core/utils/category_display_util.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/patient/data/datasources/patient_connection_remote_data_source.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_connection_model.dart';
@@ -272,7 +273,7 @@ class PatientUpdateCategoryViewmodel extends ChangeNotifier {
       }
 
       // Get category display name
-      final categoryName = categoryCardData.name;
+      final categoryName = CategoryDisplayUtil.getName(categoryCardData.id);
 
       // Create notification message
       final message = isUpdate

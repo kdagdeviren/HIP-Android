@@ -573,5 +573,12 @@
   "settings_appBarTitle": "Ayarlar",
   "settings_languageSectionTitle": "Dil",
   "settings_language_turkish": "Türkçe",
-  "settings_language_english": "İngilizce"
+  "settings_language_english": "İngilizce",
+
+  "category_pathology_name": "Patoloji",
+  "category_oncology_name": "Onkoloji",
+  "category_demography_name": "Demografik",
+  "category_comorbidity_name": "Komorbite",
+  "category_biochemistry_name": "Biyokimya",
+  "category_radiology_name": "Radyoloji"
 }

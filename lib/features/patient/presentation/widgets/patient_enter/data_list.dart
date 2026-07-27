@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/theme/theme_color.dart';
+import 'package:flutter_medical_data_app/core/utils/category_display_util.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/categories_card_data.dart';
 import 'package:flutter_medical_data_app/shared/widgets/custom_card_with_image.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -31,7 +32,7 @@ class DataList extends StatelessWidget {
             if (index != 0) SizedBox(height: 0.7.h),
             CustomCardWithImage(
               title: l10n.data_list_categoryDataEntryTitle(
-                categoryCardData[index].name,
+                CategoryDisplayUtil.getName(categoryCardData[index].id),
               ),
               buttonName: !isFin
                   ? l10n.data_list_viewButton
