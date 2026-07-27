@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 class LoggerUtil {
@@ -17,6 +18,10 @@ class LoggerUtil {
         colors: true,
         printEmojis: true,
       ),
+      // Release derlemede loglar tamamen kapalı: hasta adı, protokol no,
+      // doküman ID'si gibi kişisel veri release APK'da adb logcat ile
+      // okunabilir olmasın diye.
+      level: kReleaseMode ? Level.off : Level.trace,
     );
   }
 
