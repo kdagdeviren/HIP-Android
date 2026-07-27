@@ -80,7 +80,8 @@ class PatientViewDataViewmodel extends ChangeNotifier {
     // Create label map
     Map<String, String> keyToLabel = {};
     for (var config in fieldConfigs) {
-      keyToLabel[config['key'] as String] = config['label'] as String;
+      final key = config['key'] as String;
+      keyToLabel[key] = EnumDisplayUtil.getFieldLabel(categoryKey, key);
     }
 
     // Convert to display format
@@ -176,8 +177,11 @@ class PatientViewDataViewmodel extends ChangeNotifier {
           Map<String, int> labelToIndex = {};
           if (fieldConfigs != null) {
             for (var config in fieldConfigs) {
-              labelToIndex[config['label'] as String] =
-                  (config['index'] as int?) ?? 0;
+              final label = EnumDisplayUtil.getFieldLabel(
+                cardData.id,
+                config['key'] as String,
+              );
+              labelToIndex[label] = (config['index'] as int?) ?? 0;
             }
           }
 

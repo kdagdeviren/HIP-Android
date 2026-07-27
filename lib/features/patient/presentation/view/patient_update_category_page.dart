@@ -89,7 +89,10 @@ class PatientUpdateCategoryPage extends StatelessWidget {
           children: [
             _buildDropdown(
               config['key'] as String,
-              config['label'] as String,
+              EnumDisplayUtil.getFieldLabel(
+                viewModel.categoryKey,
+                config['key'] as String,
+              ),
               config['values'] as List<Enum>,
               viewModel,
               l10n,

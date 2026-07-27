@@ -1,33 +1,7 @@
 // Comorbidity enums
 enum Presence { present, absent, unknown }
 
-extension PresenceExtension on Presence {
-  String get displayText {
-    switch (this) {
-      case Presence.present:
-        return 'Var-2';
-      case Presence.absent:
-        return 'Yok-1';
-      case Presence.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum PresenceNegative { present, absent, unk }
-
-extension PresenceExtensionNegative on PresenceNegative {
-  String get displayText {
-    switch (this) {
-      case PresenceNegative.present:
-        return 'Var-1';
-      case PresenceNegative.absent:
-        return 'Yok-2';
-      case PresenceNegative.unk:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 class Comorbidity {
   final Presence? ht;
@@ -170,56 +144,24 @@ class Comorbidity {
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
-      {'index': 21, 'key': 'ht', 'label': 'HT', 'values': Presence.values},
-      {'index': 22, 'key': 'dm', 'label': 'DM', 'values': Presence.values},
-      {
-        'index': 23,
-        'key': 'copd',
-        'label': 'KOAH',
-        'values': PresenceNegative.values,
-      },
-      {
-        'index': 24,
-        'key': 'smoking',
-        'label': 'Sigara',
-        'values': PresenceNegative.values,
-      },
+      {'index': 21, 'key': 'ht', 'values': Presence.values},
+      {'index': 22, 'key': 'dm', 'values': Presence.values},
+      {'index': 23, 'key': 'copd', 'values': PresenceNegative.values},
+      {'index': 24, 'key': 'smoking', 'values': PresenceNegative.values},
       {
         'index': 25,
         'key': 'familyHistoryOfBreastCa',
-        'label': 'Ailede Meme Kanseri Öyküsü',
         'values': Presence.values,
       },
       {
         'index': 26,
         'key': 'thyroidDisease',
-        'label': 'Tiroid Hastalığı',
         'values': PresenceNegative.values,
       },
-      {
-        'index': 27,
-        'key': 'retinopathy',
-        'label': 'Retinopati',
-        'values': Presence.values,
-      },
-      {
-        'index': 28,
-        'key': 'neuropathy',
-        'label': 'Nöropati',
-        'values': PresenceNegative.values,
-      },
-      {
-        'index': 29,
-        'key': 'osteoporosis',
-        'label': 'Osteoporoz',
-        'values': PresenceNegative.values,
-      },
-      {
-        'index': 30,
-        'key': 'depression',
-        'label': 'Depresyon',
-        'values': PresenceNegative.values,
-      },
+      {'index': 27, 'key': 'retinopathy', 'values': Presence.values},
+      {'index': 28, 'key': 'neuropathy', 'values': PresenceNegative.values},
+      {'index': 29, 'key': 'osteoporosis', 'values': PresenceNegative.values},
+      {'index': 30, 'key': 'depression', 'values': PresenceNegative.values},
     ];
   }
 }

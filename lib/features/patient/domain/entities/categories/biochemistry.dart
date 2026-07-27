@@ -1,21 +1,6 @@
 // Biochemistry enums
 enum BiochemistryLevel { normal, high, low, unknown }
 
-extension BiochemistryLevelExtension on BiochemistryLevel {
-  String get displayText {
-    switch (this) {
-      case BiochemistryLevel.normal:
-        return 'Normal-1';
-      case BiochemistryLevel.high:
-        return 'Yüksek-3';
-      case BiochemistryLevel.low:
-        return 'Düşük-2';
-      case BiochemistryLevel.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 class Biochemistry {
   final BiochemistryLevel? alp;
   final BiochemistryLevel? alt;
@@ -215,90 +200,20 @@ class Biochemistry {
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
-      {
-        'index': 31,
-        'key': 'alp',
-        'label': 'ALP',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 32,
-        'key': 'alt',
-        'label': 'ALT',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 33,
-        'key': 'ast',
-        'label': 'AST',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 34,
-        'key': 'bun',
-        'label': 'BUN',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 35,
-        'key': 'ca153',
-        'label': 'CA15-3',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 36,
-        'key': 'cea',
-        'label': 'CEA',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 37,
-        'key': 'crp',
-        'label': 'CRP',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 38,
-        'key': 'ggt',
-        'label': 'GGT',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 39,
-        'key': 'glucose',
-        'label': 'Glukoz',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 40,
-        'key': 'hba1c',
-        'label': 'HbA1c',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 41,
-        'key': 'creatinine',
-        'label': 'Kreatinin',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 42,
-        'key': 'ldh',
-        'label': 'LDH',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 43,
-        'key': 'tsh',
-        'label': 'TSH',
-        'values': BiochemistryLevel.values,
-      },
-      {
-        'index': 44,
-        'key': 'egfr',
-        'label': 'e-GFR',
-        'values': BiochemistryLevel.values,
-      },
+      {'index': 31, 'key': 'alp', 'values': BiochemistryLevel.values},
+      {'index': 32, 'key': 'alt', 'values': BiochemistryLevel.values},
+      {'index': 33, 'key': 'ast', 'values': BiochemistryLevel.values},
+      {'index': 34, 'key': 'bun', 'values': BiochemistryLevel.values},
+      {'index': 35, 'key': 'ca153', 'values': BiochemistryLevel.values},
+      {'index': 36, 'key': 'cea', 'values': BiochemistryLevel.values},
+      {'index': 37, 'key': 'crp', 'values': BiochemistryLevel.values},
+      {'index': 38, 'key': 'ggt', 'values': BiochemistryLevel.values},
+      {'index': 39, 'key': 'glucose', 'values': BiochemistryLevel.values},
+      {'index': 40, 'key': 'hba1c', 'values': BiochemistryLevel.values},
+      {'index': 41, 'key': 'creatinine', 'values': BiochemistryLevel.values},
+      {'index': 42, 'key': 'ldh', 'values': BiochemistryLevel.values},
+      {'index': 43, 'key': 'tsh', 'values': BiochemistryLevel.values},
+      {'index': 44, 'key': 'egfr', 'values': BiochemistryLevel.values},
     ];
   }
 }

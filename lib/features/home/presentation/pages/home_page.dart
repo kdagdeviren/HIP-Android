@@ -8,7 +8,8 @@ import 'package:flutter_medical_data_app/shared/widgets/custom_card_with_image.d
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 String getCurrentUserName(AppLocalizations l10n) {
-  return FirebaseAuth.instance.currentUser?.displayName ?? l10n.home_defaultTitle;
+  return FirebaseAuth.instance.currentUser?.displayName ??
+      l10n.home_defaultTitle;
 }
 
 class MainPage extends StatelessWidget {

@@ -8,81 +8,11 @@ enum HistologicalType {
   unknown,
 }
 
-extension HistologicalTypeExtension on HistologicalType {
-  String get displayText {
-    switch (this) {
-      case HistologicalType.mikstDuctalLobular:
-        return 'Mikst (Duktal + Lobüler)-3';
-      case HistologicalType.invasiveLobularCarcinoma:
-        return 'İnvaziv Lobüler Karsinom-2';
-      case HistologicalType.invasiveDuctalCarcinoma:
-        return 'İnvaziv Duktal Karsinom-1';
-      case HistologicalType.otherRareTypes:
-        return 'Diğer Nadir Tipler-5';
-      case HistologicalType.dcis:
-        return 'DCIS-4';
-      case HistologicalType.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum ERStatus { negative, strongPositive, weakPositive, positive, unknown }
-
-extension ERStatusExtension on ERStatus {
-  String get displayText {
-    switch (this) {
-      case ERStatus.negative:
-        return 'Negatif-2';
-      case ERStatus.strongPositive:
-        return 'Güçlü Pozitif-1';
-      case ERStatus.weakPositive:
-        return 'Zayıf Pozitif-4';
-      case ERStatus.positive:
-        return 'Pozitif-3';
-      case ERStatus.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 enum PRStatus { negative, strongPositive, weakPositive, positive, unknown }
 
-extension PRStatusExtension on PRStatus {
-  String get displayText {
-    switch (this) {
-      case PRStatus.negative:
-        return 'Negatif-2';
-      case PRStatus.strongPositive:
-        return 'Güçlü Pozitif-1';
-      case PRStatus.weakPositive:
-        return 'Zayıf Pozitif-4';
-      case PRStatus.positive:
-        return 'Pozitif-3';
-      case PRStatus.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum HER2Status { negative, positive, her2Low, equivocal, unknown }
-
-extension HER2StatusExtension on HER2Status {
-  String get displayText {
-    switch (this) {
-      case HER2Status.negative:
-        return 'Negatif-3';
-      case HER2Status.positive:
-        return 'Pozitif-4';
-      case HER2Status.her2Low:
-        return 'HER2-düşük-2';
-      case HER2Status.equivocal:
-        return 'Ekvokal-1';
-      case HER2Status.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 enum MolecularType {
   tripleNegative,
@@ -94,143 +24,19 @@ enum MolecularType {
   unknown,
 }
 
-extension MolecularTypeExtension on MolecularType {
-  String get displayText {
-    switch (this) {
-      case MolecularType.tripleNegative:
-        return 'Triple Negatif-6';
-      case MolecularType.luminalA:
-        return 'Luminal A-5';
-      case MolecularType.luminalBHer2Positive:
-        return 'Luminal B (HER2 Pozitif)-5';
-      case MolecularType.luminalBHer2Negative:
-        return 'Luminal B (HER2 Negatif)-4';
-      case MolecularType.her2Low:
-        return 'HER2-düşük-1';
-      case MolecularType.her2Enriched:
-        return 'HER2-zengin-2';
-      case MolecularType.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum Ki67Level { low, medium, high, unknown }
-
-extension Ki67LevelExtension on Ki67Level {
-  String get displayText {
-    switch (this) {
-      case Ki67Level.low:
-        return 'Düşük-1';
-      case Ki67Level.medium:
-        return 'Orta-2';
-      case Ki67Level.high:
-        return 'Yüksek-3';
-      case Ki67Level.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 enum TubuleGrade { grade1, grade2, grade3, unknown }
 
-extension TubuleGradeExtension on TubuleGrade {
-  String get displayText {
-    switch (this) {
-      case TubuleGrade.grade1:
-        return '1-1';
-      case TubuleGrade.grade2:
-        return '2-2';
-      case TubuleGrade.grade3:
-        return '3-3';
-      case TubuleGrade.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum NuclearGrade { grade1, grade2, grade3, unknown }
-
-extension NuclearGradeExtension on NuclearGrade {
-  String get displayText {
-    switch (this) {
-      case NuclearGrade.grade1:
-        return '1-1';
-      case NuclearGrade.grade2:
-        return '2-2';
-      case NuclearGrade.grade3:
-        return '3-3';
-      case NuclearGrade.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 enum MitoticGrade { grade1, grade2, grade3, unknown }
 
-extension MitoticGradeExtension on MitoticGrade {
-  String get displayText {
-    switch (this) {
-      case MitoticGrade.grade1:
-        return '1-1';
-      case MitoticGrade.grade2:
-        return '2-2';
-      case MitoticGrade.grade3:
-        return '3-3';
-      case MitoticGrade.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum HistologicalGrade { g1, g2, g3, unknown }
-
-extension HistologicalGradeExtension on HistologicalGrade {
-  String get displayText {
-    switch (this) {
-      case HistologicalGrade.g1:
-        return 'G1-1';
-      case HistologicalGrade.g2:
-        return 'G2-2';
-      case HistologicalGrade.g3:
-        return 'G3-3';
-      case HistologicalGrade.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 enum ECadherinStatus { negative, positive, unknown }
 
-extension ECadherinStatusExtension on ECadherinStatus {
-  String get displayText {
-    switch (this) {
-      case ECadherinStatus.negative:
-        return 'Negatif-2';
-      case ECadherinStatus.positive:
-        return 'Pozitif-1';
-      case ECadherinStatus.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
-
 enum TILLevel { lessThan10, between10and50, moreThan50, unknown }
-
-extension TILLevelExtension on TILLevel {
-  String get displayText {
-    switch (this) {
-      case TILLevel.lessThan10:
-        return '<%10-1';
-      case TILLevel.between10and50:
-        return '%10/%50-2';
-      case TILLevel.moreThan50:
-        return '>%50-3';
-      case TILLevel.unknown:
-        return 'Veri Yok-0';
-    }
-  }
-}
 
 class Pathology {
   final HistologicalType? histologicalType;
@@ -395,78 +201,22 @@ class Pathology {
 
   static List<Map<String, dynamic>> getDropdownConfigs() {
     return [
-      {
-        'index': 1,
-        'key': 'histologicalType',
-        'label': 'Histolojik Tip',
-        'values': HistologicalType.values,
-      },
-      {
-        'index': 2,
-        'key': 'er',
-        'label': 'ER Durumu',
-        'values': ERStatus.values,
-      },
-      {
-        'index': 3,
-        'key': 'pr',
-        'label': 'PR Durumu',
-        'values': PRStatus.values,
-      },
-      {
-        'index': 4,
-        'key': 'her2',
-        'label': 'HER2 Durumu',
-        'values': HER2Status.values,
-      },
-      {
-        'index': 5,
-        'key': 'molecularType',
-        'label': 'Moleküler Tip',
-        'values': MolecularType.values,
-      },
-      {
-        'index': 6,
-        'key': 'ki67',
-        'label': 'Ki67 Seviyesi',
-        'values': Ki67Level.values,
-      },
-      {
-        'index': 7,
-        'key': 'tubuleGrade',
-        'label': 'Tübül Derecesi',
-        'values': TubuleGrade.values,
-      },
-      {
-        'index': 8,
-        'key': 'nuclearGrade',
-        'label': 'Nükleer Derece',
-        'values': NuclearGrade.values,
-      },
-      {
-        'index': 9,
-        'key': 'mitoticGrade',
-        'label': 'Mitotik Derece',
-        'values': MitoticGrade.values,
-      },
+      {'index': 1, 'key': 'histologicalType', 'values': HistologicalType.values},
+      {'index': 2, 'key': 'er', 'values': ERStatus.values},
+      {'index': 3, 'key': 'pr', 'values': PRStatus.values},
+      {'index': 4, 'key': 'her2', 'values': HER2Status.values},
+      {'index': 5, 'key': 'molecularType', 'values': MolecularType.values},
+      {'index': 6, 'key': 'ki67', 'values': Ki67Level.values},
+      {'index': 7, 'key': 'tubuleGrade', 'values': TubuleGrade.values},
+      {'index': 8, 'key': 'nuclearGrade', 'values': NuclearGrade.values},
+      {'index': 9, 'key': 'mitoticGrade', 'values': MitoticGrade.values},
       {
         'index': 10,
         'key': 'histologicalGrade',
-        'label': 'Histolojik Derece',
         'values': HistologicalGrade.values,
       },
-      {
-        'index': 11,
-        'key': 'eCadherin',
-        'label': 'E-Cadherin Durumu',
-        'values': ECadherinStatus.values,
-      },
-      {
-        'index': 12,
-        'key': 'til',
-        'label': 'TIL Seviyesi',
-        'values': TILLevel.values,
-      },
+      {'index': 11, 'key': 'eCadherin', 'values': ECadherinStatus.values},
+      {'index': 12, 'key': 'til', 'values': TILLevel.values},
     ];
   }
 }
