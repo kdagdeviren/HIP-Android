@@ -41,7 +41,7 @@ Kod tabanı ve git geçmişi üzerinde yapılan tarama sonuçları:
 
 Geçmiş temizliği anahtarı güvenli hale getirmez; anahtar zaten ifşa olmuş durumda ve depo public ise otomatik tarayıcılar tarafından toplanmış olabilir.
 
-1. Firebase Console → Project Settings → Service accounts → `firebase-adminsdk-fbsvc@medical-app-2c545.iam.gserviceaccount.com` için **mevcut anahtarı sil**, yeni anahtar üret.
+1. Firebase Console → Project Settings → Service accounts → `firebase-adminsdk-fbsvc@<proje-id>.iam.gserviceaccount.com` için **mevcut anahtarı sil**, yeni anahtar üret.
 2. Google Cloud Console → IAM → bu service account'un son 30 günlük kullanım logunu kontrol et (yetkisiz kullanım var mı).
 3. Yeni anahtar **hiçbir koşulda repoya girmez** — yalnızca lokal `.env`'de, ileride Cloud Function ortam değişkeninde.
 4. `firebase_options.dart` içindeki Android API key'i de Google Cloud Console'dan **kısıtla** (package name + SHA-1 imza kısıtı). Bu anahtar teknik olarak gizli değildir ama kısıtsız bırakılması kota suistimaline açıktır — README'de bu ayrım açıkça yazılacak.

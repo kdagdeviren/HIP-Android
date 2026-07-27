@@ -78,7 +78,7 @@ satırda reddedildiği görülebilir.
 
 ### 2. Eski service account anahtarını sil (Faz 0)
 
-IAM → `firebase-adminsdk-fbsvc@medical-app-2c545.iam.gserviceaccount.com` → **Keys** →
+IAM → `firebase-adminsdk-fbsvc@<proje-id>.iam.gserviceaccount.com` → **Keys** →
 eski anahtarı **Delete**. Yeni anahtar üretildi ve API key kısıtı (paket adı + SHA-1)
 uygulandı; eksik olan tek adım silme.
 
