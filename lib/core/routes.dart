@@ -8,10 +8,12 @@ import 'package:flutter_medical_data_app/features/auth/presentation/pages/regist
 import 'package:flutter_medical_data_app/features/home/presentation/pages/home_page.dart';
 import 'package:flutter_medical_data_app/core/services/auth_guard.dart';
 import 'package:flutter_medical_data_app/features/patient/presentation/view/patient_view_data.dart';
+import 'package:flutter_medical_data_app/features/settings/presentation/pages/settings_page.dart';
 
 final Map<String, WidgetBuilder> appRoutes = {
   //Home Page
   '/home': (context) => const MainPage(),
+  '/settings': (context) => const SettingsPage(),
   //Auth Pages
   '/auth-guard': (context) => const AuthGuard(),
   '/login': (context) => const LoginPage(),

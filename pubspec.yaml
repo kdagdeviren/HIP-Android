@@ -13,6 +13,7 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1
+  shared_preferences: ^2.3.3
   responsive_sizer: ^3.3.1
   intl: ^0.20.2
   smart_popup: ^3.0.4

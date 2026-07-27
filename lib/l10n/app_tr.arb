@@ -568,5 +568,10 @@
   "radiology_cosmeticImplant_no": "Hayır-2",
   "radiology_cosmeticImplant_yes": "Evet-1",
   "radiology_cosmeticImplant_unknown": "Veri Yok-0",
-  "radiology_cosmeticImplant_label": "Kozmetik İmplant"
+  "radiology_cosmeticImplant_label": "Kozmetik İmplant",
+
+  "settings_appBarTitle": "Ayarlar",
+  "settings_languageSectionTitle": "Dil",
+  "settings_language_turkish": "Türkçe",
+  "settings_language_english": "İngilizce"
 }

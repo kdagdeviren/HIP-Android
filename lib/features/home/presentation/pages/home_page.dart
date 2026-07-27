@@ -20,7 +20,11 @@ class MainPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     String name = getCurrentUserName(l10n);
     return Scaffold(
-      appBar: MainAppBar(title: name),
+      appBar: MainAppBar(
+        title: name,
+        onSettingsPressed: () =>
+            NavigationService.instance.navigateTo('/settings'),
+      ),
       body: Padding(
         padding: mainPadding,
         child: Column(

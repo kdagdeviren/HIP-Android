@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_medical_data_app/core/constants/providers.dart';
 import 'package:flutter_medical_data_app/core/routes.dart';
 import 'package:flutter_medical_data_app/firebase_options.dart';
+import 'package:flutter_medical_data_app/core/services/locale_provider.dart';
 import 'package:flutter_medical_data_app/core/services/navigation_service.dart';
 import 'package:flutter_medical_data_app/core/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +23,18 @@ void main() async {
   // Initialize notification service
   await NotificationService().initialize();
 
-  runApp(MultiProvider(providers: providers, child: const MyApp()));
+  // Kayıtlı bir dil tercihi yoksa cihazın sistem diline göre karar verir.
+  final localeProvider = await LocaleProvider.load();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: localeProvider),
+        ...providers,
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,6 +42,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.watch<LocaleProvider>().locale;
     return ResponsiveSizer(
       builder: (context, orientation, screenType) {
         return MaterialApp(
@@ -39,7 +52,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: const Locale('tr'),
+          locale: locale,
           routes: appRoutes,
           home: const AuthGuard(),
         );
