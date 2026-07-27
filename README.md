@@ -1,182 +1,182 @@
-# HIP — Hasta Bilgi Platformu
+# HIP — Patient Information Platform
 
-Hekimlerin hasta klinik verilerini yapılandırılmış biçimde toplaması, meslektaşlarıyla
-denetimli şekilde paylaşması ve analiz için dışa aktarması amacıyla geliştirilmiş bir
-Flutter uygulamasıdır.
+[🇹🇷 Türkçe](README.tr.md)
 
-Hesaplar yönetici onayından geçer, hasta verisine erişim hasta bazında yetkilendirilir ve
-bu yetkilendirme sunucu tarafındaki Firestore güvenlik kurallarıyla zorunlu kılınır.
+A Flutter application built for physicians to collect structured patient clinical
+data, share it with colleagues under controlled access, and export it for analysis.
 
----
-
-## İçindekiler
-
-- [Özellikler](#özellikler)
-- [Mimari](#mimari)
-- [Veri Modeli](#veri-modeli)
-- [Güvenlik Modeli](#güvenlik-modeli)
-- [Kurulum](#kurulum)
-- [Güvenlik Kurallarının Test Edilmesi](#güvenlik-kurallarının-test-edilmesi)
-- [Yönetici Atama](#yönetici-atama)
-- [Bilinen Sınırlamalar](#bilinen-sınırlamalar)
-- [Lisans](#lisans)
+Accounts go through admin approval, access to patient data is authorized per patient,
+and that authorization is enforced server-side by Firestore security rules.
 
 ---
 
-## Özellikler
+## Table of Contents
 
-- E-posta/şifre ile kimlik doğrulama
-- Yönetici onaylı hesap açılışı — onaylanmamış hesap hiçbir hasta verisine erişemez
-- Altı klinik kategoride yapılandırılmış veri girişi: demografi, komorbidite, patoloji,
-  radyoloji, biyokimya, onkoloji
-- Derin bağlantı (deep link) ile hasta paylaşımı; paylaşılan hekim düzenleyici olarak eklenir
-- Hasta verisinin Excel (`.xlsx`) olarak dışa aktarılması ve paylaşılması
+- [Features](#features)
+- [Architecture](#architecture)
+- [Data Model](#data-model)
+- [Security Model](#security-model)
+- [Setup](#setup)
+- [Testing the Security Rules](#testing-the-security-rules)
+- [Assigning an Admin](#assigning-an-admin)
+- [Known Limitations](#known-limitations)
+- [License](#license)
 
 ---
 
-## Mimari
+## Features
 
-Katmanlı bir Clean Architecture uygulanır; bağımlılıklar tek yönlüdür
-(`presentation` → `domain` → `data`). Sunum katmanında MVVM kullanılır, `ChangeNotifier`
-tabanlı ViewModel'ler `provider` ile dağıtılır.
+- Email/password authentication
+- Admin-approved account onboarding — an unapproved account cannot access any patient data
+- Structured data entry across six clinical categories: demographics, comorbidity,
+  pathology, radiology, biochemistry, oncology
+- Patient sharing via deep link; the receiving physician is added as an editor
+- Exporting and sharing patient data as Excel (`.xlsx`)
+- Turkish and English UI, with automatic locale selection on first launch
+
+---
+
+## Architecture
+
+A layered Clean Architecture is used; dependencies flow in one direction
+(`presentation` → `domain` → `data`). The presentation layer follows MVVM, with
+`ChangeNotifier`-based ViewModels distributed via `provider`.
 
 ```
 lib/
-├── core/                  # Çapraz kesen bileşenler
-│   ├── constants/         # Provider kayıtları, tema sabitleri
-│   ├── services/          # AuthGuard, deep link, bildirim, navigasyon
+├── core/                  # Cross-cutting concerns
+│   ├── constants/         # Provider registrations, theme constants
+│   ├── services/          # AuthGuard, deep link, notifications, navigation
 │   ├── theme/
-│   └── utils/             # Loglama, hata dönüşümü, doğrulama
+│   └── utils/             # Logging, error mapping, validation
 └── features/
-    ├── admin/             # Hesap onay akışı
-    ├── auth/              # Giriş, kayıt, onay bekleme
+    ├── admin/             # Account approval flow
+    ├── auth/               # Login, registration, pending approval
     ├── home/
     └── patient/
-        ├── data/          # Firestore veri kaynakları, modeller, repository'ler
-        ├── domain/        # Klinik kategori varlıkları (saf Dart)
-        └── presentation/  # Sayfalar, ViewModel'ler, widget'lar
+        ├── data/          # Firestore data sources, models, repositories
+        ├── domain/        # Clinical category entities (pure Dart)
+        └── presentation/  # Pages, ViewModels, widgets
 ```
 
-**Yönlendirme.** `main.dart` içindeki `home:` bir `AuthGuard`'dır. Oturum durumunu
-`authStateChanges` üzerinden dinler, yönetici yetkisini token'daki custom claim'den okur ve
-kullanıcıyı giriş ekranına, onay bekleme ekranına, yönetici paneline veya ana sayfaya
-yönlendirir. Diğer geçişler `core/routes.dart` içindeki adlandırılmış rotalarla yapılır.
+**Routing.** The `home:` in `main.dart` is an `AuthGuard`. It listens to
+`authStateChanges`, reads the admin claim from the token, and routes the user to the
+login screen, the pending-approval screen, the admin panel, or the home page. Other
+navigation uses the named routes in `core/routes.dart`.
 
-**Paylaşım akışı.** Bir hasta kaydı paylaşıldığında `myapp://addPatient?id=...` veya
-karşılığı olan HTTPS bağlantısı üretilir. Bağlantıyı açan hekim, `patient_connections`
-koleksiyonunda kendisi için bir kayıt oluşturur ve aynı toplu yazma (batch) içinde ilgili
-hasta dokümanının yetki listesine eklenir.
+**Sharing flow.** Sharing a patient record produces a `myapp://addPatient?id=...` link
+(or its HTTPS equivalent). The physician who opens the link creates their own record in
+the `patient_connections` collection, and the patient document's authorization list is
+updated in the same batched write.
 
 ---
 
-## Veri Modeli
+## Data Model
 
-Üç koleksiyon kullanılır.
+Three collections are used.
 
 ### `users/{uid}`
 
-| Alan | Tip | Açıklama |
+| Field | Type | Description |
 |---|---|---|
-| `docID` | string | Firebase Auth UID ile aynıdır |
-| `ad`, `soyad` | string | |
-| `isVerified` | bool | Yönetici onayı. Kullanıcı kendi kendine değiştiremez |
-| `fcmToken` | string | Bildirim hedefi |
+| `docID` | string | Same as the Firebase Auth UID |
+| `ad`, `soyad` | string | First and last name |
+| `isVerified` | bool | Admin approval. Cannot be self-changed by the user |
+| `fcmToken` | string | Notification target |
 
 ### `patients/{patientId}`
 
-| Alan | Tip | Açıklama |
+| Field | Type | Description |
 |---|---|---|
 | `firstName`, `lastName`, `protocolNo` | string | |
-| `mainDoctorId` | string | Kaydı oluşturan hekim; erişim listesinin sahibi |
-| `authorizedUserIds` | string[] | Erişim yetkisi olan UID'ler |
-| `addedCategories` | map | Hangi kategorilerin doldurulduğu |
-| `demography`, `comorbidity`, `pathology`, `radiology`, `biochemistry`, `oncology` | map | Klinik veriler |
+| `mainDoctorId` | string | The physician who created the record; owns the access list |
+| `authorizedUserIds` | string[] | UIDs authorized to access this patient |
+| `addedCategories` | map | Which categories have been filled in |
+| `demography`, `comorbidity`, `pathology`, `radiology`, `biochemistry`, `oncology` | map | Clinical data |
 
 ### `patient_connections/{connectionId}`
 
-| Alan | Tip | Açıklama |
+| Field | Type | Description |
 |---|---|---|
 | `patientId`, `userId` | string | |
-| `role` | string | `owner` veya `editor` |
+| `role` | string | `owner` or `editor` |
 
-### `authorizedUserIds` neden var?
+### Why `authorizedUserIds` exists
 
-Firestore güvenlik kuralları sorgu çalıştıramaz. "Bu kullanıcının bu hastaya bağlantısı var
-mı?" sorusunu `patient_connections` üzerinden bir kural içinde sormak mümkün değildir. Bu
-nedenle yetki bilgisi hasta dokümanına denormalize edilir; kural tek doküman okumasıyla karar
-verir ve liste sorguları da çalışabilir.
+Firestore security rules cannot run queries. Asking "does this user have a connection
+to this patient?" against `patient_connections` from within a rule isn't possible. So
+authorization is denormalized onto the patient document; a rule can decide with a
+single document read, and list queries work too.
 
-`patient_connections` rol bilgisinin tek kaynağı olmaya devam eder. İki yapı arasındaki
-tutarlılık, bağlantı oluşturan ve silen işlemlerin her ikisini de tek bir `WriteBatch` içinde
-yazmasıyla korunur.
+`patient_connections` remains the single source of truth for role information. The two
+structures stay in sync because both connection creation and deletion write to them in
+the same `WriteBatch`.
 
 ---
 
-## Güvenlik Modeli
+## Security Model
 
-Kurallar `firestore.rules` dosyasında versiyonlanır ve `firebase deploy` ile yayınlanır.
-Varsayılan davranış reddetmedir: açıkça eşleşmeyen her yol kapalıdır.
+Rules are versioned in `firestore.rules` and published with `firebase deploy`. The
+default behavior is deny: any path that isn't explicitly matched is closed.
 
-**Roller**
+**Roles**
 
-| Rol | Nasıl belirlenir |
+| Role | How it's determined |
 |---|---|
-| `admin` | Firebase Auth custom claim (`admin: true`). Yalnızca `tool/set_admin_claim.js` ile atanır, istemci değiştiremez |
-| `verified` | Oturum açmış **ve** `users/{uid}.isVerified == true`. Hasta verisine yalnızca bu kullanıcılar erişebilir |
-| `owner` | `patients/{id}.mainDoctorId`. Erişim listesini değiştirebilen taraf |
+| `admin` | Firebase Auth custom claim (`admin: true`). Only assigned via `tool/set_admin_claim.js`; the client cannot change it |
+| `verified` | Signed in **and** `users/{uid}.isVerified == true`. Only these users can access patient data |
+| `owner` | `patients/{id}.mainDoctorId`. The party that can change the access list |
 
-**Erişim matrisi**
+**Access matrix**
 
-| Koleksiyon | Okuma | Oluşturma | Güncelleme | Silme |
+| Collection | Read | Create | Update | Delete |
 |---|---|---|---|---|
-| `users` | Kendi dokümanı veya admin. Listeleme yalnızca admin | Yalnızca kendi UID'i, `isVerified` zorunlu `false` | Kendi dokümanı (`isVerified` ve `docID` değiştirilemez) veya admin | Yalnızca admin |
-| `patients` | `uid ∈ authorizedUserIds` veya admin | Doğrulanmış kullanıcı; kendini `mainDoctorId` ve `authorizedUserIds` olarak yazmak zorunda | Yetkili kullanıcı klinik veriyi düzenler; erişim listesini yalnızca `owner` değiştirir. Kullanıcı kendini ekleyebilir veya çıkarabilir | `owner` veya admin |
-| `patient_connections` | Kendi bağlantıları veya erişim yetkisi olunan hastanın bağlantıları | Yalnızca kendi adına | Rol ataması yalnızca `owner` | Kendi bağlantısı veya `owner` |
-| diğer yollar | ✗ | ✗ | ✗ | ✗ |
+| `users` | Own document or admin. Listing is admin-only | Only their own UID, `isVerified` must be `false` | Own document (`isVerified` and `docID` are immutable) or admin | Admin only |
+| `patients` | `uid ∈ authorizedUserIds` or admin | Verified user; must write themselves as `mainDoctorId` and into `authorizedUserIds` | An authorized user can edit clinical data; only the `owner` can change the access list. A user may add or remove themselves | `owner` or admin |
+| `patient_connections` | Own connections, or connections on a patient the caller may access | Only on their own behalf | Role assignment is `owner`-only | Own connection or `owner` |
+| all other paths | ✗ | ✗ | ✗ | ✗ |
 
-Kullanıcının kendi `isVerified` alanını `true` yapması, güncelleme kuralında alanın
-değişmediğinin doğrulanmasıyla engellenir.
+A user setting their own `isVerified` to `true` is blocked by the update rule verifying
+the field hasn't changed.
 
-**Firebase API anahtarı hakkında.** `lib/firebase_options.dart` ve
-`android/app/google-services.json` içindeki `apiKey` değeri gizli bir bilgi değildir; her
-istemci uygulamasının içinde dağıtılır ve Google tarafından da böyle belgelenir. Veriyi
-koruyan şey bu anahtarın gizliliği değil, yukarıdaki güvenlik kurallarıdır. Anahtarın kota
-suistimaline karşı Google Cloud Console üzerinden paket adı ve SHA-1 imza kısıtı ile
-sınırlandırılması önerilir.
+**About the Firebase API key.** The `apiKey` value in `lib/firebase_options.dart` and
+`android/app/google-services.json` is not a secret; it ships inside every client app,
+and Google documents it as such. What protects the data is not the secrecy of this key
+but the security rules above. Restricting the key to your package name and SHA-1
+signature via Google Cloud Console is recommended as a quota-abuse safeguard.
 
 ---
 
-## Kurulum
+## Setup
 
-**Ön koşullar:** Flutter SDK (`pubspec.yaml` içindeki `sdk` kısıtına uyan bir sürüm),
-Firebase CLI, Node.js 18+ (yalnızca kural testleri ve `tool/` betikleri için).
+**Prerequisites:** Flutter SDK (matching the `sdk` constraint in `pubspec.yaml`),
+Firebase CLI, Node.js 18+ (only needed for rule tests and the `tool/` scripts).
 
-1. Firebase Console'da yeni bir proje oluşturun.
+1. Create a new project in the Firebase Console.
 
-2. **Authentication** bölümünü etkinleştirin ve **E-posta/Şifre** sağlayıcısını açın.
+2. Enable **Authentication** and turn on the **Email/Password** provider.
 
-3. **Firestore Database**'i **üretim modunda** oluşturun. Test modu veritabanını kimlik
-   doğrulaması olmadan herkese açık okuma-yazmaya açar; bu depodaki kurallar zaten
-   yayınlanacağı için gerekli değildir.
+3. Create the **Firestore Database**. This repository already ships production-ready
+   security rules (`firestore.rules`); you'll publish them in step 6 below.
 
-4. **Cloud Messaging**'i etkinleştirin.
+4. Enable **Cloud Messaging**.
 
-5. FlutterFire CLI'yı kurun ve yapılandırmayı üretin:
+5. Install the FlutterFire CLI and generate the configuration:
    ```bash
    dart pub global activate flutterfire_cli
    ```
    ```bash
    flutterfire configure
    ```
-   Bu adım `lib/firebase_options.dart` ve `android/app/google-services.json` dosyalarını
-   kendi projeniz için oluşturur. İkisi de depoya dahil edilmez.
+   This generates `lib/firebase_options.dart` and `android/app/google-services.json`
+   for your own project. Neither file is committed to the repo.
 
-6. Güvenlik kurallarını ve indeksleri yayınlayın:
+6. Publish the security rules and indexes:
    ```bash
    firebase deploy --only firestore:rules,firestore:indexes
    ```
 
-7. Bağımlılıkları kurup uygulamayı çalıştırın:
+7. Install dependencies and run the app:
    ```bash
    flutter pub get
    ```
@@ -184,12 +184,12 @@ Firebase CLI, Node.js 18+ (yalnızca kural testleri ve `tool/` betikleri için).
    flutter run
    ```
 
-8. İlk hesabınızla kayıt olun, ardından [Yönetici Atama](#yönetici-atama) adımını uygulayıp
-   hesabınızı onaylayın.
+8. Register your first account, then follow [Assigning an Admin](#assigning-an-admin)
+   to approve it.
 
-**SHA anahtarları.** API anahtarını yalnızca kendi uygulamanızla sınırlamak ve derin
-bağlantı doğrulaması (`assetlinks.json`) için Firebase Console'da
-**Proje Ayarları → Uygulamalarınız** altına **SHA-1** ve **SHA-256** parmak izlerini ekleyin:
+**SHA fingerprints.** To restrict the API key to your own app and to validate deep
+links (`assetlinks.json`), add the **SHA-1** and **SHA-256** fingerprints under
+**Project Settings → Your apps** in the Firebase Console:
 
 ```bash
 cd android && ./gradlew signingReport
@@ -197,64 +197,66 @@ cd android && ./gradlew signingReport
 
 ---
 
-## Güvenlik Kurallarının Test Edilmesi
+## Testing the Security Rules
 
-Kurallar, Firestore emülatörü üzerinde çalışan 38 senaryoyla doğrulanır. Testler gerçek bir
-projeye bağlanmaz.
+The rules are verified by 38 scenarios running against the Firestore emulator. The
+tests never connect to a real project.
 
 ```bash
 cd test/firestore_rules && npm install && npm run test:emulator
 ```
 
-Kapsanan durumlar: kimliği doğrulanmamış erişim, onaylanmamış hesap, yetkisiz hekim,
-düzenleyici ile sahip arasındaki yetki farkı, paylaşım bağlantısıyla kendini ekleme,
-üçüncü şahsı gizlice ekleme denemesi, kullanıcının kendini onaylama denemesi ve yönetici
-yetkisinin Firestore alanıyla taklit edilememesi.
+Covered cases: unauthenticated access, an unapproved account, an unauthorized
+physician, the access difference between an editor and an owner, joining via a share
+link, an attempt to sneak a third party onto the access list, a user trying to approve
+themselves, and admin authority being unforgeable via a plain Firestore field.
 
 ---
 
-## Yönetici Atama
+## Assigning an Admin
 
-Yönetici yetkisi bir Firestore alanı değil, Auth token'ındaki custom claim'dir; bu nedenle
-istemci tarafından değiştirilemez. Atama, Admin SDK kimlik bilgisi gerektiren tek seferlik
-bir betikle yapılır.
+Admin authority is a custom claim on the Auth token, not a Firestore field, so the
+client cannot change it. Assignment is done with a one-off script that requires an
+Admin SDK credential.
 
 ```bash
 cd tool && npm install
 ```
 
 ```bash
-set GOOGLE_APPLICATION_CREDENTIALS=C:\yol\service-account.json
+set GOOGLE_APPLICATION_CREDENTIALS=C:\path\to\service-account.json
 ```
 
 ```bash
-node tool/set_admin_claim.js --email yonetici@example.com
+node tool/set_admin_claim.js --email admin@example.com
 ```
 
-Mevcut yöneticileri listelemek için `--list`, yetkiyi geri almak için `--revoke` kullanılır.
-Claim, kullanıcının token'ı yenilenene kadar etkili olmaz; uygulama içindeki "Tekrar dene"
-yenilemeyi zorlar.
+Use `--list` to list current admins, `--revoke` to remove the claim. The claim doesn't
+take effect until the user's token refreshes; the "Retry" action in the app forces
+that refresh.
 
-> Service account JSON dosyası hiçbir koşulda depoya eklenmemelidir.
+> The service account JSON file must never be committed to the repository.
 
-Var olan hasta kayıtlarında `authorizedUserIds` alanı yoksa
-`tool/migrate_authorized_user_ids.js` betiği bunları `patient_connections` üzerinden
-doldurur. `--dry-run` ile önce özet alınması önerilir.
-
----
-
-## Bilinen Sınırlamalar
-
-- **Bildirim gönderimi devre dışıdır.** FCM v1 API'ye istek atmak service account kimlik
-  bilgisi gerektirir ve bu bilgi istemci uygulamasında güvenli biçimde tutulamaz. Gönderim
-  yolu kaldırılmıştır; token kaydı ve gelen bildirimlerin işlenmesi çalışmaya devam eder.
-  Gönderimin bir Cloud Function'a taşınması planlanmaktadır.
-- Arayüz yalnızca Türkçedir; uluslararasılaştırma altyapısı henüz kurulmamıştır.
+If existing patient records are missing `authorizedUserIds`,
+`tool/migrate_authorized_user_ids.js` backfills them from `patient_connections`.
+Run it with `--dry-run` first to review a summary.
 
 ---
 
-## Lisans
+## Known Limitations
 
-MIT — ayrıntılar için [LICENSE](LICENSE) dosyasına bakınız.
+- **Notification sending is disabled.** Calling the FCM v1 API requires a service
+  account credential, which cannot be kept safely inside a client app. The sending
+  path was removed; token registration and receiving notifications still work.
+  Moving sending to a Cloud Function is planned.
+- The English translation was produced quickly for testing purposes; clinical
+  terminology has not gone through medical review. Treat the English UI as
+  provisional until a domain expert validates it.
 
-Telif hakkı © 2025-2026 Yusuf Kağan Dağdeviren, Özgür Demir
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE) for details.
+
+Copyright © 2025-2026 Yusuf Kağan Dağdeviren, Özgür Demir
