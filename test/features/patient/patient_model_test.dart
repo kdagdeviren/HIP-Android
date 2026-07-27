@@ -107,8 +107,8 @@ void main() {
       expect(map['lastName'], 'Patient');
       expect(map['protocolNo'], 'P123');
       expect(map['mainDoctorId'], 'doc123');
-      expect(map['createdAt'], now);
-      expect(map['updatedAt'], now);
+      expect(map['createdAt'], now.toIso8601String());
+      expect(map['updatedAt'], now.toIso8601String());
     });
 
     test('copyWith should update only specified fields', () {

@@ -1,30 +1,32 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// Bu app'te sayaç (counter) yok; `flutter create` şablonunun varsayılan testi
+// doğrudan Firebase/Provider'a bağımlı MyApp'i pump ediyordu ve o bağımlılıklar
+// olmadan çöküyordu. Onun yerine l10n kablolamasının çalıştığını doğrulayan
+// hafif bir smoke test kullanılıyor.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:flutter_medical_data_app/main.dart';
+import 'package:flutter_medical_data_app/l10n/app_localizations.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('AppLocalizations MaterialApp içinde doğru şekilde çözülür', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (context) {
+            return Text(AppLocalizations.of(context)!.app_title);
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final l10n = AppLocalizations.of(
+      tester.element(find.byType(Text)),
+    )!;
+    expect(find.text(l10n.app_title), findsOneWidget);
   });
 }
