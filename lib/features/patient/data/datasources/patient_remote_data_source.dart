@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import '../models/patient_model.dart';
@@ -21,13 +22,15 @@ class PatientRemoteDataSource {
 
       return ResponseMessage(
         status: true,
-        message: 'Kategori başarıyla güncellendi',
+        message: L10n.current.patient_remote_categoryUpdateSuccess,
       );
     } catch (e) {
       LoggerUtil.e('Error updating patient category: $e');
       return ResponseMessage(
         status: false,
-        message: 'Kategori güncellenirken hata oluştu: $e',
+        message: L10n.current.patient_remote_categoryUpdateFailed(
+          e.toString(),
+        ),
       );
     }
   }
@@ -46,13 +49,13 @@ class PatientRemoteDataSource {
       await docRef.set(patientData);
       return ResponseMessage(
         status: true,
-        message: 'Hasta başarıyla eklendi',
+        message: L10n.current.patient_remote_addSuccess,
         docId: docRef.id,
       );
     } catch (e) {
       return ResponseMessage(
         status: false,
-        message: 'Hasta eklenirken hata oluştu: $e',
+        message: L10n.current.patient_remote_addFailed(e.toString()),
       );
     }
   }
@@ -66,13 +69,13 @@ class PatientRemoteDataSource {
       await _patientsCollection.doc(docId).update(patientData);
       return ResponseMessage(
         status: true,
-        message: 'Hasta başarıyla güncellendi',
+        message: L10n.current.patient_remote_updateSuccess,
       );
     } catch (e) {
       LoggerUtil.e('Hasta güncellenirken: $e');
       return ResponseMessage(
         status: false,
-        message: 'Hasta güncellenirken hata oluştu: $e',
+        message: L10n.current.patient_remote_updateFailed(e.toString()),
       );
     }
   }
@@ -80,11 +83,14 @@ class PatientRemoteDataSource {
   Future<ResponseMessage> deletePatient(String id) async {
     try {
       await _patientsCollection.doc(id).delete();
-      return ResponseMessage(status: true, message: 'Hasta başarıyla silindi');
+      return ResponseMessage(
+        status: true,
+        message: L10n.current.patient_remote_deleteSuccess,
+      );
     } catch (e) {
       return ResponseMessage(
         status: false,
-        message: 'Hasta silinirken hata oluştu: $e',
+        message: L10n.current.patient_remote_deleteFailed(e.toString()),
       );
     }
   }

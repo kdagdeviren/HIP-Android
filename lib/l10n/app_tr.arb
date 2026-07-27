@@ -215,5 +215,35 @@
   "patient_viewData_exportError": "Hata: {error}",
   "@patient_viewData_exportError": {
     "placeholders": { "error": { "type": "String" } }
-  }
+  },
+  "patient_connection_addSuccess": "Hasta başarıyla bağlandı",
+  "patient_connection_notFound": "Bağlantı bulunamadı",
+  "patient_connection_deleteSuccess": "Bağlantı başarıyla silindi",
+  "patient_connection_roleUpdateSuccess": "Rol başarıyla güncellendi",
+  "patient_connection_roleUpdateFailed": "Rol güncellenemedi: {error}",
+  "@patient_connection_roleUpdateFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_remote_categoryUpdateSuccess": "Kategori başarıyla güncellendi",
+  "patient_remote_categoryUpdateFailed": "Kategori güncellenirken hata oluştu: {error}",
+  "@patient_remote_categoryUpdateFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_remote_addSuccess": "Hasta başarıyla eklendi",
+  "patient_remote_addFailed": "Hasta eklenirken hata oluştu: {error}",
+  "@patient_remote_addFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_remote_updateSuccess": "Hasta başarıyla güncellendi",
+  "patient_remote_updateFailed": "Hasta güncellenirken hata oluştu: {error}",
+  "@patient_remote_updateFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "patient_remote_deleteSuccess": "Hasta başarıyla silindi",
+  "patient_remote_deleteFailed": "Hasta silinirken hata oluştu: {error}",
+  "@patient_remote_deleteFailed": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "connectionRole_owner": "Sahip",
+  "connectionRole_editor": "Editör"
 }

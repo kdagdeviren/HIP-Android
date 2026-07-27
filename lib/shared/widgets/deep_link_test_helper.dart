@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Widget to help test and share deep links
+/// Widget to help test and share deep links.
+///
+/// Geliştirici test aracıdır, hiçbir sayfada kullanılmıyor — bu yüzden
+/// kasıtlı olarak lokalize edilmedi.
 class DeepLinkTestHelper extends StatelessWidget {
   const DeepLinkTestHelper({super.key});
 

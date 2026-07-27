@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 
 enum ConnectionRole { owner, editor }
 
@@ -6,9 +7,9 @@ extension ConnectionRoleExtension on ConnectionRole {
   String get displayText {
     switch (this) {
       case ConnectionRole.owner:
-        return 'Sahip';
+        return L10n.current.connectionRole_owner;
       case ConnectionRole.editor:
-        return 'Editör';
+        return L10n.current.connectionRole_editor;
     }
   }
 }

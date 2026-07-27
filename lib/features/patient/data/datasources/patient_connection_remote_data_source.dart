@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/core/utils/logger_util.dart';
 import 'package:flutter_medical_data_app/features/auth/domain/response_message.dart';
 import 'package:flutter_medical_data_app/features/patient/data/models/patient_connection_model.dart';
@@ -24,7 +25,10 @@ class PatientConnectionRemoteDataSource {
           .get();
 
       if (existingQuery.docs.isNotEmpty) {
-        return ResponseMessage(status: false, message: 'Bu hasta zaten mevcut');
+        return ResponseMessage(
+          status: false,
+          message: L10n.current.patient_allList_alreadyConnected,
+        );
       }
 
       // Yeni bağlantı oluştur
@@ -43,14 +47,14 @@ class PatientConnectionRemoteDataSource {
 
       return ResponseMessage(
         status: true,
-        message: 'Hasta başarıyla bağlandı',
+        message: L10n.current.patient_connection_addSuccess,
         docId: docRef.id,
       );
     } catch (e) {
       LoggerUtil.e('Bağlantı oluşturulurken hata: $e');
       return ResponseMessage(
         status: false,
-        message: 'Bağlantı oluşturulamadı: $e',
+        message: L10n.current.patient_connection_createFailed(e.toString()),
       );
     }
   }
@@ -96,7 +100,10 @@ class PatientConnectionRemoteDataSource {
       final snapshot = await connectionRef.get();
 
       if (!snapshot.exists) {
-        return ResponseMessage(status: false, message: 'Bağlantı bulunamadı');
+        return ResponseMessage(
+          status: false,
+          message: L10n.current.patient_connection_notFound,
+        );
       }
 
       final data = snapshot.data() as Map<String, dynamic>;
@@ -111,11 +118,14 @@ class PatientConnectionRemoteDataSource {
 
       return ResponseMessage(
         status: true,
-        message: 'Bağlantı başarıyla silindi',
+        message: L10n.current.patient_connection_deleteSuccess,
       );
     } catch (e) {
       LoggerUtil.e('Bağlantı silinirken hata: $e');
-      return ResponseMessage(status: false, message: 'Bağlantı silinemedi: $e');
+      return ResponseMessage(
+        status: false,
+        message: L10n.current.patient_connection_deleteFailed(e.toString()),
+      );
     }
   }
 
@@ -130,11 +140,16 @@ class PatientConnectionRemoteDataSource {
       });
       return ResponseMessage(
         status: true,
-        message: 'Rol başarıyla güncellendi',
+        message: L10n.current.patient_connection_roleUpdateSuccess,
       );
     } catch (e) {
       LoggerUtil.e('Rol güncellenirken hata: $e');
-      return ResponseMessage(status: false, message: 'Rol güncellenemedi: $e');
+      return ResponseMessage(
+        status: false,
+        message: L10n.current.patient_connection_roleUpdateFailed(
+          e.toString(),
+        ),
+      );
     }
   }
 
