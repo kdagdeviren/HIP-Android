@@ -1,3 +1,4 @@
+import 'package:flutter_medical_data_app/core/l10n/l10n.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/pathology.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/oncology.dart';
 import 'package:flutter_medical_data_app/features/patient/domain/entities/categories/demography.dart';
@@ -74,7 +75,7 @@ class EnumDisplayUtil {
     String enumValue,
     String categoryKey,
   ) {
-    if (enumValue.isEmpty) return "Belirtilmemiş";
+    if (enumValue.isEmpty) return L10n.current.common_unspecified;
 
     try {
       // İlgili kategorinin dropdown config'ini al

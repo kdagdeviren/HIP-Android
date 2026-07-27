@@ -245,5 +245,8 @@
     "placeholders": { "error": { "type": "String" } }
   },
   "connectionRole_owner": "Sahip",
-  "connectionRole_editor": "Editör"
+  "connectionRole_editor": "Editör",
+  "patient_addList_title": "HASTA EKLE",
+  "patient_addList_addingButton": "Ekleniyor...",
+  "patient_addList_addButton": "Mevcut Hasta Ekle"
 }
