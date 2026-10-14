@@ -68,7 +68,6 @@ class Patient {
       // the connection flow via arrayUnion/arrayRemove, so a stale in-memory
       // copy can never overwrite the authoritative list.
       // Note: createdAt/updatedAt will be handled at datasource level with FieldValue.serverTimestamp()
-      if (createdAt != null) 'createdAt': createdAt?.toIso8601String(),
       if (updatedAt != null) 'updatedAt': updatedAt?.toIso8601String(),
     };
   }
