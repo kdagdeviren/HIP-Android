@@ -201,7 +201,7 @@ cd android && ./gradlew signingReport
 
 ## Güvenlik Kurallarının Test Edilmesi
 
-Kurallar, Firestore emülatörü üzerinde çalışan 38 senaryoyla doğrulanır. Testler gerçek bir
+Kurallar, Firestore emülatörü üzerinde çalışan 62 senaryoyla doğrulanır. Testler gerçek bir
 projeye bağlanmaz.
 
 ```bash

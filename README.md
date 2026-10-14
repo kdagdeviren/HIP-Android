@@ -199,7 +199,7 @@ cd android && ./gradlew signingReport
 
 ## Testing the Security Rules
 
-The rules are verified by 38 scenarios running against the Firestore emulator. The
+The rules are verified by 62 scenarios running against the Firestore emulator. The
 tests never connect to a real project.
 
 ```bash

@@ -16,6 +16,17 @@ rules_version = '2';
 // Authorization for a patient is read from patients/{id}.authorizedUserIds.
 // Rules cannot run queries, so that list is denormalized from
 // patient_connections and kept in sync by a batched write on the client.
+//
+// Field-level write policy (added after review)
+// ---------------------------------------------
+// A contributor who is on the access list but is not the owner may write ONLY
+// the clinical payload. Ownership, the access list and the identifying fields
+// are closed to them. Without this restriction a contributor could set
+// mainDoctorId to their own uid while leaving the access list untouched, pass
+// the old `newAccessList() == accessList()` test, become the owner and then
+// delete the record or rewrite its access list. That escalation path is the
+// reason the branch below is expressed as an allow-list of mutable keys rather
+// than as a single equality check.
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -79,9 +90,23 @@ service cloud.firestore {
         return request.resource.data.authorizedUserIds;
       }
 
+      function changedKeys() {
+        return request.resource.data.diff(resource.data).affectedKeys();
+      }
+
       function onlyAccessListChanged() {
-        return request.resource.data.diff(resource.data)
-          .affectedKeys().hasOnly(['authorizedUserIds']);
+        return changedKeys().hasOnly(['authorizedUserIds']);
+      }
+
+      // The clinical payload plus the status tracker and the edit timestamp.
+      // Everything absent from this list - ownership, the access list, the
+      // identifying fields, the creation stamp - is closed to a contributor.
+      function onlyClinicalDataChanged() {
+        return changedKeys().hasOnly([
+          'pathology', 'oncology', 'demography',
+          'comorbidity', 'biochemistry', 'radiology',
+          'addedCategories', 'updatedAt'
+        ]);
       }
 
       function isOwner() {
@@ -92,9 +117,21 @@ service cloud.firestore {
         return isVerified() && uid() in accessList();
       }
 
+      // Ownership stays put unless it is being handed to someone who already
+      // holds access, which keeps a record from being orphaned onto a user who
+      // cannot open it.
+      function ownershipIntactOrHandedOver() {
+        return request.resource.data.mainDoctorId == resource.data.mainDoctorId
+          || request.resource.data.mainDoctorId in newAccessList();
+      }
+
       // Accepting a shared link: the caller adds themselves and nothing else.
       // Both hasAll and hasOnly are needed - the first proves no one was
       // dropped, the second proves no one but the caller was added.
+      //
+      // NOTE: this grants access on possession of the record id alone, so the
+      // share link works as a credential. An owner-approved, single-use
+      // invitation document would close this; it is a known design limit.
       function joiningSelf() {
         return isVerified()
           && onlyAccessListChanged()
@@ -122,11 +159,15 @@ service cloud.firestore {
         && request.resource.data.mainDoctorId == uid()
         && uid() in request.resource.data.authorizedUserIds;
 
-      // Clinical data may be edited by anyone authorized, but the access list
-      // itself is the owner's to change - other than joining or leaving.
+      // Four disjoint paths:
+      //   admin          - unrestricted
+      //   owner          - anything, except handing ownership to a user who
+      //                    holds no access
+      //   contributor    - the clinical payload only
+      //   join / leave   - the access list only, and only one's own entry
       allow update: if isAdmin()
-        || isOwner()
-        || (isAuthorized() && newAccessList() == accessList())
+        || (isOwner() && ownershipIntactOrHandedOver())
+        || (isAuthorized() && onlyClinicalDataChanged())
         || joiningSelf()
         || leavingSelf();
 
@@ -139,18 +180,37 @@ service cloud.firestore {
         return patientData(resource.data.patientId);
       }
 
+      function connectionKeysIntact() {
+        return request.resource.data.patientId == resource.data.patientId
+          && request.resource.data.userId == resource.data.userId;
+      }
+
       // Own connections, or any connection on a patient the caller may access -
       // the sharing screen lists who else holds a connection.
       allow get, list: if isAdmin()
         || (isVerified() && resource.data.userId == uid())
         || (isVerified() && uid() in connectionPatient().authorizedUserIds);
 
-      // A connection may only ever be created for oneself.
-      allow create: if isVerified() && request.resource.data.userId == uid();
+      // A connection may only ever be created for oneself, and only against a
+      // patient record that exists and already lists the caller as authorized.
+      // Without the second clause a verified user could mint connection rows
+      // for arbitrary patients, which the paper's "connections are the source
+      // of truth for role information" claim cannot survive.
+      // The *After variants read the patient as the whole batch leaves it: the
+      // app's join flow writes this row and the caller's arrayUnion together,
+      // so the pre-batch document does not list the caller yet.
+      allow create: if isVerified()
+        && request.resource.data.userId == uid()
+        && existsAfter(/databases/$(database)/documents/patients/$(request.resource.data.patientId))
+        && uid() in getAfter(/databases/$(database)/documents/patients/$(request.resource.data.patientId)).data.authorizedUserIds;
 
-      // Roles are the owning doctor's to assign.
+      // Roles are the owning doctor's to assign; the pair the row identifies
+      // is immutable, so a role change cannot be turned into a re-pointing of
+      // the connection at another patient or another user.
       allow update: if isAdmin()
-        || (isVerified() && connectionPatient().mainDoctorId == uid());
+        || (isVerified()
+            && connectionPatient().mainDoctorId == uid()
+            && connectionKeysIntact());
 
       allow delete: if isAdmin()
         || (isVerified() && resource.data.userId == uid())
