@@ -1,0 +1,40 @@
+# Runs the Firestore authorisation test suite against the local emulator.
+# No live Firebase project is contacted: emulators:exec uses the throwaway
+# project id demo-medical-app.
+name: Firestore rules
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rules:
+    name: authorisation test suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # The Firestore emulator is a Java process.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install the Firebase CLI
+        run: npm install --global firebase-tools@13
+
+      - name: Install test dependencies
+        working-directory: test/firestore_rules
+        run: npm install
+
+      # The CLI walks up to the repository root for firebase.json, which is
+      # where firestore.rules is declared.
+      - name: Run the authorisation test suite
+        working-directory: test/firestore_rules
+        run: npm run test:emulator
