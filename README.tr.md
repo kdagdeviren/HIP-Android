@@ -1,13 +1,19 @@
-# HIP — Hasta Bilgi Platformu
+# HİP — Mahremiyet Koruyucu Klinik Veri Toplama
 
 [🇬🇧 English](README.md)
 
-Hekimlerin hasta klinik verilerini yapılandırılmış biçimde toplaması, meslektaşlarıyla
-denetimli şekilde paylaşması ve analiz için dışa aktarması amacıyla geliştirilmiş bir
-Flutter uygulamasıdır.
+Birden çok hekimin, tek bir hasta için paylaşılan 20 karakterlik bir kod altında,
+her biri kendi uzmanlık kategorisinde ve asenkron biçimde yapılandırılmış klinik
+veri girdiği bir Flutter uygulamasıdır. Uygulama hangi katkıların beklediğini izler
+ve birleştirilmiş kaydı, aşağı akıştaki karar destek sistemi için dışa aktarır.
 
 Hesaplar yönetici onayından geçer, hasta verisine erişim hasta bazında yetkilendirilir ve
 bu yetkilendirme sunucu tarafındaki Firestore güvenlik kurallarıyla zorunlu kılınır.
+
+> **Ad hakkında.** Google Play listelemesinin başlığı *HİP — Hekim İletişim
+> Platformu*'dur; bu ad projenin ilk evresinden kalmıştır. Sistem bir mesajlaşma
+> aracı değil, bir veri toplama katmanıdır — mağaza listelemesinin kendi açıklaması
+> da onu böyle tanımlar. İlişkili makale boyunca veri toplama çerçevesi kullanılır.
 
 ---
 
@@ -21,6 +27,7 @@ bu yetkilendirme sunucu tarafındaki Firestore güvenlik kurallarıyla zorunlu k
 - [Güvenlik Kurallarının Test Edilmesi](#güvenlik-kurallarının-test-edilmesi)
 - [Yönetici Atama](#yönetici-atama)
 - [Bilinen Sınırlamalar](#bilinen-sınırlamalar)
+- [Bu yazılıma atıf](#bu-yazılıma-atıf)
 - [Lisans](#lisans)
 
 ---
@@ -254,6 +261,22 @@ doldurur. `--dry-run` ile önce özet alınması önerilir.
 - İngilizce çeviri hızlı ve test amaçlı yapılmıştır; klinik terminoloji tıbbi bir
   incelemeden geçmemiştir. Bir alan uzmanı doğrulayana kadar İngilizce arayüz taslak
   kabul edilmelidir.
+
+---
+
+## Bu yazılıma atıf
+
+Bu yazılımı kullanıyorsanız, kullandığınız sürümün belirlenebilmesi için depoya
+değil arşivlenmiş sürüme atıf verin:
+
+> Dağdeviren YK, Demir Ö, Bekiş R. HİP: a privacy-preserving, unique-code-based
+> mobile application for asynchronous multi-physician clinical data collection
+> [yazılım]. Zenodo; 2026. doi:〈Zenodo sürüm DOI'si〉
+
+Deponun kökündeki `CITATION.cff` aynı meta veriyi makine tarafından okunabilir
+biçimde taşır; GitHub bunu "Cite this repository" panelinde gösterir.
+
+İlişkili makaleye de birlikte atıf verilmelidir.
 
 ---
 

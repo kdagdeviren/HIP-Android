@@ -1,0 +1,33 @@
+{
+  "title": "HİP: a privacy-preserving, unique-code-based mobile application for asynchronous multi-physician clinical data collection",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "description": "<p>A cross-platform mobile application (Flutter, Firebase) in which several physicians contribute structured clinical data for one patient under a shared 20-character alphanumeric code, each within their own specialty category and asynchronously. The system tracks which contributions remain pending and exports the consolidated record as a two-column spreadsheet matching the input schema of the decision support system it serves.</p><p>Authorisation is enforced server-side by versioned, deny-by-default Firestore security rules, exercised by 62 emulator-based scenarios under eleven headings covering both permitted and refused operations. The rules file and the test suite in this archive are the versions in force on the live project.</p><p>This archive accompanies the manuscript of the same title. The Google Play listing is titled \"HİP — Hekim İletişim Platformu\", a name retained from the project's first phase; the system is a data-collection layer rather than a messaging tool.</p>",
+  "creators": [
+    {
+      "name": "Dağdeviren, Yusuf Kağan",
+      "orcid": "0000-0003-3814-9401",
+      "affiliation": "Hospital Pharmacy, Dokuz Eylül University Hospital, İzmir, Türkiye"
+    },
+    {
+      "name": "Demir, Özgür",
+      "orcid": "0009-0004-5386-0597",
+      "affiliation": "Independent software developer, Bilecik, Türkiye"
+    },
+    {
+      "name": "Bekiş, Recep",
+      "orcid": "0000-0002-8313-8974",
+      "affiliation": "Department of Nuclear Medicine, Dokuz Eylül University, İzmir, Türkiye"
+    }
+  ],
+  "keywords": [
+    "clinical data collection",
+    "privacy by design",
+    "health informatics",
+    "mobile application",
+    "Firestore security rules",
+    "clinical decision support systems"
+  ],
+  "language": "eng"
+}

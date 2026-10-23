@@ -1,0 +1,36 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software archive and the accompanying paper."
+title: "HİP: a privacy-preserving, unique-code-based mobile application for asynchronous multi-physician clinical data collection"
+abstract: >-
+  A cross-platform mobile application in which several physicians contribute
+  structured clinical data for one patient under a shared 20-character code,
+  each within their own specialty category and asynchronously. The system
+  tracks which contributions remain pending and exports the consolidated
+  record as a spreadsheet matching the input schema of the decision support
+  system it serves. Authorisation is enforced server-side by versioned,
+  deny-by-default Firestore security rules.
+type: software
+authors:
+  - family-names: "Dağdeviren"
+    given-names: "Yusuf Kağan"
+    orcid: "https://orcid.org/0000-0003-3814-9401"
+    affiliation: "Hospital Pharmacy, Dokuz Eylül University Hospital, İzmir, Türkiye"
+    email: "kagan.dagdeviren@deu.edu.tr"
+  - family-names: "Demir"
+    given-names: "Özgür"
+    orcid: "https://orcid.org/0009-0004-5386-0597"
+    affiliation: "Independent software developer, Bilecik, Türkiye"
+  - family-names: "Bekiş"
+    given-names: "Recep"
+    orcid: "https://orcid.org/0000-0002-8313-8974"
+    affiliation: "Department of Nuclear Medicine, Dokuz Eylül University, İzmir, Türkiye"
+repository-code: "https://github.com/kdagdeviren/HIP-Android"
+url: "https://play.google.com/store/apps/details?id=com.flutter_medical_app.android"
+license: MIT
+keywords:
+  - clinical data collection
+  - privacy by design
+  - health informatics
+  - mobile application
+  - Firestore security rules
+  - clinical decision support

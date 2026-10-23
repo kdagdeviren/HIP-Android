@@ -1,12 +1,21 @@
-# HIP — Patient Information Platform
+# HİP — Privacy-Preserving Clinical Data Collection
 
 [🇹🇷 Türkçe](README.tr.md)
 
-A Flutter application built for physicians to collect structured patient clinical
-data, share it with colleagues under controlled access, and export it for analysis.
+A Flutter application in which several physicians contribute structured clinical
+data for one patient under a shared 20-character code, each within their own
+specialty category and asynchronously. The application tracks which contributions
+are still pending and exports the consolidated record for a downstream decision
+support system.
 
 Accounts go through admin approval, access to patient data is authorized per patient,
 and that authorization is enforced server-side by Firestore security rules.
+
+> **About the name.** The Google Play listing is titled *HİP — Hekim İletişim
+> Platformu* ("Physician Communication Platform"), a name kept from the project's
+> first phase. The system is a data-collection layer rather than a messaging tool,
+> which is also how the store listing's own description presents it. The
+> accompanying paper uses the data-collection framing throughout.
 
 ---
 
@@ -20,6 +29,7 @@ and that authorization is enforced server-side by Firestore security rules.
 - [Testing the Security Rules](#testing-the-security-rules)
 - [Assigning an Admin](#assigning-an-admin)
 - [Known Limitations](#known-limitations)
+- [Citing this software](#citing-this-software)
 - [License](#license)
 
 ---
@@ -252,6 +262,22 @@ Run it with `--dry-run` first to review a summary.
 - The English translation was produced quickly for testing purposes; clinical
   terminology has not gone through medical review. Treat the English UI as
   provisional until a domain expert validates it.
+
+---
+
+## Citing this software
+
+If you use this software, please cite the archived release rather than the
+repository, so that the version you used is identifiable:
+
+> Dağdeviren YK, Demir Ö, Bekiş R. HİP: a privacy-preserving, unique-code-based
+> mobile application for asynchronous multi-physician clinical data collection
+> [software]. Zenodo; 2026. doi:〈Zenodo version DOI〉
+
+`CITATION.cff` in the repository root carries the same metadata in machine-readable
+form, and GitHub renders it in the "Cite this repository" panel.
+
+The accompanying paper should be cited alongside it.
 
 ---
 
